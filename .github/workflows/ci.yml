@@ -31,6 +31,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
     - name: Install requirements
+      run: |
         pip install -r requirements.txt
     - name: Lint with black & flake8
       run: |
