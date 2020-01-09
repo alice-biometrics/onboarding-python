@@ -1,8 +1,9 @@
 ALiCE Onboarding API Python Client
 ==================================
 
+## Installation
 
-Install from PyPI:
+Install from PyPI: Not yet available :construction:
 
 ```console
 pip install alice-onboarding
@@ -15,97 +16,61 @@ git clone https://github.com/alice-biometrics/onboarding-api-python-client.git
 pip install -e .
 ```
 
-To install to develop:
+## Getting Started
+
+#### Config 
+
+Configure your credentials with *Config* class
+
+```
+from alice import Config
+
+config = Config(api_key=given_valid_api_key)
+```
+
+
+#### Onboarding
+
+To manage the operations with ALiCE Onboarding API, use *Onboarding* class. 
+This class deals with authentication automatically.
+
+see onboarding example [here](examples/onboarding.py)
 
 ```console
-conda create --name onboarding-sdk python=3.6
-conda activate onboarding-sdk
-pip install .
+export ONBOARDING_API_KEY="<YOUR-API-KEY>"
+python examples/onboarding.py
 ```
 
-## Upload to internal PyPi
+#### Auth
+
+To manage authorization and token creations, use *Auth* class.
+
+Available tokens: 
+
+| Type Token              | Info          | 
+| ----------------------- |:-------------:|
+| BACKEND_TOKEN           | Used to secure global requests.| 
+| BACKEND_TOKEN_WITH_USER | Used to secure global requests include user_id information embedded |  
+| USER_TOKEN              | Used to secure requests made by the users on their mobile devices or web clients.|
 
 
-#### Quick way
+To create a BACKEND_TOKEN_WITH_USER and a USER_TOKEN you will need a valid user_id obtained from Alice Onboarding API.
 
-1. Update version in setup.py
-2. Execute the following command
+see onboarding example [here](examples/auth.py)
 
 ```console
-bash deploy_wheel.sh
+export ONBOARDING_API_KEY="<YOUR-API-KEY>"
+export ONBOARDING_USER_ID="<USER-ID-ALREADY-CREATED-IN-ALICE-ONBOARDING-API>"
+python examples/auth.py
 ```
 
-#### Step by step
+#### Sandbox (Only for early stages of integration)
 
-Create dist folder:
+To manage the operations with the Sandbox API, use *Sandbox* class.
+
+see onboarding example [here](examples/sandbox.py)
 
 ```console
-python setup.py sdist bdist_wheel
-```
-
-
-To upload it use twine
-
-First of all, install it
-```console
-pip install twine
-```
-
-Then, upload created wheel
-```console
-twine upload dist/* --repository-url https://intranet.gradiant.org/nexus/repository/pypi-biometrics/    
-```
-
-
-Another way to create a wheel
-
-```console
-pip wheel --wheel-dir=output/package .
-pip install output/package/alice_onboarding-*-py3-none-any
-```
-
-## Usage
-
-Default (Using PRO)
-
-```python
-from alice import Onboarding, Auth
-
-API_KEY = "<ADD-YOUR-API-KEY>"
-
-auth_sdk = AuthSdk(api_key=API_KEY)
-onboarding_sdk = OnboardingSdk(auth_sdk=auth_sdk)
-
-ok = onboarding_sdk.healthcheck(verbose=True)
-assert ok, "healthcheck is not returning a 200"
-```
-
-Parametrized (e.g Using PRE)
-
-```python
-from alice import Onboarding, Auth
-
-auth_sdk = AuthSdk(
-    service_id="onboarding", base_url="https://pre.alicebiometrics.com/auth", api_key="<ADD-YOUR-API-KEY>"
-)
-onboarding_sdk = OnboardingSdk(auth_sdk=auth_sdk, url="https://pre.alicebiometrics.com/onboarding")
-
-ok = onboarding_sdk.healthcheck(verbose=True)
-assert ok, "healthcheck is not returning a 200"
-```
-
-## Documentation
-
-Dependencies
-
-```console
-pip instal Sphinx
-pip install sphinx_rtd_theme
-```
-
-Generate html
-
-```console
-cd docs
-make html
+export ONBOARDING_SANDBOX_TOKEN="<YOUR-SANDBOX-TOKEN>"
+python examples/sandbox.py
 ```
