@@ -1,7 +1,7 @@
-ALiCE Onboarding API Python Client
+ALiCE Onboarding API Python Client [![ci](https://github.com/alice-biometrics/onboarding-api-python-client/workflows/ci/badge.svg)](https://github.com/alice-biometrics/onboarding-api-python-client/actions)
 ==================================
 
-## Installation
+## Installation :computer:
 
 Install from PyPI: Not yet available :construction:
 
@@ -16,7 +16,7 @@ git clone https://github.com/alice-biometrics/onboarding-api-python-client.git
 pip install -e .
 ```
 
-## Getting Started
+## Getting Started :chart_with_upwards_trend:
 
 #### Config 
 
