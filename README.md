@@ -45,10 +45,22 @@ python examples/onboarding.py
 
 To manage authorization and token creations, use *Auth* class.
 
+Available tokens: 
+
+| Type Token              | Info          | 
+| ----------------------- |:-------------:|
+| BACKEND_TOKEN           | Used to secure global requests.| 
+| BACKEND_TOKEN_WITH_USER | Used to secure global requests include user_id information embedded |  
+| USER_TOKEN              | Used to secure requests made by the users on their mobile devices or web clients.|
+
+
+To create a BACKEND_TOKEN_WITH_USER and a USER_TOKEN you will need a valid user_id obtained from Alice Onboarding API.
+
 see onboarding example [here](examples/auth.py)
 
 ```console
 export ONBOARDING_API_KEY="<YOUR-API-KEY>"
+export ONBOARDING_USER_ID="<USER-ID-ALREADY-CREATED-IN-ALICE-ONBOARDING-API>"
 python examples/auth.py
 ```
 
