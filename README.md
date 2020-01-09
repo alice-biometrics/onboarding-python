@@ -34,12 +34,12 @@ config = Config(api_key=given_valid_api_key)
 To manage the operations with ALiCE Onboarding API, use *Onboarding* class. 
 This class deals with authentication automatically.
 
-see onboarding example [here](examples/onboarding.py)
-
 ```console
 export ONBOARDING_API_KEY="<YOUR-API-KEY>"
 python examples/onboarding.py
 ```
+
+see onboarding example [here](examples/onboarding.py)
 
 #### Auth
 
@@ -56,7 +56,6 @@ Available tokens:
 
 To create a BACKEND_TOKEN_WITH_USER and a USER_TOKEN you will need a valid user_id obtained from Alice Onboarding API.
 
-see onboarding example [here](examples/auth.py)
 
 ```console
 export ONBOARDING_API_KEY="<YOUR-API-KEY>"
@@ -64,13 +63,17 @@ export ONBOARDING_USER_ID="<USER-ID-ALREADY-CREATED-IN-ALICE-ONBOARDING-API>"
 python examples/auth.py
 ```
 
+see auth example [here](examples/auth.py)
+
+
 #### Sandbox (Only for early stages of integration)
 
 To manage the operations with the Sandbox API, use *Sandbox* class.
-
-see onboarding example [here](examples/sandbox.py)
 
 ```console
 export ONBOARDING_SANDBOX_TOKEN="<YOUR-SANDBOX-TOKEN>"
 python examples/sandbox.py
 ```
+
+see sandbox example [here](examples/sandbox.py)
+
