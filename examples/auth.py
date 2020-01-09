@@ -7,7 +7,7 @@ from alice import Auth, Config
 
 
 @meiga
-def auth_example(api_key: str, user_id:str, verbose: bool = False):
+def auth_example(api_key: str, user_id: str, verbose: bool = False):
     config = Config(api_key=api_key)
     auth = Auth.from_config(config)
 
@@ -31,8 +31,6 @@ if __name__ == "__main__":
             "Please configure your ONBOARDING_USER_ID to run the example"
         )
 
-    result = auth_example(
-        api_key=api_key, user_id=user_id, verbose=True
-    )
+    result = auth_example(api_key=api_key, user_id=user_id, verbose=True)
 
     print(result)

@@ -1,22 +1,80 @@
-from alice import Sandbox, UserInfo
+import os
 
-sandbox_token_pre = "<ADD-HERE-YOUR-SANDBOX-TOKEN"
+from meiga import isSuccess
+from meiga.decorators import meiga
 
-email = "python-playground@alicebiometrics.com"
+from alice import Onboarding, Config
 
-sandbox_sdk = Sandbox(sandbox_token=sandbox_token_pre)
+RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
-result = sandbox_sdk.healthcheck(verbose=True)
-print(result)
 
-result = sandbox_sdk.create_user(user_info=UserInfo(email=email), verbose=True)
-print(result)
+@meiga
+def onboarding_example(api_key: str, verbose: bool = False):
 
-result = sandbox_sdk.get_user(email=email, verbose=True)
-print(result)
+    config = Config(api_key=api_key)
+    onboarding = Onboarding.from_config(config)
 
-result = sandbox_sdk.get_user_token(email=email, verbose=True)
-print(result)
+    selfie_media_data = given_any_selfie_image_media_data()
+    document_front_media_data = given_any_document_front_media_data()
+    document_back_media_data = given_any_document_back_media_data()
 
-result = sandbox_sdk.delete_user(email=email, verbose=True)
-print(result)
+    user_id = onboarding.create_user(verbose=verbose).handle()
+
+    # Upload a selfie (Recommended 1-second video)
+    onboarding.add_selfie(
+        user_id=user_id, media_data=selfie_media_data, verbose=verbose
+    ).handle()
+
+    # Create and upload front and back side from a document
+    document_id = onboarding.create_document(
+        user_id=user_id, type="idcard", issuing_country="ESP", verbose=verbose
+    ).handle()
+    onboarding.add_document(
+        user_id=user_id,
+        document_id=document_id,
+        media_data=document_front_media_data,
+        side="front",
+        manual=True,
+        verbose=verbose,
+    ).handle()
+    onboarding.add_document(
+        user_id=user_id,
+        document_id=document_id,
+        media_data=document_back_media_data,
+        side="back",
+        manual=True,
+        verbose=verbose,
+    ).handle()
+
+    # Generate the report
+    report = onboarding.create_report(user_id=user_id, verbose=verbose).handle()
+
+    return isSuccess
+
+
+def given_resources_path():
+    return
+
+
+def given_any_selfie_image_media_data():
+    return open(f"{RESOURCES_PATH}/selfie.png", "rb").read()
+
+
+def given_any_document_front_media_data():
+    return open(f"{RESOURCES_PATH}/idcard_esp_front_example.png", "rb").read()
+
+
+def given_any_document_back_media_data():
+    return open(f"{RESOURCES_PATH}/idcard_esp_back_example.png", "rb").read()
+
+
+if __name__ == "__main__":
+    api_key = os.environ.get("ONBOARDING_API_KEY")
+    if api_key is None:
+        raise AssertionError(
+            "Please configure your ONBOARDING_API_KEY to run the example"
+        )
+
+    result = onboarding_example(api_key=api_key, verbose=True)
+
+    print(result)

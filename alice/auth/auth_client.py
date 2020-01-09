@@ -13,7 +13,9 @@ class AuthClient:
         self._login_token = None
 
     @timeit
-    def create_backend_token(self, service_id: str, user_id: str = None, verbose: bool = False) -> Response:
+    def create_backend_token(
+        self, service_id: str, user_id: str = None, verbose: bool = False
+    ) -> Response:
 
         suffix = " (with user)" if user_id else ""
         print_intro(f"create_backend_token{suffix}", verbose=verbose)
@@ -36,7 +38,9 @@ class AuthClient:
         return response
 
     @timeit
-    def create_user_token(self, service_id: str, user_id: str, verbose: bool = False) -> Response:
+    def create_user_token(
+        self, service_id: str, user_id: str, verbose: bool = False
+    ) -> Response:
 
         print_intro("create_user_token", verbose=verbose)
 
