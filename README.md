@@ -69,7 +69,7 @@ pip install output/package/alice_onboarding-*-py3-none-any
 Default (Using PRO)
 
 ```python
-from alice import OnboardingSdk, AuthSdk
+from alice import Onboarding, Auth
 
 API_KEY = "<ADD-YOUR-API-KEY>"
 
@@ -83,7 +83,7 @@ assert ok, "healthcheck is not returning a 200"
 Parametrized (e.g Using PRE)
 
 ```python
-from alice import OnboardingSdk, AuthSdk
+from alice import Onboarding, Auth
 
 auth_sdk = AuthSdk(
     service_id="onboarding", base_url="https://pre.alicebiometrics.com/auth", api_key="<ADD-YOUR-API-KEY>"

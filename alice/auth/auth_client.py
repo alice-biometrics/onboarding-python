@@ -42,13 +42,6 @@ class AuthClient:
 
         return response
 
-    def check_user_token(self, user_token: str) -> Response:
-        headers = {"Authorization": "Bearer {}".format(user_token)}
-        final_url = "{}/check_user_token".format(self._base_url)
-        response = requests.post(final_url, headers=headers)
-
-        return response
-
     def _create_login_token(self):
         final_url = "{}/login_token".format(self._base_url)
         headers = {"apikey": self._api_key}

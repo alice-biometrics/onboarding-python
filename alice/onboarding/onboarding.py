@@ -2,18 +2,23 @@ from typing import List, Dict
 
 from meiga import Result, Success, Failure, isSuccess
 
+from alice.config import Config
 from alice.onboarding.onboarding_errors import OnboardingError
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
 from alice.onboarding.onboarding_client import OnboardingClient
-from alice.auth.auth_sdk import AuthSdk
+from alice.auth.auth import Auth
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
 
-class OnboardingSdk:
-    def __init__(self, auth_sdk: AuthSdk, url: str = DEFAULT_URL):
-        self.onboarding_client = OnboardingClient(auth=auth_sdk, url=url)
+class Onboarding:
+    @staticmethod
+    def from_config(config: Config):
+        return Onboarding(auth=Auth.from_config(config), url=config.onboarding_url)
+
+    def __init__(self, auth: Auth, url: str = DEFAULT_URL):
+        self.onboarding_client = OnboardingClient(auth=auth, url=url)
 
     def healthcheck(self, verbose: bool = False) -> Result[bool, OnboardingError]:
         """

@@ -2,6 +2,8 @@ import time
 from typing import Dict
 
 import jwt
+
+from alice.config import Config
 from alice.sandbox.sandbox_client import SandboxClient
 from alice.sandbox.sandbox_errors import SandboxError
 from alice.onboarding.user_info import UserInfo
@@ -11,7 +13,12 @@ from meiga import Result, Failure, isSuccess, Success
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 
 
-class SandboxSdk:
+class Sandbox:
+
+    @staticmethod
+    def from_config(config: Config):
+        return Sandbox(sandbox_token=config.sandbox_token, url=config.sandbox_url)
+
     def __init__(self, sandbox_token: str, url: str = DEFAULT_URL):
         self.sandbox_client = SandboxClient(sandbox_token=sandbox_token, url=url)
 

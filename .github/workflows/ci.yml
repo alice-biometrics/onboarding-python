@@ -8,9 +8,12 @@ on:
     branches: 
       - master
 
+env:
+  ONBOARDING_API_KEY: ${{ secrets.ONBOARDING_API_KEY }}
+  ONBOARDING_SANDBOX_TOKEN: ${{ secrets.ONBOARDING_SANDBOX_TOKEN }}
+
 jobs:
   build:
-
     strategy:
       max-parallel: 4
       matrix:
@@ -41,4 +44,4 @@ jobs:
       run: |
         pip install -e . # Dependencies are also included in the setup.py
         pip install pytest
-        pytest
+        pytest -v

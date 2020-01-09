@@ -8,24 +8,27 @@
 modules = []
 
 # Classes
-from alice.onboarding.onboarding_sdk import OnboardingSdk
+from alice.onboarding.onboarding import Onboarding
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
-from alice.auth.auth_sdk import AuthSdk
+from alice.auth.auth import Auth
 from alice.auth.auth_client import AuthClient
-from alice.sandbox.sandbox_sdk import SandboxSdk
+from alice.sandbox.sandbox import Sandbox
 from alice.sandbox.sandbox_client import SandboxClient
+from alice.config import Config
+
 
 classes = [
-    "OnboardingSdk",
+    "Onboarding",
     "OnboardingClient",
     "UserInfo",
     "DeviceInfo",
-    "AuthSdk",
+    "Auth",
     "AuthClient",
-    "SandboxSdk",
+    "Sandbox",
     "SandboxClient",
+    "Config",
 ]
 
 # Errors

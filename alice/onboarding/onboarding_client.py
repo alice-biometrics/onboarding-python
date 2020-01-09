@@ -2,7 +2,7 @@ import json
 
 from requests import request, Response
 
-from alice.auth.auth_sdk import AuthSdk
+from alice.auth.auth import Auth
 from alice.onboarding.tools import timeit, print_intro, print_response, print_token
 
 from alice.onboarding.user_info import UserInfo
@@ -13,7 +13,7 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
 
 
 class OnboardingClient:
-    def __init__(self, auth: AuthSdk, url: str = DEFAULT_URL):
+    def __init__(self, auth: Auth, url: str = DEFAULT_URL):
         self.auth = auth
         self.url = url
 
@@ -74,7 +74,8 @@ class OnboardingClient:
         """
         print_intro("create_user", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token()
+        backend_token = self.auth.create_backend_token().unwrap()
+
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -113,7 +114,7 @@ class OnboardingClient:
         """
         print_intro("delete_user", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id)
+        backend_token = self.auth.create_backend_token(user_id).unwrap()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -143,7 +144,7 @@ class OnboardingClient:
         """
         print_intro("get_user_status", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id)
+        user_token = self.auth.create_user_token(user_id).unwrap()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -172,7 +173,7 @@ class OnboardingClient:
         """
         print_intro("get_users_stats", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token()
+        backend_token = self.auth.create_backend_token().unwrap()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -200,7 +201,7 @@ class OnboardingClient:
         """
         print_intro("get_users", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token()
+        backend_token = self.auth.create_backend_token().unwrap()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -251,7 +252,7 @@ class OnboardingClient:
         """
         print_intro("get_users_status", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token()
+        backend_token = self.auth.create_backend_token().unwrap()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -298,7 +299,7 @@ class OnboardingClient:
         """
         print_intro("add_selfie", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id)
+        user_token = self.auth.create_user_token(user_id).unwrap()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -331,7 +332,7 @@ class OnboardingClient:
             A Response object [requests library]
         """
         print_intro("supported_documents", verbose=verbose)
-        user_token = self.auth.create_user_token(user_id)
+        user_token = self.auth.create_user_token(user_id).unwrap()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -367,7 +368,7 @@ class OnboardingClient:
             A Response object [requests library]
         """
         print_intro("create_document", verbose=verbose)
-        user_token = self.auth.create_user_token(user_id)
+        user_token = self.auth.create_user_token(user_id).unwrap()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -405,7 +406,7 @@ class OnboardingClient:
         """
         print_intro("delete_document", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id)
+        backend_token = self.auth.create_backend_token(user_id).unwrap()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -456,7 +457,7 @@ class OnboardingClient:
         """
         print_intro("add_document", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id)
+        user_token = self.auth.create_user_token(user_id).unwrap()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -495,7 +496,7 @@ class OnboardingClient:
         """
         print_intro("create_report", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id)
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -524,7 +525,7 @@ class OnboardingClient:
         """
         print_intro("authorize_user", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id)
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -553,7 +554,7 @@ class OnboardingClient:
         """
         print_intro("deauthorize_user", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id)
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -587,7 +588,7 @@ class OnboardingClient:
         """
         print_intro("authenticate_user", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id=user_id)
+        user_token = self.auth.create_user_token(user_id=user_id).unwrap()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -622,7 +623,7 @@ class OnboardingClient:
         """
         print_intro("get_authentications_ids", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id)
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -668,7 +669,7 @@ class OnboardingClient:
         """
         print_intro("get_authentications", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id)
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -711,7 +712,7 @@ class OnboardingClient:
         """
         print_intro("get_authentication", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id)
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -752,7 +753,7 @@ class OnboardingClient:
         """
         print_intro("retrieve_media", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id)
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
