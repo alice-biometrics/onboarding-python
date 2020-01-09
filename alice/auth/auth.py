@@ -20,7 +20,7 @@ class Auth:
         self._auth_client = AuthClient(base_url, api_key)
         self._service_id = service_id
 
-    def create_backend_token(self, user_id: str = None) -> Result[str, AuthError]:
+    def create_backend_token(self, user_id: str = None, verbose:bool = False) -> Result[str, AuthError]:
         """
         Returns a BACKEND_TOKEN or BACKEND_TOKEN_WITH_USER depending of user_id given parameter.
         Both BACKEND_TOKEN and BACKEND_TOKEN_WITH_USER are used to secure global requests.
@@ -29,25 +29,27 @@ class Auth:
         ----------
         user_id
             User identifier
-
+        verbose
+            Used for print service response as well as the time elapsed
 
         Returns
         -------
             A Result where if the operation is successful it returns BACKEND_TOKEN or BACKEND_TOKEN_WITH_USER.
             Otherwise, it returns an OnboardingError.
         """
-        response = self._auth_client.create_backend_token(self._service_id, user_id)
+        response = self._auth_client.create_backend_token(self._service_id, user_id, verbose=verbose)
 
         if response.status_code == 200:
             return Success(self.__get_token_from_response(response))
         else:
+            suffix = " (with user)" if user_id else ""
             return Failure(
                 AuthError.from_response(
-                    operation="create_backend_token", response=response
+                    operation=f"create_backend_token{suffix}", response=response
                 )
             )
 
-    def create_user_token(self, user_id: str) -> Result[str, AuthError]:
+    def create_user_token(self, user_id: str, verbose:bool = False) -> Result[str, AuthError]:
         """
         Returns a USER_TOKEN.
         The USER_TOKEN is used to secure requests made by the users on their mobile devices or web clients.
@@ -57,6 +59,8 @@ class Auth:
         ----------
         user_id
             User identifier
+        verbose
+            Used for print service response as well as the time elapsed
 
 
         Returns
@@ -64,7 +68,7 @@ class Auth:
             A Result where if the operation is successful it returns USER_TOKEN.
             Otherwise, it returns an OnboardingError.
         """
-        response = self._auth_client.create_user_token(self._service_id, user_id)
+        response = self._auth_client.create_user_token(self._service_id, user_id, verbose=verbose)
 
         if response.status_code == 200:
             return Success(self.__get_token_from_response(response))

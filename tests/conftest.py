@@ -22,9 +22,11 @@ def given_valid_sandbox_token():
         )
     return sandbox_token
 
+
 @pytest.fixture
 def given_any_valid_mail():
     return "alice@alicebiometrics.com"
+
 
 @pytest.fixture
 def given_resources_path():

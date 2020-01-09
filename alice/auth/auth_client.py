@@ -3,6 +3,7 @@ import json
 import jwt
 import requests
 from requests import Response
+from alice.onboarding.tools import timeit, print_intro, print_response
 
 
 class AuthClient:
@@ -11,7 +12,12 @@ class AuthClient:
         self._api_key = api_key
         self._login_token = None
 
-    def create_backend_token(self, service_id: str, user_id: str = None) -> Response:
+    @timeit
+    def create_backend_token(self, service_id: str, user_id: str = None, verbose: bool = False) -> Response:
+
+        suffix = " (with user)" if user_id else ""
+        print_intro(f"create_backend_token{suffix}", verbose=verbose)
+
         if not self._is_token_valid(self._login_token):
             response = self._create_login_token()
             if response.status_code == 200:
@@ -25,10 +31,15 @@ class AuthClient:
 
         headers = {"Authorization": "Bearer {}".format(self._login_token)}
         response = requests.get(final_url, headers=headers)
+        print_response(response=response, verbose=verbose)
 
         return response
 
-    def create_user_token(self, service_id: str, user_id: str) -> Response:
+    @timeit
+    def create_user_token(self, service_id: str, user_id: str, verbose: bool = False) -> Response:
+
+        print_intro("create_user_token", verbose=verbose)
+
         if not self._is_token_valid(self._login_token):
             response = self._create_login_token()
             if response.status_code == 200:
@@ -40,12 +51,15 @@ class AuthClient:
         headers = {"Authorization": "Bearer {}".format(self._login_token)}
         response = requests.get(final_url, headers=headers)
 
+        print_response(response=response, verbose=verbose)
+
         return response
 
     def _create_login_token(self):
         final_url = "{}/login_token".format(self._base_url)
         headers = {"apikey": self._api_key}
         response = requests.get(final_url, headers=headers)
+
         return response
 
     @staticmethod

@@ -14,7 +14,6 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 
 
 class Sandbox:
-
     @staticmethod
     def from_config(config: Config):
         return Sandbox(sandbox_token=config.sandbox_token, url=config.sandbox_url)
