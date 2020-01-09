@@ -40,8 +40,9 @@ jobs:
       run: |
         black .
         flake8 alice
-    - name: Test with pytest
+    - name: Install package
       run: |
         pip install -e . # Dependencies are also included in the setup.py
-        pip install pytest
+    - name: Test with pytest
+      run: |
         pytest -v
