@@ -24,15 +24,20 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Build package
-      run: |
-        pip install -e . # Dependencies are included in the setup.py
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Install requirements
+        pip install -r requirements.txt
     - name: Lint with black & flake8
       run: |
-        pip install black flake8
         black .
         flake8 alice
     - name: Test with pytest
       run: |
+        pip install -e . # Dependencies are also included in the setup.py
         pip install pytest
         pytest
