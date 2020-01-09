@@ -19,6 +19,6 @@ class SandboxError(Error):
         code = response.status_code
         try:
             message = response.json()
-        except:
+        except:  # noqa E722
             message = {"message": "no content"}
         return SandboxError(operation=operation, code=code, message=message)
