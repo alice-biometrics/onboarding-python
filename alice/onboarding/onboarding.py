@@ -340,7 +340,7 @@ class Onboarding:
         user_id
             User identifier
         type
-            Type of document [idcard, driverlicense, passport]
+            Type of document [idcard, driverlicense, passport, residencepermit]
         issuing_country
             Issuing Country [ESP, FRA]. Country codes following ISO 3166-1.
 
@@ -409,6 +409,7 @@ class Onboarding:
         media_data: bytes,
         side: str,
         manual: bool = False,
+        fields: dict = None,
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
@@ -424,9 +425,11 @@ class Onboarding:
         media_data
             Binary media data.
         side
-            Side of the document [front or back]
+            Side of the document [front, back or internal]
         manual
             If True defines manual document uploading
+        fields
+            Fields to add regardless of the OCR process
         verbose
             Used for print service response as well as the time elapsed
 
@@ -451,6 +454,43 @@ class Onboarding:
             return Failure(
                 OnboardingError.from_response(
                     operation="add_document", response=response
+                )
+            )
+
+    def document_properties(
+        self, user_id: str, document_id: str, verbose: bool = False
+    ) -> Result[str, OnboardingError]:
+        """
+
+        Returns the properties of a previously added document, such as face, MRZ or NFC availability
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+
+        document_id
+            Document identifier
+
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns dict with document properties.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.document_properties(
+            user_id=user_id, document_id=document_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="document_properties", response=response
                 )
             )
 

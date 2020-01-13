@@ -50,6 +50,11 @@ def test_should_do_complete_onboarding_process(
             side="back",
             manual=True,
         ).handle()
+        onboarding.document_properties(
+            user_id=user_id,
+            document_id=document_id
+        ).handle()
+
         return onboarding.create_report(user_id=user_id)
 
     result = do_complete_onboarding()
