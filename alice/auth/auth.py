@@ -12,13 +12,14 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
 class Auth:
     @staticmethod
     def from_config(config: Config):
-        return Auth(api_key=config.api_key, base_url=config.auth_url)
+        return Auth(api_key=config.api_key, url=config.auth_url)
 
     def __init__(
-        self, api_key, service_id: str = "onboarding", base_url: str = DEFAULT_URL
+        self, api_key, service_id: str = "onboarding", url: str = DEFAULT_URL
     ):
-        self._auth_client = AuthClient(base_url, api_key)
+        self._auth_client = AuthClient(url, api_key)
         self._service_id = service_id
+        self.url = url
 
     def create_backend_token(
         self, user_id: str = None, verbose: bool = False
