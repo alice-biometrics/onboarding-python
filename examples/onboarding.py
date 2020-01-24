@@ -59,10 +59,6 @@ def onboarding_example(api_key: str, verbose: bool = False):
     return isSuccess
 
 
-def given_resources_path():
-    return
-
-
 def given_any_selfie_image_media_data():
     return open(f"{RESOURCES_PATH}/selfie.png", "rb").read()
 
