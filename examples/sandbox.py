@@ -15,10 +15,14 @@ def sandbox_example(sandbox_token: str, email: str, verbose: bool = False):
 
     user_id = sandbox.create_user(
         user_info=UserInfo(email=email), verbose=verbose
-    ).handle()
-    user_token = sandbox.get_user_token(email=email, verbose=verbose).handle()
-    user = sandbox.get_user(email=email, verbose=verbose).handle()
-    sandbox.delete_user(email=email, verbose=verbose).handle()
+    ).unwrap_or_return()
+    user_token = sandbox.get_user_token(email=email, verbose=verbose).unwrap_or_return()
+    user = sandbox.get_user(email=email, verbose=verbose).unwrap_or_return()
+    sandbox.delete_user(email=email, verbose=verbose).unwrap_or_return()
+
+    print(f"user_id: {user_id}")
+    print(f"user_token: {user_token}")
+    print(f"user: {user}")
 
     return isSuccess
 
@@ -38,5 +42,4 @@ if __name__ == "__main__":
     result = sandbox_example(
         sandbox_token=sandbox_token, email=random_mail(), verbose=True
     )
-
     print(result)

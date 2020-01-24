@@ -11,9 +11,15 @@ def auth_example(api_key: str, user_id: str, verbose: bool = False):
     config = Config(api_key=api_key)
     auth = Auth.from_config(config)
 
-    backend_token = auth.create_backend_token(verbose=verbose).handle()
-    backend_token_with_user = auth.create_backend_token(user_id=user_id).handle()
-    user_token = auth.create_user_token(user_id=user_id).handle()
+    backend_token = auth.create_backend_token(verbose=verbose).unwrap_or_return()
+    backend_token_with_user = auth.create_backend_token(
+        user_id=user_id
+    ).unwrap_or_return()
+    user_token = auth.create_user_token(user_id=user_id).unwrap_or_return()
+
+    print(f"backend_token: {backend_token}")
+    print(f"backend_token_with_user: {backend_token_with_user}")
+    print(f"user_token: {user_token}")
 
     return isSuccess
 
@@ -32,5 +38,4 @@ if __name__ == "__main__":
         )
 
     result = auth_example(api_key=api_key, user_id=user_id, verbose=True)
-
     print(result)

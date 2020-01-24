@@ -14,9 +14,7 @@ class Auth:
     def from_config(config: Config):
         return Auth(api_key=config.api_key, url=config.auth_url)
 
-    def __init__(
-        self, api_key, service_id: str = "onboarding", url: str = DEFAULT_URL
-    ):
+    def __init__(self, api_key, service_id: str = "onboarding", url: str = DEFAULT_URL):
         self._auth_client = AuthClient(url, api_key)
         self._service_id = service_id
         self.url = url

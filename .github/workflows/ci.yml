@@ -65,6 +65,15 @@ jobs:
     - name: Install package
       run: |
         pip install -e . # Dependencies are also included in the setup.py
-    - name: Test with pytest
+    - name: Test [pytest]
       run: |
         pytest -v
+    - name: Test [Onboarding]
+      run: |
+        python examples/onboarding.py
+    - name: Test [examples/onboarding.py]
+        run: |
+          python examples/onboarding.py
+    - name: Test [examples/sandbox.py]
+        run: |
+          python examples/sandbox.py
