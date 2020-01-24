@@ -12,8 +12,7 @@ pip install alice-onboarding
 Install from code:
 
 ```console
-git clone https://github.com/alice-biometrics/onboarding-api-python-client.git
-pip install -e .
+pip install git+https://github.com/alice-biometrics/onboarding-api-python-client.git
 ```
 
 ## Getting Started :chart_with_upwards_trend:
