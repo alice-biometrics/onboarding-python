@@ -50,7 +50,9 @@ def onboarding_example(api_key: str, verbose: bool = False):
     report = onboarding.create_report(
         user_id=user_id, verbose=verbose
     ).unwrap_or_return()
-    print(f"report: {report}")
+
+    if verbose:
+        print(f"report: {report}")
 
     # Authorize an user
     # Based on report results and your business logic, you can authorize an user
@@ -82,7 +84,5 @@ if __name__ == "__main__":
         raise AssertionError(
             "Please configure your ONBOARDING_API_KEY to run the example"
         )
-
-    result = onboarding_example(api_key=api_key, verbose=True)
-
-    print(result)
+    print("Running onboarding example...")
+    onboarding_example(api_key=api_key, verbose=False)

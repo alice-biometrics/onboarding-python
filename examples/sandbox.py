@@ -20,9 +20,10 @@ def sandbox_example(sandbox_token: str, email: str, verbose: bool = False):
     user = sandbox.get_user(email=email, verbose=verbose).unwrap_or_return()
     sandbox.delete_user(email=email, verbose=verbose).unwrap_or_return()
 
-    print(f"user_id: {user_id}")
-    print(f"user_token: {user_token}")
-    print(f"user: {user}")
+    if verbose:
+        print(f"user_id: {user_id}")
+        print(f"user_token: {user_token}")
+        print(f"user: {user}")
 
     return isSuccess
 
@@ -38,8 +39,5 @@ if __name__ == "__main__":
         raise AssertionError(
             "Please configure your ONBOARDING_SANDBOX_TOKEN to run the example"
         )
-
-    result = sandbox_example(
-        sandbox_token=sandbox_token, email=random_mail(), verbose=True
-    )
-    print(result)
+    print("Running sandbox example...")
+    sandbox_example(sandbox_token=sandbox_token, email=random_mail(), verbose=False)

@@ -6,7 +6,8 @@ exclude =
     __pycache__,
     # Tricky imports
     alice/__init__.py,
-    alice/public_api.py
+    alice/public_api.py,
+    examples/auth.py
 
 max-line-length = 110
 
