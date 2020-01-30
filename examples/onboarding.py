@@ -18,17 +18,17 @@ def onboarding_example(api_key: str, verbose: bool = False):
     document_front_media_data = given_any_document_front_media_data()
     document_back_media_data = given_any_document_back_media_data()
 
-    user_id = onboarding.create_user(verbose=verbose).handle()
+    user_id = onboarding.create_user(verbose=verbose).unwrap_or_return()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data, verbose=verbose
-    ).handle()
+    ).unwrap_or_return()
 
     # Create and upload front and back side from a document
     document_id = onboarding.create_document(
         user_id=user_id, type="idcard", issuing_country="ESP", verbose=verbose
-    ).handle()
+    ).unwrap_or_return()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
@@ -36,7 +36,7 @@ def onboarding_example(api_key: str, verbose: bool = False):
         side="front",
         manual=True,
         verbose=verbose,
-    ).handle()
+    ).unwrap_or_return()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
@@ -44,23 +44,26 @@ def onboarding_example(api_key: str, verbose: bool = False):
         side="back",
         manual=True,
         verbose=verbose,
-    ).handle()
+    ).unwrap_or_return()
 
     # Generate the report
-    report = onboarding.create_report(user_id=user_id, verbose=verbose).handle()
+    report = onboarding.create_report(
+        user_id=user_id, verbose=verbose
+    ).unwrap_or_return()
+
+    if verbose:
+        print(f"report: {report}")
 
     # Authorize an user
     # Based on report results and your business logic, you can authorize an user
     onboarding.authorize_user(user_id=user_id, verbose=verbose)
 
     # Authenticate an user (only available if a user is already authorized)
-    onboarding.authenticate_user(user_id=user_id, media_data=selfie_media_data, verbose=verbose)
+    onboarding.authenticate_user(
+        user_id=user_id, media_data=selfie_media_data, verbose=verbose
+    )
 
     return isSuccess
-
-
-def given_resources_path():
-    return
 
 
 def given_any_selfie_image_media_data():
@@ -81,7 +84,5 @@ if __name__ == "__main__":
         raise AssertionError(
             "Please configure your ONBOARDING_API_KEY to run the example"
         )
-
-    result = onboarding_example(api_key=api_key, verbose=True)
-
-    print(result)
+    print("Running onboarding example...")
+    onboarding_example(api_key=api_key, verbose=False)

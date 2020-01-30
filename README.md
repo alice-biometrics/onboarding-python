@@ -12,8 +12,7 @@ pip install alice-onboarding
 Install from code:
 
 ```console
-git clone https://github.com/alice-biometrics/onboarding-api-python-client.git
-pip install -e .
+pip install git+https://github.com/alice-biometrics/onboarding-api-python-client.git
 ```
 
 ## Getting Started :chart_with_upwards_trend:
@@ -59,7 +58,6 @@ To create a BACKEND_TOKEN_WITH_USER and a USER_TOKEN you will need a valid user_
 
 ```console
 export ONBOARDING_API_KEY="<YOUR-API-KEY>"
-export ONBOARDING_USER_ID="<USER-ID-ALREADY-CREATED-IN-ALICE-ONBOARDING-API>"
 python examples/auth.py
 ```
 

@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = "1.3.0"
+VERSION = "1.3.1"
 REQUIRES = [
     "pyjwt>=1.7.1",
     "requests>=2.18.0",

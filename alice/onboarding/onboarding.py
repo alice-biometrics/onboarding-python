@@ -19,6 +19,7 @@ class Onboarding:
 
     def __init__(self, auth: Auth, url: str = DEFAULT_URL):
         self.onboarding_client = OnboardingClient(auth=auth, url=url)
+        self.url = url
 
     def healthcheck(self, verbose: bool = False) -> Result[bool, OnboardingError]:
         """

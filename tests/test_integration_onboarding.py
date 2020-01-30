@@ -29,20 +29,20 @@ def test_should_do_complete_onboarding_process(
 
         onboarding = Onboarding.from_config(config)
 
-        user_id = onboarding.create_user().handle()
+        user_id = onboarding.create_user().unwrap_or_return()
         onboarding.add_selfie(
             user_id=user_id, media_data=given_any_selfie_image_media_data
-        ).handle()
+        ).unwrap_or_return()
         document_id = onboarding.create_document(
             user_id=user_id, type="idcard", issuing_country="ESP"
-        ).handle()
+        ).unwrap_or_return()
         onboarding.add_document(
             user_id=user_id,
             document_id=document_id,
             media_data=given_any_document_front_media_data,
             side="front",
             manual=True,
-        ).handle()
+        ).unwrap_or_return()
         onboarding.add_document(
             user_id=user_id,
             document_id=document_id,
@@ -53,7 +53,7 @@ def test_should_do_complete_onboarding_process(
         onboarding.document_properties(
             user_id=user_id,
             document_id=document_id
-        ).handle()
+       ).unwrap_or_return()
 
         return onboarding.create_report(user_id=user_id)
 

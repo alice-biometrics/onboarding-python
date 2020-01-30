@@ -20,6 +20,7 @@ class Sandbox:
 
     def __init__(self, sandbox_token: str, url: str = DEFAULT_URL):
         self.sandbox_client = SandboxClient(sandbox_token=sandbox_token, url=url)
+        self.url = url
 
     @staticmethod
     def _is_token_valid(token, margin_seconds: int = 60):
