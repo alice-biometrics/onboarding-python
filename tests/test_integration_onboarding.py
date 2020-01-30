@@ -49,7 +49,12 @@ def test_should_do_complete_onboarding_process(
             media_data=given_any_document_back_media_data,
             side="back",
             manual=True,
-        ).unwrap_or_return()
+        ).handle()
+        onboarding.document_properties(
+            user_id=user_id,
+            document_id=document_id
+       ).unwrap_or_return()
+
         return onboarding.create_report(user_id=user_id)
 
     result = do_complete_onboarding()

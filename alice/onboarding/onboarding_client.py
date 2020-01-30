@@ -428,6 +428,7 @@ class OnboardingClient:
         media_data: bytes,
         side: str,
         manual: bool = False,
+        fields: dict = None,
         verbose: bool = False,
     ) -> Response:
         """
@@ -447,6 +448,8 @@ class OnboardingClient:
             Side of the document [front or back]
         manual
             If True defines manual document uploading
+        fields
+            Fields to add regardless of the OCR process
         verbose
             Used for print service response as well as the time elapsed
 
@@ -461,12 +464,56 @@ class OnboardingClient:
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
-        data = {"document_id": document_id, "side": side, "manual": manual}
+        data = {
+            "document_id": document_id,
+            "side": side,
+            "manual": manual,
+            "fields": json.dumps(fields),
+        }
 
         files = {"image": ("image", media_data)}
 
         response = request(
             "PUT", self.url + "/user/document", files=files, data=data, headers=headers
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def document_properties(
+            self, user_id: str, document_id: str, verbose: bool = False
+    ) -> Response:
+        """
+
+        Returns the properties of a previously added document, such as face, MRZ or NFC availability
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("document_properties", verbose=verbose)
+
+        user_token = self.auth.create_user_token(user_id).unwrap()
+        print_token("user_token", user_token, verbose=verbose)
+
+        headers = self._auth_headers(user_token)
+        data = {"document_id": document_id}
+
+        response = request(
+            "POST", self.url + "/user/document/properties", data=data, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
