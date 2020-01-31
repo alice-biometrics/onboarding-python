@@ -446,7 +446,8 @@ class Onboarding:
             media_data=media_data,
             side=side,
             manual=manual,
-            verbose=verbose,
+            fields=fields,
+            verbose=verbose
         )
 
         if response.status_code == 200:
