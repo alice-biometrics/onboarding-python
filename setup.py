@@ -13,7 +13,7 @@ setup(
     name="alice-onboarding",
     version=VERSION,
     description="Alice Onboarding Python SDK",
-    url="http://alicebiometrics.com",
+    url="https://alicebiometrics.com",
     author="ALiCE Biometrics",
     author_email="support@alicebiometrics.com",
     license="ALiCE Copyright",
