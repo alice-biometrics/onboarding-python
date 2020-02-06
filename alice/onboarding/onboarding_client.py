@@ -8,7 +8,7 @@ from alice.onboarding.tools import timeit, print_intro, print_response, print_to
 
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
-from alice import __version__
+import alice
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
 
@@ -21,7 +21,7 @@ class OnboardingClient:
     def _auth_headers(self, token: str):
         auth_headers = {"Authorization": "Bearer {}".format(token),
                         "Alice-User-Agent": "onboarding-python/{} ({}; {}) python {}"
-                            .format(__version__,
+                            .format(alice.__version__,
                                     platform.system(),
                                     platform.release(),
                                     platform.python_version())}
