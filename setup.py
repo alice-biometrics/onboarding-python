@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = "1.3.1"
+VERSION = open("alice/VERSION", "r").read()
 REQUIRES = [
     "pyjwt>=1.7.1",
     "requests>=2.18.0",
@@ -20,4 +20,5 @@ setup(
     packages=["alice", "alice/onboarding", "alice/auth", "alice/sandbox"],
     zip_safe=False,
     install_requires=REQUIRES,
+    include_package_data=True,
 )

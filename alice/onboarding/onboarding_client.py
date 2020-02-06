@@ -1,4 +1,5 @@
 import json
+import platform
 
 from requests import request, Response
 
@@ -7,7 +8,7 @@ from alice.onboarding.tools import timeit, print_intro, print_response, print_to
 
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
-
+from alice import __version__
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
 
@@ -18,7 +19,12 @@ class OnboardingClient:
         self.url = url
 
     def _auth_headers(self, token: str):
-        auth_headers = {"Authorization": "Bearer {}".format(token)}
+        auth_headers = {"Authorization": "Bearer {}".format(token),
+                        "Alice-User-Agent": "onboarding-python/{} ({}; {}) python {}"
+                            .format(__version__,
+                                    platform.system(),
+                                    platform.release(),
+                                    platform.python_version())}
         return auth_headers
 
     @timeit
@@ -47,10 +53,10 @@ class OnboardingClient:
 
     @timeit
     def create_user(
-        self,
-        user_info: UserInfo = None,
-        device_info: DeviceInfo = None,
-        verbose: bool = False,
+            self,
+            user_info: UserInfo = None,
+            device_info: DeviceInfo = None,
+            verbose: bool = False,
     ) -> Response:
         """
 
@@ -213,15 +219,15 @@ class OnboardingClient:
 
     @timeit
     def get_users_status(
-        self,
-        verbose: bool = False,
-        page: int = 1,
-        page_size: int = 0,
-        descending: bool = True,
-        authorized: bool = False,
-        sort_by: str = None,
-        filter_field: str = None,
-        filter_value: str = None,
+            self,
+            verbose: bool = False,
+            page: int = 1,
+            page_size: int = 0,
+            descending: bool = True,
+            authorized: bool = False,
+            sort_by: str = None,
+            filter_field: str = None,
+            filter_value: str = None,
     ) -> Response:
         """
 
@@ -260,8 +266,8 @@ class OnboardingClient:
 
         if filter_field and filter_value:
             url_query_params = (
-                url_query_params
-                + f"&filter_field={filter_field}&filter_value={filter_value}"
+                    url_query_params
+                    + f"&filter_field={filter_field}&filter_value={filter_value}"
             )
         if sort_by:
             url_query_params = url_query_params + f"&sort_by={sort_by}"
@@ -276,7 +282,7 @@ class OnboardingClient:
 
     @timeit
     def add_selfie(
-        self, user_id: str, media_data: bytes, verbose: bool = False
+            self, user_id: str, media_data: bytes, verbose: bool = False
     ) -> Response:
         """
 
@@ -344,7 +350,7 @@ class OnboardingClient:
 
     @timeit
     def create_document(
-        self, user_id: str, type: str, issuing_country: str, verbose: bool = False
+            self, user_id: str, type: str, issuing_country: str, verbose: bool = False
     ) -> Response:
         """
 
@@ -384,7 +390,7 @@ class OnboardingClient:
 
     @timeit
     def delete_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+            self, user_id: str, document_id: str, verbose: bool = False
     ) -> Response:
         """
 
@@ -422,14 +428,14 @@ class OnboardingClient:
 
     @timeit
     def add_document(
-        self,
-        user_id: str,
-        document_id: str,
-        media_data: bytes,
-        side: str,
-        manual: bool = False,
-        fields: dict = None,
-        verbose: bool = False,
+            self,
+            user_id: str,
+            document_id: str,
+            media_data: bytes,
+            side: str,
+            manual: bool = False,
+            fields: dict = None,
+            verbose: bool = False,
     ) -> Response:
         """
 
@@ -613,7 +619,7 @@ class OnboardingClient:
 
     @timeit
     def authenticate_user(
-        self, user_id: str, media_data: bytes, verbose: bool = False
+            self, user_id: str, media_data: bytes, verbose: bool = False
     ) -> Response:
         """
 
@@ -685,12 +691,12 @@ class OnboardingClient:
 
     @timeit
     def get_authentications(
-        self,
-        user_id: str,
-        page: int = 1,
-        page_size: int = 0,
-        descending: bool = True,
-        verbose: bool = False,
+            self,
+            user_id: str,
+            page: int = 1,
+            page_size: int = 0,
+            descending: bool = True,
+            verbose: bool = False,
     ) -> Response:
         """
 
@@ -737,7 +743,7 @@ class OnboardingClient:
 
     @timeit
     def get_authentication(
-        self, user_id: str, authentication_id: str, verbose: bool = False
+            self, user_id: str, authentication_id: str, verbose: bool = False
     ) -> Response:
         """
 
@@ -778,7 +784,7 @@ class OnboardingClient:
 
     @timeit
     def retrieve_media(
-        self, user_id: str, media_id: str, verbose: bool = False
+            self, user_id: str, media_id: str, verbose: bool = False
     ) -> Response:
         """
 
