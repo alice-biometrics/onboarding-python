@@ -321,6 +321,44 @@ class OnboardingClient:
         return response
 
     @timeit
+    def delete_selfie(
+            self, user_id: str, verbose: bool = False
+    ) -> Response:
+        """
+
+        This call is used to delete the video of the user's face to the onboarding service.
+        This will also erase the biometric face profile.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("delete_selfie", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        print_token("backend_token_with_user", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        response = request(
+            "DELETE",
+            self.url + "/user/selfie",
+            headers=headers,
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
     def supported_documents(self, user_id: str, verbose: bool = False) -> Response:
         """
         This method is used to obtain a hierarchical-ordered dict with the information of the documents supported by the API.
