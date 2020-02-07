@@ -1,4 +1,4 @@
-# ALiCE Onboarding API Python Client [![version](https://img.shields.io/github/release/alice-biometrics/petisco/all.svg)](https://github.com/alice-biometrics/petisco/releases)  ![ci](https://github.com/alice-biometrics/onboarding-api-python-client/workflows/ci/badge.svg) 
+# ALiCE Onboarding API Python Client [![version](https://img.shields.io/github/release/alice-biometrics/onboarding-api-python-client/all.svg)] ![ci](https://github.com/alice-biometrics/onboarding-api-python-client/workflows/ci/badge.svg) 
 
 
 ## Installation :computer:
