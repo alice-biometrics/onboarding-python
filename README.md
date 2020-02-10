@@ -1,5 +1,5 @@
-# ALiCE Onboarding API Python Client ![ci](https://github.com/alice-biometrics/onboarding-api-python-client/workflows/ci/badge.svg) 
-
+# ALiCE Onboarding API Python Client
+![ci](https://github.com/alice-biometrics/onboarding-api-python-client/workflows/ci/badge.svg)
 
 ## Installation :computer:
 
