@@ -7,7 +7,7 @@ on:
 env:
   TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
   TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-  PACKAGE_NAME: alice-onboarding
+  PACKAGE_NAME: alice
 
 jobs:
   deploy:
