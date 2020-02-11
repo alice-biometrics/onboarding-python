@@ -19,7 +19,7 @@ env:
   ONBOARDING_SANDBOX_TOKEN: ${{ secrets.ONBOARDING_SANDBOX_TOKEN }}
 
 jobs:
-  build:
+  ci:
 
     strategy:
       max-parallel: 4
