@@ -67,7 +67,7 @@ jobs:
         pip install -e . # Dependencies are also included in the setup.py
     - name: Test [pytest]
       run: |
-        pytest
+        pytest --tb=no
     - name: Test [Onboarding]
       run: |
         python examples/onboarding.py
