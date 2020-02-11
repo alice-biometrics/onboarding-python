@@ -1,9 +1,14 @@
-# ALiCE Onboarding API Python Client
-![ci](https://github.com/alice-biometrics/onboarding-api-python-client/workflows/ci/badge.svg)
+# onboarding-python ![ci](https://github.com/alice-biometrics/onboarding-python/workflows/ci/badge.svg)
+
+The aim of this Python package is to manage the authentication and backend operations against ALiCE Onboarding API.
+
+If you want more information about how to integrate with ALiCE technology, please contact us at support@alicebiometrics.com.
+
+## Requirements
+
+Python 3.6+
 
 ## Installation :computer:
-
-Install from PyPI: Not yet available :construction:
 
 ```console
 pip install alice-onboarding
@@ -12,7 +17,7 @@ pip install alice-onboarding
 Install from code:
 
 ```console
-pip install git+https://github.com/alice-biometrics/onboarding-api-python-client.git
+pip install git+https://github.com/alice-biometrics/onboarding-python.git
 ```
 
 ## Getting Started :chart_with_upwards_trend:
