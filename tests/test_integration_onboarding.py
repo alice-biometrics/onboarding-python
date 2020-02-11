@@ -55,7 +55,11 @@ def test_should_do_complete_onboarding_process(
             document_id=document_id
        ).unwrap_or_return()
 
-        return onboarding.create_report(user_id=user_id)
+        report = onboarding.create_report(user_id=user_id)
+
+        onboarding.delete_user(user_id).unwrap_or_return()
+
+        return report
 
     result = do_complete_onboarding()
 
