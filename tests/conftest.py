@@ -1,4 +1,6 @@
 import os
+import random
+import string
 
 import pytest
 
@@ -25,7 +27,10 @@ def given_valid_sandbox_token():
 
 @pytest.fixture
 def given_any_valid_mail():
-    return "alice@alicebiometrics.com"
+    domains = ["hotmail.com", "gmail.com", "aol.com", "mail.com", "mail.kz", "yahoo.com"]
+    letters = string.ascii_lowercase[:12]
+    mail = ''.join(random.choice(letters) for i in range(7)) + '@' + random.choice(domains)
+    return mail
 
 
 @pytest.fixture
