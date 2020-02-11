@@ -326,7 +326,9 @@ class Onboarding:
             return isSuccess
         else:
             return Failure(
-                OnboardingError.from_response(operation="delete_Selfie", response=response)
+                OnboardingError.from_response(
+                    operation="delete_selfie", response=response
+                )
             )
 
     def supported_documents(
@@ -479,7 +481,7 @@ class Onboarding:
             side=side,
             manual=manual,
             fields=fields,
-            verbose=verbose
+            verbose=verbose,
         )
 
         if response.status_code == 200:
