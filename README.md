@@ -1,4 +1,4 @@
-# onboarding-python  [![version](https://img.shields.io/github/release/alice-biometrics/onboarding-python/all.svg)](https://github.com/alice-biometrics/onboarding-python/releases) ![ci](https://github.com/alice-biometrics/onboarding-python/workflows/ci/badge.svg)
+# onboarding-python  [![version](https://img.shields.io/github/release/alice-biometrics/onboarding-python/all.svg)](https://github.com/alice-biometrics/onboarding-python/releases) ![ci](https://github.com/alice-biometrics/onboarding-python/workflows/ci/badge.svg) [![doc](https://img.shields.io/badge/doc-onboarding-51CB56)](https://docs.alicebiometrics.com/onboarding/)
 
 The aim of this Python package is to manage the authentication and backend operations against ALiCE Onboarding API.
 
