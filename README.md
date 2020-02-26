@@ -4,6 +4,17 @@ The aim of this Python package is to manage the authentication and backend opera
 
 If you want more information about how to integrate with ALiCE technology, please contact us at support@alicebiometrics.com.
 
+## Table of Contents
+- [Requirements](#requirements)
+- [Installation :computer:](#installation-computer)
+- [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
+  * [Config](#config)
+  * [Onboarding](#onboarding)
+- [Authentication :closed_lock_with_key:](#authentication-closed_lock_with_key)
+- [Documentation :page_facing_up:](#documentation-page_facing_up)
+- [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
+
+
 ## Requirements
 
 Python 3.6+
@@ -12,12 +23,6 @@ Python 3.6+
 
 ```console
 pip install alice-onboarding
-```
-
-Install from code:
-
-```console
-pip install git+https://github.com/alice-biometrics/onboarding-python.git
 ```
 
 ## Getting Started :chart_with_upwards_trend:
@@ -45,7 +50,7 @@ python examples/onboarding.py
 
 see onboarding example [here](examples/onboarding.py)
 
-#### Auth
+## Authentication :closed_lock_with_key:
 
 To manage authorization and token creations, use *Auth* class.
 
@@ -79,4 +84,13 @@ python examples/sandbox.py
 ```
 
 see sandbox example [here](examples/sandbox.py)
+
+
+## Documentation :page_facing_up:
+
+For more information about ALiCE Onboarding:  https://docs.alicebiometrics.com/onboarding/
+
+## Contact :mailbox_with_mail:
+
+support@alicebiometrics.com
 
