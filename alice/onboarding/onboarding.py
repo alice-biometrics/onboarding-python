@@ -406,7 +406,7 @@ class Onboarding:
     ) -> Result[bool, OnboardingError]:
         """
 
-        Delete all the information stored extracted from a document
+        Delete all the stored/extracted information from a document
 
 
         Parameters
@@ -434,6 +434,42 @@ class Onboarding:
             return Failure(
                 OnboardingError.from_response(
                     operation="delete_document", response=response
+                )
+            )
+
+    def void_document(
+        self, user_id: str, document_id: str, verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+
+        Mark a document as invalid.
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.void_document(
+            user_id=user_id, document_id=document_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="void_document", response=response
                 )
             )
 
