@@ -8,4 +8,4 @@ class Config:
     auth_url: str = "https://apis.alicebiometrics.com/auth"
     api_key: str = None
     sandbox_token: str = None
-    send_agent = True
+    send_agent: bool = True
