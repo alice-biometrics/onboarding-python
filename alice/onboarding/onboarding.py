@@ -15,10 +15,16 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 class Onboarding:
     @staticmethod
     def from_config(config: Config):
-        return Onboarding(auth=Auth.from_config(config), url=config.onboarding_url)
+        return Onboarding(
+            auth=Auth.from_config(config),
+            url=config.onboarding_url,
+            send_agent=config.send_agent,
+        )
 
-    def __init__(self, auth: Auth, url: str = DEFAULT_URL):
-        self.onboarding_client = OnboardingClient(auth=auth, url=url)
+    def __init__(self, auth: Auth, url: str = DEFAULT_URL, send_agent: bool = True):
+        self.onboarding_client = OnboardingClient(
+            auth=auth, url=url, send_agent=send_agent
+        )
         self.url = url
 
     def healthcheck(self, verbose: bool = False) -> Result[bool, OnboardingError]:
