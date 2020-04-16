@@ -9,7 +9,7 @@ from requests import Response
 class OnboardingError(Error):
     operation: str
     code: int
-    message: Dict
+    message: Dict[str, str]
 
     def __str__(self):
         return self.__repr__()
