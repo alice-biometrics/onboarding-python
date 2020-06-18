@@ -646,7 +646,7 @@ class Onboarding:
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, OnboardingError]:
         """
-        Authorizes a user. Now it can be authenticated.
+        Authorizes a user. Now it can be icated.
 
         Parameters
         ----------
@@ -766,7 +766,7 @@ class Onboarding:
         )
 
         if response.status_code == 200:
-            return Success(response.json()["authentications"])
+            return Success(response.json()["authentication_ids"])
         else:
             return Failure(
                 OnboardingError.from_response(
