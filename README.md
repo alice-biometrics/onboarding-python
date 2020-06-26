@@ -13,6 +13,7 @@ If you want more information about how to integrate with ALiCE technology, pleas
 - [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
   * [Config](#config)
   * [Onboarding](#onboarding)
+  * [Certified Onboarding](#certified-onboarding)
 - [Authentication :closed_lock_with_key:](#authentication-closed_lock_with_key)
 - [Documentation :page_facing_up:](#documentation-page_facing_up)
 - [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
