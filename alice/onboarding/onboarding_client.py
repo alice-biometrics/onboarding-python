@@ -668,6 +668,91 @@ class OnboardingClient:
         return response
 
     @timeit
+    def create_certificated_pdf_report(
+        self, user_id: str, template_name: str = "default", verbose: bool = False
+    ) -> Response:
+        """
+
+        This call is used to create a signed pdf report of the onboarding process for a specific user.
+        It returns a identifier (pdf_report_id) as a reference of created resource.
+        This resource contains all evidence defined in the template.
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        template_name
+            'default' (only available)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+              A Response object [requests library]
+        """
+        print_intro("create_certificated_pdf_report", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+        options = {"template_name": template_name}
+        headers = self._auth_headers(backend_user_token)
+        headers["Content-Type"] = "application/json"
+        response = request(
+            "POST",
+            self.url + "/user/certificate/pdfreport",
+            data=json.dumps(options),
+            headers=headers,
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def retrieve_certificated_pdf_report(
+        self, user_id: str, pdf_report_id: str, verbose: bool = False
+    ) -> Response:
+        """
+
+        This call is used to create a signed pdf report of the onboarding process for a specific user.
+        It returns a identifier (pdf_report_id) as a reference of created resource.
+        This resource contains all evidence defined in the template.
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        pdf_report_id
+            PdfReport Identifier
+        template_name
+            'default' (only available)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+              A Response object [requests library]
+        """
+        print_intro("retrieve_certificated_pdf_report", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+        headers = self._auth_headers(backend_user_token)
+        response = request(
+            "GET",
+            f"{self.url}/user/certificate/pdfreport/{pdf_report_id}",
+            headers=headers,
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
     def authorize_user(self, user_id: str, verbose: bool = False) -> Response:
         """
         Authorizes a user. Now it can be authenticate.

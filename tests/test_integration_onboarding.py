@@ -51,9 +51,8 @@ def test_should_do_complete_onboarding_process(
             manual=True,
         ).handle()
         onboarding.document_properties(
-            user_id=user_id,
-            document_id=document_id
-       ).unwrap_or_return()
+            user_id=user_id, document_id=document_id
+        ).unwrap_or_return()
 
         report = onboarding.create_report(user_id=user_id)
 
