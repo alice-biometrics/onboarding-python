@@ -640,13 +640,12 @@ class Onboarding:
                 )
             )
 
-    def create_certificated_pdf_report(
+    def create_certificate(
         self, user_id: str, template_name: str = "default", verbose: bool = False
     ) -> Result[Dict, OnboardingError]:
         """
-
-        This call is used to create a signed pdf report of the onboarding process for a specific user.
-        It returns a identifier (pdf_report_id) as a reference of created resource.
+        This call is used to create a Certificate (Signed PDF Report) of the onboarding process for a specific user.
+        It returns a identifier (certificate_id) as a reference of created resource.
         This resource contains all evidence defined in the template.
 
 
@@ -665,21 +664,21 @@ class Onboarding:
             A Result where if the operation is successful it returns a str with a pdf_report_id.
             Otherwise, it returns an OnboardingError.
         """
-        response = self.onboarding_client.create_certificated_pdf_report(
+        response = self.onboarding_client.create_certificate(
             user_id=user_id, template_name=template_name, verbose=verbose
         )
 
         if response.status_code == 200:
-            return Success(response.json()["pdf_report_id"])
+            return Success(response.json()["certificate_id"])
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="create_report", response=response
+                    operation="create_certificate", response=response
                 )
             )
 
-    def retrieve_certificated_pdf_report(
-        self, user_id: str, pdf_report_id: str, verbose: bool = False
+    def retrieve_certificate(
+        self, user_id: str, certificate_id: str, verbose: bool = False
     ) -> Result[bytes, OnboardingError]:
         """
 
@@ -689,8 +688,8 @@ class Onboarding:
         ----------
         user_id
             User identifier
-        pdf_report_id
-           PdfReport Identifier. You can obtain it using retrieve_pdf_report method.
+        certificate_id
+           Certificate Unique Identifier. You can obtain it using create_certificate method.
         verbose
             Used for print service response as well as the time elapsed
 
@@ -700,8 +699,8 @@ class Onboarding:
             A Result where if the operation is successful it returns a binary pdf (bytes).
             Otherwise, it returns an OnboardingError.
         """
-        response = self.onboarding_client.retrieve_certificated_pdf_report(
-            user_id=user_id, pdf_report_id=pdf_report_id, verbose=verbose
+        response = self.onboarding_client.retrieve_certificate(
+            user_id=user_id, certificate_id=certificate_id, verbose=verbose
         )
 
         if response.status_code == 200:
@@ -709,7 +708,40 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="retrieve_media", response=response
+                    operation="retrieve_certificate", response=response
+                )
+            )
+
+    def retrieve_certificates(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[bytes, OnboardingError]:
+        """
+
+        Returns summary info for created certificates
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a list of dictionaries.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.retrieve_certificates(
+            user_id=user_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return Success(response.content)
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="retrieve_certificates", response=response
                 )
             )
 

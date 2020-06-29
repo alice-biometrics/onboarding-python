@@ -46,19 +46,25 @@ def certified_onboarding(api_key: str, verbose: bool = False):
         verbose=verbose,
     ).unwrap_or_return()
 
-    # Create Certified PdfReport
-    pdf_report_id = onboarding.create_certificated_pdf_report(
+    # Create Certificate
+    certificate_id = onboarding.create_certificate(
         user_id=user_id, verbose=verbose
     ).unwrap_or_return()
 
-    # Retrieved Certified PdfReport from pdf_report_id
-    pdf_report = onboarding.retrieve_certificated_pdf_report(
-        user_id=user_id, pdf_report_id=pdf_report_id, verbose=verbose
+    # Retrieved Certificate from certificate_id
+    certificate = onboarding.retrieve_certificate(
+        user_id=user_id, certificate_id=certificate_id, verbose=verbose
     ).unwrap_or_return()
 
     # Save PdfReport data to a file
-    with open(f"certified_pdf_report_{pdf_report_id}.pdf", "wb") as outfile:
-        outfile.write(pdf_report)
+    with open(f"certificate_{certificate_id}.pdf", "wb") as outfile:
+        outfile.write(certificate)
+
+    certificates = onboarding.retrieve_certificates(
+        user_id=user_id, verbose=verbose
+    ).unwrap_or_return()
+
+    assert len(certificates) >= 1
 
     return isSuccess
 
