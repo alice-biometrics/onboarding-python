@@ -64,6 +64,9 @@ def certified_onboarding(api_key: str, verbose: bool = False):
         user_id=user_id, verbose=verbose
     ).unwrap_or_return()
 
+    import pdb
+
+    pdb.set_trace()
     assert len(certificates) >= 1
 
     return isSuccess
@@ -87,5 +90,5 @@ if __name__ == "__main__":
         raise AssertionError(
             "Please configure your ONBOARDING_API_KEY to run the example"
         )
-    print("Running onboarding example...")
+    print("Running onboarding with certificate example...")
     certified_onboarding(api_key=api_key, verbose=False)

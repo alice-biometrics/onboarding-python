@@ -60,10 +60,10 @@ If you need certified your user data, you can retrieve a certified Pdf Report.
 
 ```console
 export ONBOARDING_API_KEY="<YOUR-API-KEY>"
-python examples/certified_onboarding.py
+python examples/onboarding_with_certificate.py
 ```
 
-see certified onboarding [here](examples/certified_onboarding.py)
+see certified onboarding [here](examples/onboarding_with_certificate.py)
 
 ## Authentication :closed_lock_with_key:
 

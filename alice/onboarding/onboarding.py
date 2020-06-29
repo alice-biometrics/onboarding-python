@@ -714,7 +714,7 @@ class Onboarding:
 
     def retrieve_certificates(
         self, user_id: str, verbose: bool = False
-    ) -> Result[bytes, OnboardingError]:
+    ) -> Result[List, OnboardingError]:
         """
 
         Returns summary info for created certificates
@@ -737,7 +737,7 @@ class Onboarding:
         )
 
         if response.status_code == 200:
-            return Success(response.content)
+            return Success(response.json()["certificates"])
         else:
             return Failure(
                 OnboardingError.from_response(
