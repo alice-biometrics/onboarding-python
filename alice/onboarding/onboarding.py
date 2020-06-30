@@ -300,7 +300,7 @@ class Onboarding:
             return isSuccess
         else:
             return Failure(
-                OnboardingError.from_response(operation="add_Selfie", response=response)
+                OnboardingError.from_response(operation="add_selfie", response=response)
             )
 
     def delete_selfie(
