@@ -64,9 +64,6 @@ def certified_onboarding(api_key: str, verbose: bool = False):
         user_id=user_id, verbose=verbose
     ).unwrap_or_return()
 
-    import pdb
-
-    pdb.set_trace()
     assert len(certificates) >= 1
 
     return isSuccess
