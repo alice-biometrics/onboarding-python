@@ -1,6 +1,6 @@
 from typing import Dict
 
-from meiga import Result, Error
+from meiga import Result, Error, Success
 from meiga.assertions import assert_success, assert_failure
 from meiga.decorators import meiga
 
@@ -64,11 +64,11 @@ def test_should_do_complete_onboarding_process(
             user_id=user_id, certificate_id=certificate_id
         ).unwrap_or_return()
 
-        _ = onboarding.retrieve_certificates().unwrap_or_return()
+        _ = onboarding.retrieve_certificates(user_id=user_id).unwrap_or_return()
 
         onboarding.delete_user(user_id).unwrap_or_return()
 
-        return report
+        return Success(report)
 
     result = do_complete_onboarding()
 
