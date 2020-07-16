@@ -3,6 +3,7 @@ from typing import List, Dict
 from meiga import Result, Success, Failure, isSuccess
 
 from alice.config import Config
+from alice.onboarding.document_source import DocumentSource
 from alice.onboarding.onboarding_errors import OnboardingError
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
@@ -518,6 +519,7 @@ class Onboarding:
         media_data: bytes,
         side: str,
         manual: bool = False,
+        source: DocumentSource = None,
         fields: dict = None,
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
@@ -537,6 +539,8 @@ class Onboarding:
             Side of the document [front, back or internal]
         manual
             If True defines manual document uploading
+        source
+            Source of the media: camera or file
         fields
             Fields to add regardless of the OCR process
         verbose
@@ -554,6 +558,7 @@ class Onboarding:
             media_data=media_data,
             side=side,
             manual=manual,
+            source=source,
             fields=fields,
             verbose=verbose,
         )
