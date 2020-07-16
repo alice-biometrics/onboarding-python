@@ -4,6 +4,7 @@ import platform
 from requests import request, Response
 
 from alice.auth.auth import Auth
+from alice.onboarding.document_source import DocumentSource
 from alice.onboarding.tools import timeit, print_intro, print_response, print_token
 
 from alice.onboarding.user_info import UserInfo
@@ -542,6 +543,7 @@ class OnboardingClient:
         media_data: bytes,
         side: str,
         manual: bool = False,
+        source: DocumentSource = None,
         fields: dict = None,
         verbose: bool = False,
     ) -> Response:
@@ -562,6 +564,8 @@ class OnboardingClient:
             Side of the document [front or back]
         manual
             If True defines manual document uploading
+        source
+            Source of the media: camera or file
         fields
             Fields to add regardless of the OCR process
         verbose
@@ -584,6 +588,9 @@ class OnboardingClient:
             "manual": manual,
             "fields": json.dumps(fields),
         }
+
+        if source:
+            data["source"] = source.value
 
         files = {"image": ("image", media_data)}
 
