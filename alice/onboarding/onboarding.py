@@ -519,7 +519,7 @@ class Onboarding:
         media_data: bytes,
         side: str,
         manual: bool = False,
-        source: DocumentSource = None,
+        source: DocumentSource = DocumentSource.file,
         fields: dict = None,
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
