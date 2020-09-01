@@ -56,7 +56,7 @@ see onboarding example [here](examples/onboarding.py)
 
 #### Certified Onboarding 
 
-If you need certified your user data, you can retrieve a certified Pdf Report.
+If you need certify your user data, you can retrieve a certified Pdf Report with these feature.
 
 ```console
 export ONBOARDING_API_KEY="<YOUR-API-KEY>"
@@ -64,6 +64,17 @@ python examples/onboarding_with_certificate.py
 ```
 
 see certified onboarding [here](examples/onboarding_with_certificate.py)
+
+#### Screening
+
+ALiCE Onboarding API bring us the opportunity of screening a user over different databases & lists (sanctions, PEP, etc)..
+
+```console
+export ONBOARDING_API_KEY="<YOUR-API-KEY>"
+python examples/onboarding_with_screening.py
+```
+
+see screening onboarding [here](examples/onboarding_with_screening.py)
 
 ## Authentication :closed_lock_with_key:
 
