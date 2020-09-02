@@ -13,8 +13,10 @@ If you want more information about how to integrate with ALiCE technology, pleas
 - [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
   * [Config](#config)
   * [Onboarding](#onboarding)
-  * [Certified Onboarding](#certified-onboarding)
 - [Authentication :closed_lock_with_key:](#authentication-closed_lock_with_key)
+- [Advanced Features :tophat:](#advanced-features-tophat)
+  * [Certified Onboarding](#certified-onboarding)
+  * [User Screening](#user-screening)
 - [Documentation :page_facing_up:](#documentation-page_facing_up)
 - [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
 
@@ -54,17 +56,6 @@ python examples/onboarding.py
 
 see onboarding example [here](examples/onboarding.py)
 
-#### Certified Onboarding 
-
-If you need certified your user data, you can retrieve a certified Pdf Report.
-
-```console
-export ONBOARDING_API_KEY="<YOUR-API-KEY>"
-python examples/onboarding_with_certificate.py
-```
-
-see certified onboarding [here](examples/onboarding_with_certificate.py)
-
 ## Authentication :closed_lock_with_key:
 
 To manage authorization and token creations, use *Auth* class.
@@ -100,6 +91,31 @@ python examples/sandbox.py
 
 see sandbox example [here](examples/sandbox.py)
 
+## Advanced features :tophat:
+
+:warning: These features could not be available by default. If you obtain a HTTP Error (405 method not allowed). Please, contact us to make them available for your credentials.
+
+#### Certified Onboarding 
+
+If you need certify your user data, you can retrieve a certified Pdf Report with these feature.
+
+```console
+export ONBOARDING_API_KEY="<YOUR-API-KEY>"
+python examples/onboarding_with_certificate.py
+```
+
+see certified onboarding [here](examples/onboarding_with_certificate.py)
+
+#### User Screening
+
+ALiCE Onboarding API bring us the opportunity of screening a user over different databases & lists (sanctions, PEP, etc)..
+
+```console
+export ONBOARDING_API_KEY="<YOUR-API-KEY>"
+python examples/onboarding_with_screening.py
+```
+
+see screening onboarding [here](examples/onboarding_with_screening.py)
 
 ## Documentation :page_facing_up:
 
