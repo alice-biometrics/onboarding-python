@@ -12,11 +12,6 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 def screening_onboarding(api_key: str, verbose: bool = False):
 
     config = Config(api_key=api_key)
-
-    config.onboarding_url = "https://pre.alicebiometrics.com/onboarding"
-    config.sandbox_url = "https://pre.alicebiometrics.com/onboarding/sandbox"
-    config.auth_url = "https://pre.alicebiometrics.com/auth"
-
     onboarding = Onboarding.from_config(config)
 
     selfie_media_data = given_any_selfie_image_media_data()
