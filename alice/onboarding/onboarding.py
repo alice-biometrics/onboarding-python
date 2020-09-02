@@ -750,6 +750,39 @@ class Onboarding:
                 )
             )
 
+    def screening(
+        self, user_id: str, detail: bool = False, verbose: bool = False
+    ) -> Result[List, OnboardingError]:
+        """
+
+        This call is used to check on the user using different databases & lists (sanctions, PEP, etc)..
+        It returns retrieved information from public lists.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        detail
+            Used to select whether or not returns a summary detail
+        verbose
+            Used for print service response as well as the time elapsed
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a dictionary.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.screening(
+            user_id=user_id, detail=detail, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return Success(response.json()["screening_result"])
+        else:
+            return Failure(
+                OnboardingError.from_response(operation="screening", response=response)
+            )
+
     def authorize_user(
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, OnboardingError]:
