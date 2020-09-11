@@ -783,11 +783,12 @@ class Onboarding:
                 OnboardingError.from_response(operation="screening", response=response)
             )
 
-    def authorize_user(
+    def screening_monitor_add(
         self, user_id: str, verbose: bool = False
-    ) -> Result[bool, OnboardingError]:
+    ) -> Result[List, OnboardingError]:
         """
-        Authorizes a user. Now it can be icated.
+
+        This call is adds a user to the AML monitoring list.
 
         Parameters
         ----------
@@ -796,7 +797,100 @@ class Onboarding:
         verbose
             Used for print service response as well as the time elapsed
 
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.screening_monitor_add(
+            user_id=user_id, verbose=verbose
+        )
 
+        if response.status_code == 201:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="screening_monitor_add", response=response
+                )
+            )
+
+    def screening_monitor_delete(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[List, OnboardingError]:
+        """
+
+        This call is deletes a user from the AML monitoring list.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.screening_monitor_delete(
+            user_id=user_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="screening_monitor_delete", response=response
+                )
+            )
+
+    def screening_monitor_open_alerts(
+        self, start_index: int = 0, size: int = 100, verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+        Retrieves from the monitoring list the users with open alerts
+
+        Parameters
+        ----------
+        start_index
+            DB index to start (0-2147483647)
+        size
+            Numbers of alerts to return (1-100).
+        verbose
+            Used for print service response as well as the time elapsed
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a dictionary.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.screening_monitor_open_alerts(
+            start_index=start_index, size=size, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="screening_monitor_open_alerts", response=response
+                )
+            )
+
+    def authorize_user(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+        Authorizes a user. Now it can be icated.
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
         Returns
         -------
             A Result where if the operation is successful it returns True.
