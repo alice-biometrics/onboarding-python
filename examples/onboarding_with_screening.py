@@ -18,9 +18,6 @@ def screening_onboarding(api_key: str, verbose: bool = False):
     document_front_media_data = given_any_document_front_media_data()
     document_back_media_data = given_any_document_back_media_data()
 
-    import pdb
-
-    pdb.set_trace()
     user_id = onboarding.create_user(verbose=verbose).unwrap_or_return()
 
     # Upload a selfie (Recommended 1-second video)
