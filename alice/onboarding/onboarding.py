@@ -806,7 +806,7 @@ class Onboarding:
             user_id=user_id, verbose=verbose
         )
 
-        if response.status_code == 200:
+        if response.status_code == 201:
             return isSuccess
         else:
             return Failure(
