@@ -85,4 +85,4 @@ if __name__ == "__main__":
             "Please configure your ONBOARDING_API_KEY to run the example"
         )
     print("Running onboarding example...")
-    onboarding_example(api_key=api_key, verbose=False)
+    onboarding_example(api_key=api_key, verbose=True)
