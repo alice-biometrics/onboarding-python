@@ -880,6 +880,35 @@ class Onboarding:
                 )
             )
 
+    def authorize_user(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+        Authorizes a user. Now it can be icated.
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.authorize_user(
+            user_id=user_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="authorize_user", response=response
+                )
+            )
+
     def deauthorize_user(
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, OnboardingError]:
