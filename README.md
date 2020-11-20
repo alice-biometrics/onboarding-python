@@ -104,7 +104,7 @@ export ONBOARDING_API_KEY="<YOUR-API-KEY>"
 python examples/onboarding_with_certificate.py
 ```
 
-see certified onboarding [here](examples/onboarding_with_certificate.py)
+see certified onboarding usage [here](examples/onboarding_with_certificate.py)
 
 #### User Screening
 
@@ -115,7 +115,21 @@ export ONBOARDING_API_KEY="<YOUR-API-KEY>"
 python examples/onboarding_with_screening.py
 ```
 
-see screening onboarding [here](examples/onboarding_with_screening.py)
+see screening onboarding usage [here](examples/onboarding_with_screening.py)
+
+
+#### Webhooks
+
+Configure your webhooks through the api with the `Webhooks` object. 
+
+```console
+export ONBOARDING_API_KEY="<YOUR-API-KEY>"
+python examples/onboarding_with_webhooks.py
+```
+
+see onboarding webhooks usage [here](examples/onboarding_with_webhooks.py)
+
+Note: You can configure your webhooks using the Onboarding dashboard.
 
 ## Documentation :page_facing_up:
 

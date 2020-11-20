@@ -4,6 +4,9 @@
 """Public API of ALiCE Onboarding Python SDK"""
 
 # Modules
+from alice.webhooks.webhook import Webhook
+from alice.webhooks.webhooks import Webhooks
+from alice.webhooks.webhooks_client import WebhooksClient
 
 modules = []
 
@@ -29,7 +32,11 @@ classes = [
     "Sandbox",
     "SandboxClient",
     "Config",
+    "Webhooks",
+    "WebhooksClient",
+    "Webhook",
 ]
+
 
 # Errors
 from alice.onboarding.onboarding_errors import OnboardingError

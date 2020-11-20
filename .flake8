@@ -12,4 +12,4 @@ exclude =
 max-line-length = 110
 
 select = C,E,F,W,B,B950
-ignore = E501, W503
+ignore = E501, W503, F841
