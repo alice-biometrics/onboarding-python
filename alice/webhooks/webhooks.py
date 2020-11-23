@@ -136,7 +136,7 @@ class Webhooks:
             webhook_id=webhook_id, verbose=verbose
         )
 
-        if response.status_code == 200:
+        if response.status_code == 200 or response.status_code == 201:
             return isSuccess
         else:
             return Failure(
