@@ -410,10 +410,15 @@ class OnboardingClient:
             A Response object [requests library]
         """
         print_intro("supported_documents", verbose=verbose)
-        user_token = self.auth.create_user_token(user_id).unwrap()
-        print_token("user_token", user_token, verbose=verbose)
 
-        headers = self._auth_headers(user_token)
+        if user_id:
+            token = self.auth.create_user_token(user_id).unwrap()
+            print_token("user_token", token, verbose=verbose)
+        else:
+            token = self.auth.create_backend_token().unwrap()
+            print_token("backend_token", token, verbose=verbose)
+
+        headers = self._auth_headers(token)
 
         response = requests.get(self.url + "/documents/supported", headers=headers)
         print_response(response=response, verbose=verbose)
