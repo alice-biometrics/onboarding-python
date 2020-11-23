@@ -371,10 +371,13 @@ class Onboarding:
             )
 
     def supported_documents(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str = None, verbose: bool = False
     ) -> Result[Dict[str, str], OnboardingError]:
         """
         This method is used to obtain a hierarchical-ordered dict with the information of the documents supported by the API.
+
+        This method can be called accessed with both USER_TOKEN and BACKEND_TOKEN.
+        If you provide a user_id this method call it using the USER_TOKEN, otherwise it will be called with the BACKEND_TOKEN
 
         Parameters
         ----------

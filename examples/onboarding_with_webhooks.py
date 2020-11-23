@@ -43,7 +43,7 @@ def configure_webhooks(api_key: str, verbose: bool = False):
     webhooks_client.update_webhook(webhook_to_update, verbose)
 
     # Send a ping using configured webhook
-    webhooks_client.ping_webhook(webhook_id, verbose)
+    result = webhooks_client.ping_webhook(webhook_id, verbose)
 
     # Retrieve an existent Webhook
     retrieved_webhook = webhooks_client.get_webhook(webhook_id, verbose).unwrap()
