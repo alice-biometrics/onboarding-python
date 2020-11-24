@@ -52,7 +52,6 @@ class WebhooksClient:
 
         backend_token = self.auth.create_backend_token().unwrap()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
-
         headers = self._auth_headers(backend_token)
         response = requests.get(self.url + "/events", headers=headers)
 

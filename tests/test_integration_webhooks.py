@@ -15,15 +15,14 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
     assert_failure(result)
 
 
-def test_should_execute_all_webhook_lifecycle(
-    given_valid_api_key, given_any_valid_mail
-):
+def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     config = Config(api_key=given_valid_api_key)
     webhooks_client = Webhooks.from_config(config)
 
     # Check Available events
-    available_events = webhooks_client.get_available_events().unwrap()
-    selected_event = available_events[0]
+    result = webhooks_client.get_available_events()
+    assert_success(result, value_is_instance_of=list)
+    selected_event = result.value[0]
 
     # Create a new Webhook
     webhook = Webhook(
@@ -34,7 +33,7 @@ def test_should_execute_all_webhook_lifecycle(
         event_version=selected_event.get("version"),
         secret=str(secrets.token_hex(20)),
     )
-    webhook_id = webhooks_client.create_webhook(webhook).unwrap()
+    webhook_id = webhooks_client.create_webhook(webhook=webhook).unwrap_or_return()
 
     # Update an existent Webhook
     webhook_to_update = Webhook(
@@ -63,15 +62,21 @@ def test_should_execute_all_webhook_lifecycle(
     result = webhooks_client.get_webhooks()
     assert_success(result, value_is_instance_of=list)
 
-    # Delete a configured webhook
-    result = webhooks_client.delete_webhook(webhook_id)
-    assert_success(result)
-
     # Retrieve las webhook result of an specific webhook
     result = webhooks_client.get_last_webhook_result(webhook_id)
+    assert_success(result, value_is_instance_of=dict)
+
+    # Retrieve all webhook results of an specific webhook
+    result = webhooks_client.get_webhook_results(webhook_id)
+    assert_success(result, value_is_instance_of=list)
+    assert len(result.value) > 0
+
+    # Delete a configured webhook
+    result = webhooks_client.delete_webhook(webhook_id)
     assert_success(result)
 
     # Retrieve all webhook results of an specific webhook
     result = webhooks_client.get_webhook_results(webhook_id)
     assert_success(result, value_is_instance_of=list)
-    assert not any([webhook.webhook_id == webhook_id for webhook in result.value])
+    for webhook in result.value:
+        assert not webhook.get("webhook_id") == webhook_id
