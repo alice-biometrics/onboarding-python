@@ -28,7 +28,7 @@ class Webhook:
         if self.webhook_id:
             kdict["webhook_id"] = self.webhook_id
 
-        if self.webhook_id:
+        if self.algorithm:
             kdict["algorithm"] = self.algorithm
 
         return kdict

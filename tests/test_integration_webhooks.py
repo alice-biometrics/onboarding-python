@@ -44,6 +44,7 @@ def test_should_execute_all_webhook_lifecycle(
         api_key="b0b905d6-228f-44bf-a130-c85d7aecd765",
         event_name="user_created",
         event_version="1",
+        algorithm="sha512",
         secret=str(secrets.token_hex(20)),
     )
     result = webhooks_client.update_webhook(webhook_to_update)
