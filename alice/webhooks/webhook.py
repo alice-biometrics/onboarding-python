@@ -11,6 +11,7 @@ class Webhook:
             post_url=kdict.get("post_url"),
             api_key=kdict.get("api_key"),
             secret=kdict.get("secret"),
+            algorithm=kdict.get("algorithm"),
             event_name=kdict.get("event_name"),
             event_version=kdict.get("event_version"),
         )
@@ -26,6 +27,10 @@ class Webhook:
         }
         if self.webhook_id:
             kdict["webhook_id"] = self.webhook_id
+
+        if self.webhook_id:
+            kdict["algorithm"] = self.algorithm
+
         return kdict
 
     def __init__(
@@ -37,12 +42,14 @@ class Webhook:
         event_name: str,
         event_version: Optional[str] = "1",
         webhook_id: str = None,
+        algorithm: str = None,
     ):
         self.webhook_id = webhook_id
         self.active = active
         self.post_url = post_url
         self.api_key = api_key
         self.secret = secret
+        self.algorithm = algorithm
         self.event_name = event_name
         self.event_version = event_version
         super().__init__()

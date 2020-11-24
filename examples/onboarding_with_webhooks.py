@@ -38,6 +38,7 @@ def configure_webhooks(api_key: str, verbose: bool = False):
         api_key="b0b905d6-228f-44bf-a130-c85d7aecd765",
         event_name="user_created",
         event_version="1",
+        algorithm="sha512",
         secret=str(secrets.token_hex(20)),
     )
     webhooks_client.update_webhook(webhook_to_update, verbose)
