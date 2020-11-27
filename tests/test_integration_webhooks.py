@@ -26,7 +26,7 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
 
     # Create a new Webhook
     webhook = Webhook(
-        active=False,
+        active=True,
         post_url="http://google.com",
         api_key="b0b905d6-228f-44bf-a130-c85d7aecd765",
         event_name=selected_event.get("name"),
@@ -36,10 +36,11 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     webhook_id = webhooks_client.create_webhook(webhook=webhook).unwrap_or_return()
 
     # Update an existent Webhook
+    new_post_url = "http://alicebiometrics.com"
     webhook_to_update = Webhook(
         webhook_id=webhook_id,  # Needed if we want to update
-        active=True,
-        post_url="http://alicebiometrics.com",
+        active=False,
+        post_url=new_post_url,
         api_key="b0b905d6-228f-44bf-a130-c85d7aecd765",
         event_name="user_created",
         event_version="1",
@@ -48,6 +49,15 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     )
     result = webhooks_client.update_webhook(webhook_to_update)
     assert_success(result)
+    retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap()
+    assert retrieved_webhook.post_url == new_post_url
+    assert not retrieved_webhook.active
+
+    # Update Webhook activation
+    result = webhooks_client.update_webhook_activation(webhook_id, True)
+    assert_success(result)
+    retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap()
+    assert not retrieved_webhook.active
 
     # Send a ping using configured webhook
     result = webhooks_client.ping_webhook(webhook_id)

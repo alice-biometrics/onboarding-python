@@ -21,7 +21,7 @@ def configure_webhooks(api_key: str, verbose: bool = False):
 
     # Create a new Webhook
     webhook = Webhook(
-        active=False,
+        active=True,
         post_url="http://google.com",
         api_key="b0b905d6-228f-44bf-a130-c85d7aecd765",
         event_name=selected_event.get("name"),
@@ -33,7 +33,7 @@ def configure_webhooks(api_key: str, verbose: bool = False):
     # Update an existent Webhook
     webhook_to_update = Webhook(
         webhook_id=webhook_id,  # Needed if we want to update
-        active=True,
+        active=False,
         post_url="http://alicebiometrics.com",
         api_key="b0b905d6-228f-44bf-a130-c85d7aecd765",
         event_name="user_created",
@@ -42,6 +42,11 @@ def configure_webhooks(api_key: str, verbose: bool = False):
         secret=str(secrets.token_hex(20)),
     )
     webhooks_client.update_webhook(webhook_to_update, verbose)
+
+    # Update the activation of a Webhook
+    webhooks_client.update_webhook_activation(webhook_id, True, verbose)
+    retrieved_webhook = webhooks_client.get_webhook(webhook_id, verbose).unwrap()
+    assert retrieved_webhook.active
 
     # Send a ping using configured webhook
     result = webhooks_client.ping_webhook(webhook_id, verbose)

@@ -138,6 +138,45 @@ class WebhooksClient:
         return response
 
     @timeit
+    def update_webhook_activation(
+        self, webhook_id: str, active: bool, verbose: bool = False
+    ) -> Response:
+        """
+
+       Update Webhook activation
+
+       Parameters
+       ----------
+       webhook_id
+           Webhook identifier
+       active
+           Activation boolean value
+       verbose
+           Used for print service response as well as the time elapsed
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("update_webhook_activation", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap()
+        print_token("backend_token_with_user", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+        headers["Content-Type"] = "application/json"
+
+        response = requests.patch(
+            self.url + f"/webhook/{webhook_id}",
+            headers=headers,
+            json={"active": active},
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
     def ping_webhook(self, webhook_id: str, verbose: bool = False) -> Response:
         """
 

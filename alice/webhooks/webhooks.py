@@ -114,6 +114,41 @@ class Webhooks:
                 )
             )
 
+    def update_webhook_activation(
+        self, webhook_id: str, active: bool, verbose: bool = False
+    ) -> Result[Dict, OnboardingError]:
+        """
+
+        Update the activation of a Webhook
+
+        Parameters
+        ----------
+        webhook_id
+            Webhook identifier
+        active
+            Activation boolean value
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a webhook_id.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.webhooks_client.update_webhook_activation(
+            webhook_id=webhook_id, active=active, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="update_webhook_activation", response=response
+                )
+            )
+
     def ping_webhook(
         self, webhook_id: str, verbose: bool = False
     ) -> Result[bool, OnboardingError]:
