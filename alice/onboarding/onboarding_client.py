@@ -1,5 +1,7 @@
 import json
 import platform
+from typing import List
+
 import requests
 from requests import Response
 
@@ -913,6 +915,43 @@ class OnboardingClient:
         url = f"{self.url}/users/screening/monitor/alerts?start_index={start_index}&size={size}"
 
         response = requests.get(url, headers=headers)
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def identify_user(
+        self, user_id: str, user_ids: List[str], verbose: bool = False
+    ) -> Response:
+        """
+        Identifies (1:N matching) a user against a N-lenght list of users.
+
+        Parameters
+        ----------
+         user_id
+            User identifier (1)
+        user_ids
+            List of user identifier to match against (N)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("identify_user", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_user_token)
+        data = {"user_ids": user_ids}
+
+        response = requests.post(
+            self.url + "/user/identify", headers=headers, data=data
+        )
 
         print_response(response=response, verbose=verbose)
 

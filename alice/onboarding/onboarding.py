@@ -883,6 +883,38 @@ class Onboarding:
                 )
             )
 
+    def identify_user(
+        self, user_id: str, user_ids: List[str], verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+        Identifies (1:N matching) a user against a N-lenght list of users.
+
+        Parameters
+        ----------
+        user_id
+            User identifier (1)
+        user_ids
+            List of user identifier to match against (N)
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.identify_user(
+            user_id=user_id, user_ids=user_ids, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="identify_user", response=response
+                )
+            )
+
     def authorize_user(
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, OnboardingError]:
