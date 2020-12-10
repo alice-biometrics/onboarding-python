@@ -57,7 +57,7 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     result = webhooks_client.update_webhook_activation(webhook_id, True)
     assert_success(result)
     retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap()
-    assert not retrieved_webhook.active
+    assert retrieved_webhook.active
 
     # Send a ping using configured webhook
     result = webhooks_client.ping_webhook(webhook_id)
