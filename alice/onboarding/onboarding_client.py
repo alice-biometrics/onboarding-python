@@ -2,6 +2,7 @@ import json
 import platform
 import requests
 from requests import Response
+from typing import List
 
 from alice.auth.auth import Auth
 from alice.onboarding.document_source import DocumentSource
@@ -289,7 +290,15 @@ class OnboardingClient:
         return response
 
     @timeit
-    def add_user_feedback(self, user_id: str, document_id: str, selfie_media_id: str, decision: str, additional_feedback: List[str] = [], verbose: bool = False) -> Response:
+    def add_user_feedback(
+        self,
+        user_id: str,
+        document_id: str,
+        selfie_media_id: str,
+        decision: str,
+        additional_feedback: List[str] = [],
+        verbose: bool = False,
+    ) -> Response:
         """
 
         Adds client's feedback about an user onboarding. Usually it comes after human review.
@@ -321,12 +330,16 @@ class OnboardingClient:
 
         headers = self._auth_headers(user_token)
 
-        data = {"document_id": document_id,
-                "selfie_media_id": selfie_media_id,
-                "decision": decision,
-                "additional_feedback": additional_feedback}
+        data = {
+            "document_id": document_id,
+            "selfie_media_id": selfie_media_id,
+            "decision": decision,
+            "additional_feedback": additional_feedback,
+        }
 
-        response = requests.post(self.url + "/user/feedback", data=data, headers=headers)
+        response = requests.post(
+            self.url + "/user/feedback", data=data, headers=headers
+        )
 
         print_response(response=response, verbose=verbose)
 

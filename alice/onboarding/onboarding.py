@@ -271,7 +271,13 @@ class Onboarding:
             )
 
     def add_user_feedback(
-            self, user_id: str, document_id: str, selfie_media_id: str, decision: str, additional_feedback: List[str] = [], verbose: bool = False
+        self,
+        user_id: str,
+        document_id: str,
+        selfie_media_id: str,
+        decision: str,
+        additional_feedback: List[str] = [],
+        verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -305,14 +311,16 @@ class Onboarding:
             selfie_media_id=selfie_media_id,
             decision=decision,
             additional_feedback=additional_feedback,
-            verbose=verbose
+            verbose=verbose,
         )
 
         if response.status_code == 200:
             return isSuccess
         else:
             return Failure(
-                OnboardingError.from_response(operation="add_user_feedback", response=response)
+                OnboardingError.from_response(
+                    operation="add_user_feedback", response=response
+                )
             )
 
     def add_selfie(
