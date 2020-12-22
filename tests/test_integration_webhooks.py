@@ -1,4 +1,5 @@
 import secrets
+from time import sleep
 
 from meiga.assertions import assert_failure, assert_success
 
@@ -81,12 +82,16 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     assert_success(result, value_is_instance_of=list)
     assert len(result.value) > 0
 
+    # Retrieve all webhook results of an specific webhook
+    result = webhooks_client.get_webhook_results(webhook_id)
+    assert_success(result, value_is_instance_of=list)
+
     # Delete a configured webhook
     result = webhooks_client.delete_webhook(webhook_id)
     assert_success(result)
 
-    # Retrieve all webhook results of an specific webhook
+    sleep(3.0)
+
+    # Expected not found error when Retrieve all webhook results of an deleted webhook
     result = webhooks_client.get_webhook_results(webhook_id)
-    assert_success(result, value_is_instance_of=list)
-    for webhook in result.value:
-        assert not webhook.get("webhook_id") == webhook_id
+    assert_failure(result)
