@@ -289,6 +289,50 @@ class OnboardingClient:
         return response
 
     @timeit
+    def add_user_feedback(self, user_id: str, document_id: str, selfie_media_id: str, decision: str, additional_feedback: List[str] = [], verbose: bool = False) -> Response:
+        """
+
+        Adds client's feedback about an user onboarding. Usually it comes after human review.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        selfie_media_id
+            Selfie media identifier
+        decision
+            Whether user is accepted or rejected ["OK", "KO-client", "KO-alice"]
+        additional_feedback
+            List of strings containing additional feedback from user onboarding
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("add_user_feedback", verbose=verbose)
+
+        user_token = self.auth.create_user_token(user_id).unwrap()
+        print_token("user_token", user_token, verbose=verbose)
+
+        headers = self._auth_headers(user_token)
+
+        data = {"document_id": document_id,
+                "selfie_media_id": selfie_media_id,
+                "decision": decision,
+                "additional_feedback": additional_feedback}
+
+        response = requests.post(self.url + "/user/feedback", data=data, headers=headers)
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
     def add_selfie(
         self, user_id: str, media_data: bytes, verbose: bool = False
     ) -> Response:
