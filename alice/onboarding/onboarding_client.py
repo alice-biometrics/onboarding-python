@@ -1,6 +1,5 @@
 import json
 import platform
-from typing import List
 
 import requests
 from requests import Response
