@@ -1,4 +1,5 @@
 from typing import List, Dict
+from enum import Enum
 
 from meiga import Result, Success, Failure, isSuccess
 
@@ -11,6 +12,12 @@ from alice.onboarding.onboarding_client import OnboardingClient
 from alice.auth.auth import Auth
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
+
+
+class Decision(Enum):
+    OK = "OK"
+    KO_CLIENT = "KO-client"
+    KO_ALICE = "KO-alice"
 
 
 class Onboarding:
@@ -267,6 +274,59 @@ class Onboarding:
             return Failure(
                 OnboardingError.from_response(
                     operation="get_users_status", response=response
+                )
+            )
+
+    def add_user_feedback(
+        self,
+        user_id: str,
+        document_id: str,
+        selfie_media_id: str,
+        decision: Decision,
+        additional_feedback: List[str] = [],
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+
+        This call is used to add client's feedback on user onboarding. Usually, it is given after human review.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier.
+        selfie_media_id
+            Selfie media identifier.
+        decision
+            Whether user is accepted or rejected ["OK", "KO-client", "KO-alice"]
+        additional_feedback
+            List of strings containing additional feedback on user onboarding
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+
+        response = self.onboarding_client.add_user_feedback(
+            user_id=user_id,
+            document_id=document_id,
+            selfie_media_id=selfie_media_id,
+            decision=decision.value,
+            additional_feedback=additional_feedback,
+            verbose=verbose,
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="add_user_feedback", response=response
                 )
             )
 

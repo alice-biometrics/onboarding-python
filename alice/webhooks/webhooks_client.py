@@ -138,20 +138,20 @@ class WebhooksClient:
     ) -> Response:
         """
 
-       Update Webhook activation
+        Update Webhook activation
 
-       Parameters
-       ----------
-       webhook_id
-           Webhook identifier
-       active
-           Activation boolean value
-       verbose
-           Used for print service response as well as the time elapsed
+        Parameters
+        ----------
+        webhook_id
+            Webhook identifier
+        active
+            Activation boolean value
+        verbose
+            Used for print service response as well as the time elapsed
 
-        Returns
-        -------
-            A Response object [requests library]
+         Returns
+         -------
+             A Response object [requests library]
         """
         print_intro("update_webhook_activation", verbose=verbose)
 

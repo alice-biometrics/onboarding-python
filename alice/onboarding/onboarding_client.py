@@ -4,14 +4,16 @@ from typing import List
 
 import requests
 from requests import Response
+from typing import List
 
 from alice.auth.auth import Auth
 from alice.onboarding.document_source import DocumentSource
+from alice.onboarding.onboarding import Decision
 from alice.onboarding.tools import timeit, print_intro, print_response, print_token
 
-from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
 import alice
+from alice.onboarding.user_info import UserInfo
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
 
@@ -51,6 +53,7 @@ class OnboardingClient:
         print_intro("healthcheck", verbose=verbose)
 
         response = requests.get(f"{self.url}/healthcheck")
+        
 
         print_response(response=response, verbose=verbose)
 
@@ -279,6 +282,62 @@ class OnboardingClient:
 
         response = requests.get(
             f"{self.url}/users/status{url_query_params}", headers=headers
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def add_user_feedback(
+        self,
+        user_id: str,
+        document_id: str,
+        selfie_media_id: str,
+        decision: Decision,
+        additional_feedback: List[str] = [],
+        verbose: bool = False,
+    ) -> Response:
+        """
+
+        Adds client's feedback about an user onboarding. Usually it comes after human review.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        selfie_media_id
+            Selfie media identifier
+        decision
+            Whether user is accepted or rejected ["OK", "KO-client", "KO-alice"]
+        additional_feedback
+            List of strings containing additional feedback from user onboarding
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("add_user_feedback", verbose=verbose)
+
+        user_token = self.auth.create_user_token(user_id).unwrap()
+        print_token("user_token", user_token, verbose=verbose)
+
+        headers = self._auth_headers(user_token)
+
+        data = {
+            "document_id": document_id,
+            "selfie_media_id": selfie_media_id,
+            "decision": decision.value,
+            "additional_feedback": additional_feedback,
+        }
+
+        response = requests.post(
+            self.url + "/user/feedback", data=data, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
