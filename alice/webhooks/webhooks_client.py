@@ -18,16 +18,11 @@ class WebhooksClient:
         self.send_agent = send_agent
 
     def _auth_headers(self, token: str):
-        auth_headers = {"Authorization": "Bearer {}".format(token)}
+        auth_headers = {"Authorization": f"Bearer {token}"}
         if self.send_agent:
             auth_headers.update(
                 {
-                    "Alice-User-Agent": "onboarding-python/{} ({}; {}) python {}".format(
-                        alice.__version__,
-                        platform.system(),
-                        platform.release(),
-                        platform.python_version(),
-                    )
+                    "Alice-User-Agent": f"onboarding-python/{alice.__version__} ({platform.system()}; {platform.release()}) python {platform.python_version()}"
                 }
             )
         return auth_headers

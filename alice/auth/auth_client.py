@@ -20,18 +20,18 @@ class AuthClient:
         suffix = " (with user)" if user_id else ""
         print_intro(f"create_backend_token{suffix}", verbose=verbose)
 
-        if not self._is_token_valid(self._login_token):
+        if not self._is_valid_token(self._login_token):
             response = self._create_login_token()
             if response.status_code == 200:
                 self._login_token = self._get_token_from_response(response)
             else:
                 return response
 
-        final_url = "{}/backend_token/{}".format(self.url, service_id)
+        final_url = f"{self.url}/backend_token/{service_id}"
         if user_id:
-            final_url += "/{}".format(user_id)
+            final_url += f"/{user_id}"
 
-        headers = {"Authorization": "Bearer {}".format(self._login_token)}
+        headers = {"Authorization": f"Bearer {self._login_token}"}
         response = requests.get(final_url, headers=headers)
         print_response(response=response, verbose=verbose)
 
@@ -44,15 +44,15 @@ class AuthClient:
 
         print_intro("create_user_token", verbose=verbose)
 
-        if not self._is_token_valid(self._login_token):
+        if not self._is_valid_token(self._login_token):
             response = self._create_login_token()
             if response.status_code == 200:
                 self._login_token = self._get_token_from_response(response)
             else:
                 return response
 
-        final_url = "{}/user_token/{}/{}".format(self.url, service_id, user_id)
-        headers = {"Authorization": "Bearer {}".format(self._login_token)}
+        final_url = f"{self.url}/user_token/{service_id}/{user_id}"
+        headers = {"Authorization": f"Bearer {self._login_token}"}
         response = requests.get(final_url, headers=headers)
 
         print_response(response=response, verbose=verbose)
@@ -60,18 +60,17 @@ class AuthClient:
         return response
 
     def _create_login_token(self):
-        final_url = "{}/login_token".format(self.url)
+        final_url = f"{self.url}/login_token"
         headers = {"apikey": self._api_key}
         response = requests.get(final_url, headers=headers)
 
         return response
 
     @staticmethod
-    def _is_token_valid(token, margin_seconds: int = 60):
+    def _is_valid_token(token, margin_seconds: int = 60):
         if not token:
             return False
-
-        decoded_token = jwt.decode(token, verify=False)
+        decoded_token = jwt.decode(token, options={"verify_signature": False})
         return decoded_token["exp"] > time.time() - margin_seconds
 
     @staticmethod

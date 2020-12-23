@@ -19,7 +19,7 @@ def timeit(func):
 def print_intro(method_name: str, verbose: bool = False):
     if verbose:
         print("=================================")
-        print("method: {}".format(method_name))
+        print(f"method: {method_name}")
 
 
 def print_response(response: Response, verbose: bool = False):
@@ -27,21 +27,17 @@ def print_response(response: Response, verbose: bool = False):
         headers = response.headers
         content_type = headers["Content-Type"]
         if "image" in content_type or "video" in content_type:
-            print("response {} -> {}".format(response.status_code, content_type))
+            print(f"response {response.status_code} -> {content_type}")
         else:
             text = response.text
             if text[-1:] == "\n":
                 text = text[:-1]
             if text == "":
-                print("response {} -> {}".format(response.status_code, content_type))
+                print(f"response {response.status_code} -> {content_type}")
             else:
-                print(
-                    "response {} -> {} \n{}".format(
-                        response.status_code, content_type, text
-                    )
-                )
+                print(f"response {response.status_code} -> {content_type} \n{text}")
 
 
 def print_token(type_token: str, token: str, verbose: bool = False):
     if verbose:
-        print("{}: {}".format(type_token, token))
+        print(f"{type_token}: {token}")

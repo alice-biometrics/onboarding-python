@@ -2,7 +2,7 @@ from setuptools import setup
 
 VERSION = open("alice/VERSION", "r").read()
 REQUIRES = [
-    "pyjwt>=1.7.1",
+    "pyjwt==2.0.0",
     "requests>=2.18.0",
     "dataclasses>=0.6",
     "dataclasses-json>=0.2.14",
