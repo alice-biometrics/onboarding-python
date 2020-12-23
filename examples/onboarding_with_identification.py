@@ -30,11 +30,12 @@ def identification_onboarding(api_key: str, verbose: bool = False):
         user_id=user_id_probe, media_data=document_front_media_data, verbose=verbose
     ).unwrap_or_return()
 
-    onboarding.identify_user(
+    identifications = onboarding.identify_user(
         target_user_id=user_id_target,
         probe_user_ids=[user_id_probe, user_id_target],
         verbose=verbose,
     )
+    assert isinstance(identifications.unwrap(), dict)
 
     return isSuccess
 

@@ -6,7 +6,7 @@ REQUIRES = [
     "requests>=2.18.0",
     "dataclasses>=0.6",
     "dataclasses-json>=0.2.14",
-    "meiga>=0.1.4",
+    "meiga==1.2.12",
 ]
 
 setup(

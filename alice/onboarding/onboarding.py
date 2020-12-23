@@ -899,7 +899,7 @@ class Onboarding:
             Used for print service response as well as the time elapsed
         Returns
         -------
-            A Result where if the operation is successful it returns True.
+            A Result where if the operation is successful it returns a dict with sorted users by face score.
             Otherwise, it returns an OnboardingError.
         """
         response = self.onboarding_client.identify_user(
@@ -907,9 +907,8 @@ class Onboarding:
             probe_user_ids=probe_user_ids,
             verbose=verbose,
         )
-
         if response.status_code == 200:
-            return isSuccess
+            return Success(response.json())
         else:
             return Failure(
                 OnboardingError.from_response(

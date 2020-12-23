@@ -61,6 +61,8 @@ jobs:
           pytest --tb=no
       - name: Example [Onboarding]
         run: python examples/onboarding.py
+      - name: Example [Onboarding with Identification]
+        run: python examples/onboarding_with_identification.py
       - name: Example [Onboarding with Certificate]
         run: python examples/onboarding_with_certificate.py
       - name: Example [Onboarding with Screening]
