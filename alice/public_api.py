@@ -15,7 +15,7 @@ from alice.onboarding.onboarding import Onboarding
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
-from alice.onboarding.onboarding import Decision
+from alice.onboarding.decision import Decision
 from alice.auth.auth import Auth
 from alice.auth.auth_client import AuthClient
 from alice.sandbox.sandbox import Sandbox
