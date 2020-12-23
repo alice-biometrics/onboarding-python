@@ -936,6 +936,39 @@ class Onboarding:
                 )
             )
 
+    def identify_user(
+        self, target_user_id: str, probe_user_ids: List[str], verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+        Identifies (1:N matching) a user against a N-lenght list of users.
+
+        Parameters
+        ----------
+        target_user_id
+            User identifier (Target)
+        probe_user_ids
+            List of user identifier to match against (N Probes)
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a dict with sorted users by face score.
+            Otherwise, it returns an OnboardingError.
+        """
+        response = self.onboarding_client.identify_user(
+            target_user_id=target_user_id,
+            probe_user_ids=probe_user_ids,
+            verbose=verbose,
+        )
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="identify_user", response=response
+                )
+            )
+
     def authorize_user(
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, OnboardingError]:

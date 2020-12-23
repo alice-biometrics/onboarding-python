@@ -1,5 +1,7 @@
 import json
 import platform
+from typing import List
+
 import requests
 from requests import Response
 from typing import List
@@ -22,16 +24,11 @@ class OnboardingClient:
         self.send_agent = send_agent
 
     def _auth_headers(self, token: str):
-        auth_headers = {"Authorization": "Bearer {}".format(token)}
+        auth_headers = {"Authorization": f"Bearer {token}"}
         if self.send_agent:
             auth_headers.update(
                 {
-                    "Alice-User-Agent": "onboarding-python/{} ({}; {}) python {}".format(
-                        alice.__version__,
-                        platform.system(),
-                        platform.release(),
-                        platform.python_version(),
-                    )
+                    "Alice-User-Agent": f"onboarding-python/{alice.__version__} ({platform.system()}; {platform.release()}) python {platform.python_version()}"
                 }
             )
         return auth_headers
@@ -54,7 +51,7 @@ class OnboardingClient:
         """
         print_intro("healthcheck", verbose=verbose)
 
-        response = requests.get(self.url + "/healthcheck")
+        response = requests.get(f"{self.url}/healthcheck")
 
         print_response(response=response, verbose=verbose)
 
@@ -103,7 +100,7 @@ class OnboardingClient:
             data = data if data is not None else {}
             data.update(json.loads(device_info.to_json()))
 
-        response = requests.post(self.url + "/user", headers=headers, data=data)
+        response = requests.post(f"{self.url}/user", headers=headers, data=data)
 
         print_response(response=response, verbose=verbose)
 
@@ -133,7 +130,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.delete(self.url + "/user", headers=headers)
+        response = requests.delete(f"{self.url}/user", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -164,7 +161,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(user_token)
 
-        response = requests.get(self.url + "/user/status", headers=headers)
+        response = requests.get(f"{self.url}/user/status", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -192,7 +189,7 @@ class OnboardingClient:
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.get(self.url + "/users/stats", headers=headers)
+        response = requests.get(f"{self.url}/users/stats", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -220,7 +217,7 @@ class OnboardingClient:
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.get(self.url + "/users", headers=headers)
+        response = requests.get(f"{self.url}/users", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -282,7 +279,7 @@ class OnboardingClient:
             url_query_params = url_query_params + f"&sort_by={sort_by}"
 
         response = requests.get(
-            self.url + "/users/status" + url_query_params, headers=headers
+            f"{self.url}/users/status{url_query_params}", headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -378,7 +375,7 @@ class OnboardingClient:
         files = {"video": ("video", media_data)}
 
         response = requests.post(
-            self.url + "/user/selfie", files=files, headers=headers
+            f"{self.url}/user/selfie", files=files, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -411,7 +408,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
 
-        response = requests.delete(self.url + "/user/selfie", headers=headers)
+        response = requests.delete(f"{self.url}/user/selfie", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -443,7 +440,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
 
-        response = requests.patch(self.url + "/user/selfie", headers=headers)
+        response = requests.patch(f"{self.url}/user/selfie", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -477,7 +474,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(token)
 
-        response = requests.get(self.url + "/documents/supported", headers=headers)
+        response = requests.get(f"{self.url}/documents/supported", headers=headers)
         print_response(response=response, verbose=verbose)
 
         return response
@@ -515,7 +512,7 @@ class OnboardingClient:
 
         data = {"type": type, "issuing_country": issuing_country}
         response = requests.post(
-            self.url + "/user/document", data=data, headers=headers
+            f"{self.url}/user/document", data=data, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -551,8 +548,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
         response = requests.delete(
-            self.url + "/user/document/{document_id}".format(document_id=document_id),
-            headers=headers,
+            f"{self.url}/user/document/{document_id}", headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -587,8 +583,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
         response = requests.patch(
-            self.url + "/user/document/{document_id}".format(document_id=document_id),
-            headers=headers,
+            f"{self.url}/user/document/{document_id}", headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -655,7 +650,7 @@ class OnboardingClient:
         files = {"image": ("image", media_data)}
 
         response = requests.put(
-            self.url + "/user/document", files=files, data=data, headers=headers
+            f"{self.url}/user/document", files=files, data=data, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -694,7 +689,7 @@ class OnboardingClient:
         data = {"document_id": document_id}
 
         response = requests.post(
-            self.url + "/user/document/properties", data=data, headers=headers
+            f"{self.url}/user/document/properties", data=data, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -728,7 +723,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        response = requests.get(self.url + "/user/report", headers=headers)
+        response = requests.get(f"{self.url}/user/report", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -766,7 +761,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_user_token)
         headers["Content-Type"] = "application/json"
         response = requests.post(
-            self.url + "/user/certificate", data=json.dumps(options), headers=headers
+            f"{self.url}/user/certificate", data=json.dumps(options), headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -866,7 +861,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
 
-        url = self.url + "/user/screening/search"
+        url = f"{self.url}/user/screening/search"
         if detail:
             url += "/detail"
 
@@ -900,9 +895,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
 
-        url = self.url + "/user/screening/monitor"
-
-        response = requests.get(url, headers=headers)
+        response = requests.get(f"{self.url}/user/screening/monitor", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -932,9 +925,9 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
 
-        url = self.url + "/user/screening/monitor"
-
-        response = requests.delete(url, headers=headers)
+        response = requests.delete(
+            f"{self.url}/user/screening/monitor", headers=headers
+        )
 
         print_response(response=response, verbose=verbose)
 
@@ -967,9 +960,49 @@ class OnboardingClient:
         print_token("backend_token", backend_token, verbose=verbose)
         headers = self._auth_headers(backend_token)
 
-        url = f"{self.url}/users/screening/monitor/alerts?start_index={start_index}&size={size}"
+        response = requests.get(
+            f"{self.url}/users/screening/monitor/alerts?start_index={start_index}&size={size}",
+            headers=headers,
+        )
 
-        response = requests.get(url, headers=headers)
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def identify_user(
+        self, target_user_id: str, probe_user_ids: List[str], verbose: bool = False
+    ) -> Response:
+        """
+        Identifies (1:N matching) a user against a N-length list of users.
+
+        Parameters
+        ----------
+         target_user_id
+            User identifier (Target)
+        probe_user_ids
+            List of user identifier to match against (N Probes)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("identify_user", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(
+            user_id=target_user_id
+        ).unwrap()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_user_token)
+        data = {"user_ids": probe_user_ids}
+
+        response = requests.post(
+            f"{self.url}/user/identify", headers=headers, data=data
+        )
 
         print_response(response=response, verbose=verbose)
 
@@ -998,7 +1031,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        response = requests.post(self.url + "/user/authorize", headers=headers)
+        response = requests.post(f"{self.url}/user/authorize", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -1027,7 +1060,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        response = requests.post(self.url + "/user/deauthorize", headers=headers)
+        response = requests.post(f"{self.url}/user/deauthorize", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -1065,7 +1098,7 @@ class OnboardingClient:
         files = {"video": ("video", media_data)}
 
         response = requests.post(
-            self.url + "/user/authenticate", files=files, headers=headers
+            f"{self.url}/user/authenticate", files=files, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -1097,7 +1130,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
 
-        response = requests.get(self.url + "/user/authentications/ids", headers=headers)
+        response = requests.get(f"{self.url}/user/authentications/ids", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -1146,7 +1179,7 @@ class OnboardingClient:
         )
 
         response = requests.get(
-            self.url + "/user/authentications" + url_query_params, headers=headers
+            f"{self.url}/user/authentications" + url_query_params, headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -1182,11 +1215,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
         response = requests.get(
-            self.url
-            + "/user/authentication/{authentication_id}".format(
-                authentication_id=authentication_id
-            ),
-            headers=headers,
+            f"{self.url}/user/authentication/{authentication_id}", headers=headers
         )
 
         print_response(response=response, verbose=verbose)
@@ -1223,7 +1252,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_user_token)
 
         response = requests.get(
-            self.url + "/media/{}/download".format(media_id), headers=headers
+            f"{self.url}/media/{media_id}/download", headers=headers
         )
 
         print_response(response=response, verbose=verbose)

@@ -17,7 +17,7 @@ class SandboxClient:
         self.url = url
 
     def _auth_headers(self, token: str):
-        auth_headers = {"Authorization": "Bearer {}".format(token)}
+        auth_headers = {"Authorization": f"Bearer {token}"}
         return auth_headers
 
     @timeit
