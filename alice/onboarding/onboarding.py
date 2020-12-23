@@ -4,6 +4,7 @@ from enum import Enum
 from meiga import Result, Success, Failure, isSuccess
 
 from alice.config import Config
+from alice.onboarding.decision import Decision
 from alice.onboarding.document_source import DocumentSource
 from alice.onboarding.onboarding_errors import OnboardingError
 from alice.onboarding.user_info import UserInfo
@@ -12,12 +13,6 @@ from alice.onboarding.onboarding_client import OnboardingClient
 from alice.auth.auth import Auth
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
-
-
-class Decision(Enum):
-    OK = "OK"
-    KO_CLIENT = "KO-client"
-    KO_ALICE = "KO-alice"
 
 
 class Onboarding:

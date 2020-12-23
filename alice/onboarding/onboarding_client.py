@@ -6,8 +6,8 @@ from requests import Response
 from typing import List
 
 from alice.auth.auth import Auth
+from alice.onboarding.decision import Decision
 from alice.onboarding.document_source import DocumentSource
-from alice.onboarding.onboarding import Decision
 from alice.onboarding.tools import timeit, print_intro, print_response, print_token
 
 from alice.onboarding.device_info import DeviceInfo
