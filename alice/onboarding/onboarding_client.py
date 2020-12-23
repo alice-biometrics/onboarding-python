@@ -8,11 +8,12 @@ from typing import List
 
 from alice.auth.auth import Auth
 from alice.onboarding.document_source import DocumentSource
+from alice.onboarding.onboarding import Decision
 from alice.onboarding.tools import timeit, print_intro, print_response, print_token
 
-from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
 import alice
+from alice.onboarding.user_info import UserInfo
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
 
@@ -52,6 +53,7 @@ class OnboardingClient:
         print_intro("healthcheck", verbose=verbose)
 
         response = requests.get(f"{self.url}/healthcheck")
+        
 
         print_response(response=response, verbose=verbose)
 
@@ -292,7 +294,7 @@ class OnboardingClient:
         user_id: str,
         document_id: str,
         selfie_media_id: str,
-        decision: str,
+        decision: Decision,
         additional_feedback: List[str] = [],
         verbose: bool = False,
     ) -> Response:
@@ -330,7 +332,7 @@ class OnboardingClient:
         data = {
             "document_id": document_id,
             "selfie_media_id": selfie_media_id,
-            "decision": decision,
+            "decision": decision.value,
             "additional_feedback": additional_feedback,
         }
 

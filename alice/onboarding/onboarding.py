@@ -1,4 +1,5 @@
 from typing import List, Dict
+from enum import Enum
 
 from meiga import Result, Success, Failure, isSuccess
 
@@ -11,6 +12,12 @@ from alice.onboarding.onboarding_client import OnboardingClient
 from alice.auth.auth import Auth
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
+
+
+class Decision(Enum):
+    OK = "OK"
+    KO_CLIENT = "KO-client"
+    KO_ALICE = "KO-alice"
 
 
 class Onboarding:
@@ -275,7 +282,7 @@ class Onboarding:
         user_id: str,
         document_id: str,
         selfie_media_id: str,
-        decision: str,
+        decision: Decision,
         additional_feedback: List[str] = [],
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
@@ -309,7 +316,7 @@ class Onboarding:
             user_id=user_id,
             document_id=document_id,
             selfie_media_id=selfie_media_id,
-            decision=decision,
+            decision=decision.value,
             additional_feedback=additional_feedback,
             verbose=verbose,
         )
