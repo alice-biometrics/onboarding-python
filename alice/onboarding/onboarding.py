@@ -1,16 +1,15 @@
 from typing import List, Dict
-from enum import Enum
 
 from meiga import Result, Success, Failure, isSuccess
 
+from alice.auth.auth import Auth
 from alice.config import Config
 from alice.onboarding.decision import Decision
+from alice.onboarding.device_info import DeviceInfo
 from alice.onboarding.document_source import DocumentSource
+from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.onboarding_errors import OnboardingError
 from alice.onboarding.user_info import UserInfo
-from alice.onboarding.device_info import DeviceInfo
-from alice.onboarding.onboarding_client import OnboardingClient
-from alice.auth.auth import Auth
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
@@ -22,11 +21,21 @@ class Onboarding:
             auth=Auth.from_config(config),
             url=config.onboarding_url,
             send_agent=config.send_agent,
+            additional_headers=config.additional_headers,
         )
 
-    def __init__(self, auth: Auth, url: str = DEFAULT_URL, send_agent: bool = True):
+    def __init__(
+        self,
+        auth: Auth,
+        url: str = DEFAULT_URL,
+        send_agent: bool = True,
+        additional_headers: Dict = None,
+    ):
         self.onboarding_client = OnboardingClient(
-            auth=auth, url=url, send_agent=send_agent
+            auth=auth,
+            url=url,
+            send_agent=send_agent,
+            additional_headers=additional_headers,
         )
         self.url = url
 

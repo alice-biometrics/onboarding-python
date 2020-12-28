@@ -3,7 +3,7 @@ import platform
 
 import requests
 from requests import Response
-from typing import List
+from typing import List, Dict
 
 from alice.auth.auth import Auth
 from alice.onboarding.decision import Decision
@@ -18,10 +18,17 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
 
 
 class OnboardingClient:
-    def __init__(self, auth: Auth, url: str = DEFAULT_URL, send_agent: bool = True):
+    def __init__(
+        self,
+        auth: Auth,
+        url: str = DEFAULT_URL,
+        send_agent: bool = True,
+        additional_headers: Dict = None,
+    ):
         self.auth = auth
         self.url = url
         self.send_agent = send_agent
+        self.additional_headers = additional_headers
 
     def _auth_headers(self, token: str):
         auth_headers = {"Authorization": f"Bearer {token}"}
@@ -31,6 +38,8 @@ class OnboardingClient:
                     "Alice-User-Agent": f"onboarding-python/{alice.__version__} ({platform.system()}; {platform.release()}) python {platform.python_version()}"
                 }
             )
+        if self.additional_headers:
+            auth_headers.update(self.additional_headers)
         return auth_headers
 
     @timeit
@@ -52,7 +61,6 @@ class OnboardingClient:
         print_intro("healthcheck", verbose=verbose)
 
         response = requests.get(f"{self.url}/healthcheck")
-        
 
         print_response(response=response, verbose=verbose)
 
