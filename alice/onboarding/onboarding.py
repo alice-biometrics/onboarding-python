@@ -311,7 +311,7 @@ class Onboarding:
             user_id=user_id,
             document_id=document_id,
             selfie_media_id=selfie_media_id,
-            decision=decision.value,
+            decision=decision,
             additional_feedback=additional_feedback,
             verbose=verbose,
         )
