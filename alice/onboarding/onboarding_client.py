@@ -323,10 +323,10 @@ class OnboardingClient:
         """
         print_intro("add_user_feedback", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id).unwrap()
-        print_token("user_token", user_token, verbose=verbose)
+        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        print_token("backend_token_with_user", backend_token, verbose=verbose)
 
-        headers = self._auth_headers(user_token)
+        headers = self._auth_headers(backend_token)
 
         data = {
             "document_id": document_id,
