@@ -52,7 +52,6 @@ class OnboardingClient:
         print_intro("healthcheck", verbose=verbose)
 
         response = requests.get(f"{self.url}/healthcheck")
-        
 
         print_response(response=response, verbose=verbose)
 

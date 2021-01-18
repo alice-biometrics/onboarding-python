@@ -36,7 +36,7 @@ classes = [
     "Webhooks",
     "WebhooksClient",
     "Webhook",
-    "Decision"
+    "Decision",
 ]
 
 

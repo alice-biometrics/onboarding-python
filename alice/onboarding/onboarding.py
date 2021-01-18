@@ -1,5 +1,4 @@
 from typing import List, Dict
-from enum import Enum
 
 from meiga import Result, Success, Failure, isSuccess
 
