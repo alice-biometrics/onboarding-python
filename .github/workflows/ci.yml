@@ -1,0 +1,71 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - master
+
+env:
+  ONBOARDING_API_KEY: ${{ secrets.ONBOARDING_API_KEY }}
+  ONBOARDING_SANDBOX_TOKEN: ${{ secrets.ONBOARDING_SANDBOX_TOKEN }}
+
+jobs:
+  ci:
+    strategy:
+      max-parallel: 4
+      matrix:
+        os: [ macOS-latest, ubuntu-latest ]
+        python-version: [3.8]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/cache@v1
+        if: startsWith(runner.os, 'Linux')
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - uses: actions/cache@v1
+        if: startsWith(runner.os, 'macOS')
+        with:
+          path: ~/Library/Caches/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - uses: actions/cache@v1
+        if: startsWith(runner.os, 'Windows')
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install requirements
+        run: |
+          pip install -r requirements/dev.txt
+      - name: Lint with black & flake8
+        run: |
+          black .
+          flake8 alice
+      - name: Install package
+        run: |
+          pip install -e . # Dependencies are also included in the setup.py
+      - name: Test [pytest]
+        run: |
+          pytest --tb=no
+      - name: Example [Onboarding]
+        run: python examples/onboarding.py
+      - name: Example [Onboarding with Identification]
+        run: python examples/onboarding_with_identification.py
+      - name: Example [Onboarding with Certificate]
+        run: python examples/onboarding_with_certificate.py
+      - name: Example [Onboarding with Screening]
+        run: python examples/onboarding_with_screening.py
+      - name: Example [Auth]
+        run: python examples/auth.py
+      - name: Example [Sandbox]
+        run: python examples/sandbox.py
