@@ -14,7 +14,7 @@ from alice.onboarding.device_info import DeviceInfo
 import alice
 from alice.onboarding.user_info import UserInfo
 
-DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
+DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
 
 class OnboardingClient:
