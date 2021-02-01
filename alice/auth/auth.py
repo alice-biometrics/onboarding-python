@@ -6,17 +6,16 @@ from .auth_client import AuthClient
 from alice.config import Config
 from .auth_errors import AuthError
 
-DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
+DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
 
 class Auth:
     @staticmethod
     def from_config(config: Config):
-        return Auth(api_key=config.api_key, url=config.auth_url)
+        return Auth(api_key=config.api_key, url=config.onboarding_url)
 
-    def __init__(self, api_key, service_id: str = "onboarding", url: str = DEFAULT_URL):
+    def __init__(self, api_key, url: str = DEFAULT_URL):
         self._auth_client = AuthClient(url, api_key)
-        self._service_id = service_id
         self.url = url
 
     def create_backend_token(
@@ -38,9 +37,7 @@ class Auth:
             A Result where if the operation is successful it returns BACKEND_TOKEN or BACKEND_TOKEN_WITH_USER.
             Otherwise, it returns an OnboardingError.
         """
-        response = self._auth_client.create_backend_token(
-            self._service_id, user_id, verbose=verbose
-        )
+        response = self._auth_client.create_backend_token(user_id, verbose=verbose)
 
         if response.status_code == 200:
             return Success(self.__get_token_from_response(response))
@@ -73,9 +70,7 @@ class Auth:
             A Result where if the operation is successful it returns USER_TOKEN.
             Otherwise, it returns an OnboardingError.
         """
-        response = self._auth_client.create_user_token(
-            self._service_id, user_id, verbose=verbose
-        )
+        response = self._auth_client.create_user_token(user_id, verbose=verbose)
 
         if response.status_code == 200:
             return Success(self.__get_token_from_response(response))

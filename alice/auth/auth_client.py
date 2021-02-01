@@ -14,7 +14,7 @@ class AuthClient:
 
     @timeit
     def create_backend_token(
-        self, service_id: str, user_id: str = None, verbose: bool = False
+        self, user_id: str = None, verbose: bool = False
     ) -> Response:
 
         suffix = " (with user)" if user_id else ""
@@ -27,7 +27,7 @@ class AuthClient:
             else:
                 return response
 
-        final_url = f"{self.url}/backend_token/{service_id}"
+        final_url = f"{self.url}/backend_token"
         if user_id:
             final_url += f"/{user_id}"
 
@@ -38,9 +38,7 @@ class AuthClient:
         return response
 
     @timeit
-    def create_user_token(
-        self, service_id: str, user_id: str, verbose: bool = False
-    ) -> Response:
+    def create_user_token(self, user_id: str, verbose: bool = False) -> Response:
 
         print_intro("create_user_token", verbose=verbose)
 
@@ -51,7 +49,7 @@ class AuthClient:
             else:
                 return response
 
-        final_url = f"{self.url}/user_token/{service_id}/{user_id}"
+        final_url = f"{self.url}/user_token/{user_id}"
         headers = {"Authorization": f"Bearer {self._login_token}"}
         response = requests.get(final_url, headers=headers)
 

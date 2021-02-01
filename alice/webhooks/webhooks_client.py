@@ -8,7 +8,7 @@ from alice.onboarding.tools import timeit, print_intro, print_response, print_to
 import alice
 from alice.webhooks.webhook import Webhook
 
-DEFAULT_URL = "https://apis.alicebiometrics.com/auth"
+DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
 
 class WebhooksClient:
