@@ -6,6 +6,7 @@ from alice.config import Config
 from alice.onboarding.decision import Decision
 from alice.onboarding.document_source import DocumentSource
 from alice.onboarding.onboarding_errors import OnboardingError
+from alice.onboarding.report_version import ReportVersion
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
 from alice.onboarding.onboarding_client import OnboardingClient
@@ -667,7 +668,10 @@ class Onboarding:
             )
 
     def create_report(
-        self, user_id: str, verbose: bool = False
+        self,
+        user_id: str,
+        verbose: bool = False,
+        version: ReportVersion = ReportVersion.V0,
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -682,7 +686,8 @@ class Onboarding:
             User identifier
         verbose
             Used for print service response as well as the time elapsed
-
+        version
+            Set Report Version (Default and Stable ReportVersion.VO)
 
         Returns
         -------
@@ -690,7 +695,7 @@ class Onboarding:
             Otherwise, it returns an OnboardingError.
         """
         response = self.onboarding_client.create_report(
-            user_id=user_id, verbose=verbose
+            user_id=user_id, verbose=verbose, version=version
         )
 
         if response.status_code == 200:

@@ -8,6 +8,7 @@ from typing import List
 from alice.auth.auth import Auth
 from alice.onboarding.decision import Decision
 from alice.onboarding.document_source import DocumentSource
+from alice.onboarding.report_version import ReportVersion
 from alice.onboarding.tools import timeit, print_intro, print_response, print_token
 
 from alice.onboarding.device_info import DeviceInfo
@@ -697,7 +698,12 @@ class OnboardingClient:
         return response
 
     @timeit
-    def create_report(self, user_id: str, verbose: bool = False) -> Response:
+    def create_report(
+        self,
+        user_id: str,
+        verbose: bool = False,
+        version: ReportVersion = ReportVersion.V0,
+    ) -> Response:
         """
 
         This call is used to get the report of the onboarding process for a specific user.
@@ -711,7 +717,8 @@ class OnboardingClient:
             User identifier
         verbose
             Used for print service response as well as the time elapsed
-
+        version
+            Set Report Version (Default and Stable ReportVersion.VO)
 
         Returns
         -------
@@ -723,6 +730,8 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
+        headers["Alice-Report-Version"] = ReportVersion.V0.value
+
         response = requests.get(f"{self.url}/user/report", headers=headers)
 
         print_response(response=response, verbose=verbose)
