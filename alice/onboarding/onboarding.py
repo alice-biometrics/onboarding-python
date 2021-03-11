@@ -695,7 +695,7 @@ class Onboarding:
         self,
         user_id: str,
         verbose: bool = False,
-        version: ReportVersion = ReportVersion.V0,
+        report_version: ReportVersion = ReportVersion.V0,
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -710,7 +710,7 @@ class Onboarding:
             User identifier
         verbose
             Used for print service response as well as the time elapsed
-        version
+        report_version
             Set Report Version (Default and Stable ReportVersion.VO)
 
         Returns
@@ -720,7 +720,7 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_report(
-            user_id=user_id, verbose=verbose, version=version
+            user_id=user_id, verbose=verbose, report_version=report_version
         )
 
         if response.status_code == 200:
