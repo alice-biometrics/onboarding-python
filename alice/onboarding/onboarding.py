@@ -22,13 +22,21 @@ class Onboarding:
             auth=Auth.from_config(config),
             url=config.onboarding_url,
             send_agent=config.send_agent,
+            verbose=config.verbose,
         )
 
-    def __init__(self, auth: Auth, url: str = DEFAULT_URL, send_agent: bool = True):
+    def __init__(
+        self,
+        auth: Auth,
+        url: str = DEFAULT_URL,
+        send_agent: bool = True,
+        verbose: bool = False,
+    ):
         self.onboarding_client = OnboardingClient(
             auth=auth, url=url, send_agent=send_agent
         )
         self.url = url
+        self.verbose = verbose
 
     def healthcheck(self, verbose: bool = False) -> Result[bool, OnboardingError]:
         """
@@ -45,6 +53,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.healthcheck(verbose=verbose)
 
         if response.status_code == 200:
@@ -83,6 +92,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a user_id.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.create_user(
             user_info=user_info, device_info=device_info, verbose=verbose
         )
@@ -116,6 +126,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.delete_user(user_id=user_id, verbose=verbose)
 
         if response.status_code == 200:
@@ -147,6 +158,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a Dict with the status info.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.get_user_status(
             user_id=user_id, verbose=verbose
         )
@@ -176,7 +188,8 @@ class Onboarding:
             A Result where if the operation is successful it returns list of string with already created user_ids.
             Otherwise, it returns an OnboardingError.
         """
-        response = self.onboarding_client.get_users()
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_users(verbose=verbose)
 
         if response.status_code == 200:
             return Success(response.json()["users"])
@@ -201,6 +214,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a dict with users information
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.get_users_stats(verbose=verbose)
 
         if response.status_code == 200:
@@ -252,6 +266,7 @@ class Onboarding:
             A Result where if the operation is successful it returns list of dict which represent the status of each user.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.get_users_status(
             verbose=verbose,
             page=page,
@@ -306,7 +321,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
-
+        verbose = self.verbose or verbose
         response = self.onboarding_client.add_user_feedback(
             user_id=user_id,
             document_id=document_id,
@@ -348,6 +363,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.add_selfie(
             user_id=user_id, media_data=media_data, verbose=verbose
         )
@@ -380,6 +396,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.delete_selfie(
             user_id=user_id, verbose=verbose
         )
@@ -414,6 +431,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.void_selfie(user_id=user_id, verbose=verbose)
 
         if response.status_code == 200:
@@ -447,6 +465,7 @@ class Onboarding:
             A Result where if the operation is successful it returns dict with supported document.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.supported_documents(
             user_id=user_id, verbose=verbose
         )
@@ -485,6 +504,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a str with a document_id.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.create_document(
             user_id=user_id, type=type, issuing_country=issuing_country, verbose=verbose
         )
@@ -521,6 +541,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.delete_document(
             user_id=user_id, document_id=document_id, verbose=verbose
         )
@@ -557,6 +578,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.void_document(
             user_id=user_id, document_id=document_id, verbose=verbose
         )
@@ -610,6 +632,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.add_document(
             user_id=user_id,
             document_id=document_id,
@@ -654,6 +677,7 @@ class Onboarding:
             A Result where if the operation is successful it returns dict with document properties.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.document_properties(
             user_id=user_id, document_id=document_id, verbose=verbose
         )
@@ -694,6 +718,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a Dict with the generated report.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.create_report(
             user_id=user_id, verbose=verbose, version=version
         )
@@ -731,6 +756,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a str with a pdf_report_id.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.create_certificate(
             user_id=user_id, template_name=template_name, verbose=verbose
         )
@@ -766,6 +792,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a binary pdf (bytes).
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.retrieve_certificate(
             user_id=user_id, certificate_id=certificate_id, verbose=verbose
         )
@@ -799,6 +826,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a list of dictionaries.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.retrieve_certificates(
             user_id=user_id, verbose=verbose
         )
@@ -834,6 +862,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a dictionary.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.screening(
             user_id=user_id, detail=detail, verbose=verbose
         )
@@ -864,6 +893,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.screening_monitor_add(
             user_id=user_id, verbose=verbose
         )
@@ -896,6 +926,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.screening_monitor_delete(
             user_id=user_id, verbose=verbose
         )
@@ -929,6 +960,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a dictionary.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.screening_monitor_open_alerts(
             start_index=start_index, size=size, verbose=verbose
         )
@@ -961,6 +993,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a dict with sorted users by face score.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.identify_user(
             target_user_id=target_user_id,
             probe_user_ids=probe_user_ids,
@@ -991,6 +1024,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.authorize_user(
             user_id=user_id, verbose=verbose
         )
@@ -1023,6 +1057,7 @@ class Onboarding:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.deauthorize_user(
             user_id=user_id, verbose=verbose
         )
@@ -1058,6 +1093,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a authentication_id.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.authenticate_user(
             user_id=user_id, media_data=media_data, verbose=verbose
         )
@@ -1091,6 +1127,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a List of string with all the authentication_ids.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.get_authentications_ids(
             user_id=user_id, verbose=verbose
         )
@@ -1136,6 +1173,7 @@ class Onboarding:
             the total number of authentications.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.get_authentications(
             user_id=user_id,
             page_size=page_size,
@@ -1175,6 +1213,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a Dict with the information of one authentication.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.get_authentication(
             user_id=user_id, authentication_id=authentication_id, verbose=verbose
         )
@@ -1210,6 +1249,7 @@ class Onboarding:
             A Result where if the operation is successful it returns a binary image (bytes).
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.onboarding_client.retrieve_media(
             user_id=user_id, media_id=media_id, verbose=verbose
         )

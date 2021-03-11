@@ -12,11 +12,14 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 class Auth:
     @staticmethod
     def from_config(config: Config):
-        return Auth(api_key=config.api_key, url=config.onboarding_url)
+        return Auth(
+            api_key=config.api_key, url=config.onboarding_url, verbose=config.verbose
+        )
 
-    def __init__(self, api_key, url: str = DEFAULT_URL):
+    def __init__(self, api_key, url: str = DEFAULT_URL, verbose: bool = False):
         self._auth_client = AuthClient(url, api_key)
         self.url = url
+        self.verbose = verbose
 
     def create_backend_token(
         self, user_id: str = None, verbose: bool = False
@@ -37,6 +40,7 @@ class Auth:
             A Result where if the operation is successful it returns BACKEND_TOKEN or BACKEND_TOKEN_WITH_USER.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self._auth_client.create_backend_token(user_id, verbose=verbose)
 
         if response.status_code == 200:
@@ -70,6 +74,7 @@ class Auth:
             A Result where if the operation is successful it returns USER_TOKEN.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self._auth_client.create_user_token(user_id, verbose=verbose)
 
         if response.status_code == 200:

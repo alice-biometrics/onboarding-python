@@ -12,11 +12,11 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 @meiga
 def configure_webhooks(api_key: str, verbose: bool = False):
-    config = Config(api_key=api_key)
+    config = Config(api_key=api_key, verbose=verbose)
     webhooks_client = Webhooks.from_config(config)
 
     # Check Available events
-    available_events = webhooks_client.get_available_events(verbose).unwrap()
+    available_events = webhooks_client.get_available_events().unwrap()
     selected_event = available_events[0]
 
     # Create a new Webhook
@@ -28,7 +28,7 @@ def configure_webhooks(api_key: str, verbose: bool = False):
         event_version=selected_event.get("version"),
         secret=str(secrets.token_hex(20)),
     )
-    webhook_id = webhooks_client.create_webhook(webhook, verbose).unwrap()
+    webhook_id = webhooks_client.create_webhook(webhook).unwrap()
 
     # Update an existent Webhook
     webhook_to_update = Webhook(
@@ -41,35 +41,33 @@ def configure_webhooks(api_key: str, verbose: bool = False):
         algorithm="sha512",
         secret=str(secrets.token_hex(20)),
     )
-    webhooks_client.update_webhook(webhook_to_update, verbose)
+    webhooks_client.update_webhook(webhook_to_update)
 
     # Update the activation of a Webhook
-    webhooks_client.update_webhook_activation(webhook_id, True, verbose)
-    retrieved_webhook = webhooks_client.get_webhook(webhook_id, verbose).unwrap()
+    webhooks_client.update_webhook_activation(webhook_id, True)
+    retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap()
     assert retrieved_webhook.active
 
     # Send a ping using configured webhook
-    result = webhooks_client.ping_webhook(webhook_id, verbose)
+    result = webhooks_client.ping_webhook(webhook_id)
 
     # Retrieve an existent Webhook
-    retrieved_webhook = webhooks_client.get_webhook(webhook_id, verbose).unwrap()
+    retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap()
     assert retrieved_webhook.active
     assert retrieved_webhook.post_url == "http://alicebiometrics.com"
 
     # Retrieve all configured webhooks
-    retrieved_webhooks = webhooks_client.get_webhooks(verbose).unwrap()
+    retrieved_webhooks = webhooks_client.get_webhooks().unwrap()
 
     # Delete a configured webhook
-    result = webhooks_client.delete_webhook(webhook_id, verbose)
+    result = webhooks_client.delete_webhook(webhook_id)
     assert_success(result)
 
     # Retrieve all webhook results of an specific webhook
-    webhook_results = webhooks_client.get_webhook_results(webhook_id, verbose).unwrap()
+    webhook_results = webhooks_client.get_webhook_results(webhook_id).unwrap()
 
     # Retrieve las webhook result of an specific webhook
-    last_webhook_result = webhooks_client.get_last_webhook_result(
-        webhook_id, verbose
-    ).unwrap()
+    last_webhook_result = webhooks_client.get_last_webhook_result(webhook_id).unwrap()
 
     return isSuccess
 

@@ -16,11 +16,18 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 class Sandbox:
     @staticmethod
     def from_config(config: Config):
-        return Sandbox(sandbox_token=config.sandbox_token, url=config.sandbox_url)
+        return Sandbox(
+            sandbox_token=config.sandbox_token,
+            url=config.sandbox_url,
+            verbose=config.verbose,
+        )
 
-    def __init__(self, sandbox_token: str, url: str = DEFAULT_URL):
+    def __init__(
+        self, sandbox_token: str, url: str = DEFAULT_URL, verbose: bool = False
+    ):
         self.sandbox_client = SandboxClient(sandbox_token=sandbox_token, url=url)
         self.url = url
+        self.verbose = verbose
 
     @staticmethod
     def _is_token_valid(token, margin_seconds: int = 60):
@@ -45,6 +52,7 @@ class Sandbox:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an SandboxError.
         """
+        verbose = self.verbose or verbose
         response = self.sandbox_client.healthcheck(verbose=verbose)
 
         if response.status_code == 200:
@@ -82,6 +90,7 @@ class Sandbox:
             A Result where if the operation is successful it returns a user_id.
             Otherwise, it returns an SandboxError.
         """
+        verbose = self.verbose or verbose
         response = self.sandbox_client.create_user(
             user_info=user_info, device_info=device_info, verbose=verbose
         )
@@ -114,6 +123,7 @@ class Sandbox:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an SandboxError.
         """
+        verbose = self.verbose or verbose
         response = self.sandbox_client.delete_user(email=email, verbose=verbose)
 
         if response.status_code == 200:
@@ -141,6 +151,7 @@ class Sandbox:
             A Result where if the operation is successful it returns a Dict with the status info.
             Otherwise, it returns an SandboxError.
         """
+        verbose = self.verbose or verbose
         response = self.sandbox_client.get_user(email=email, verbose=verbose)
 
         if response.status_code == 200:
@@ -170,6 +181,7 @@ class Sandbox:
             A Result where if the operation is successful it returns list of string with already created user_ids.
             Otherwise, it returns an SandboxError.
         """
+        verbose = self.verbose or verbose
         response = self.sandbox_client.get_user_token(email=email, verbose=verbose)
 
         if response.status_code == 200:
