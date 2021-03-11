@@ -11,18 +11,18 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 @meiga
 def screening_onboarding(api_key: str, verbose: bool = False):
 
-    config = Config(api_key=api_key)
+    config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
     document_back_media_data = given_any_document_back_media_data()
 
     user_id = onboarding.create_user(
-        user_info=UserInfo(first_name="Carmen", last_name="Espanola"), verbose=verbose
+        user_info=UserInfo(first_name="Carmen", last_name="Espanola")
     ).unwrap_or_return()
 
     # # Create and upload front and back side from a document
     document_id = onboarding.create_document(
-        user_id=user_id, type="idcard", issuing_country="ESP", verbose=verbose
+        user_id=user_id, type="idcard", issuing_country="ESP"
     ).unwrap_or_return()
     onboarding.add_document(
         user_id=user_id,
@@ -30,30 +30,23 @@ def screening_onboarding(api_key: str, verbose: bool = False):
         media_data=document_back_media_data,
         side="back",
         manual=True,
-        verbose=verbose,
     ).unwrap_or_return()
 
     # Screening
-    screening = onboarding.screening(
-        user_id=user_id, verbose=verbose
-    ).unwrap_or_return()
+    screening = onboarding.screening(user_id=user_id).unwrap_or_return()
 
     assert isinstance(screening, dict)
 
     # Screening (with detail)
     detailed_screening = onboarding.screening(
-        user_id=user_id, detail=True, verbose=verbose
+        user_id=user_id, detail=True
     ).unwrap_or_return()
     assert isinstance(detailed_screening, dict)
 
     # Add user to monitoring list
-    onboarding.screening_monitor_add(
-        user_id=user_id, verbose=verbose
-    ).unwrap_or_return()
+    onboarding.screening_monitor_add(user_id=user_id).unwrap_or_return()
 
-    open_alerts = onboarding.screening_monitor_open_alerts(
-        verbose=verbose
-    ).unwrap_or_return()
+    open_alerts = onboarding.screening_monitor_open_alerts().unwrap_or_return()
     assert isinstance(open_alerts, dict)
 
     onboarding.screening_monitor_delete(

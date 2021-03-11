@@ -18,11 +18,19 @@ class Webhooks:
             auth=Auth.from_config(config),
             url=config.onboarding_url,
             send_agent=config.send_agent,
+            verbose=config.verbose,
         )
 
-    def __init__(self, auth: Auth, url: str = DEFAULT_URL, send_agent: bool = True):
+    def __init__(
+        self,
+        auth: Auth,
+        url: str = DEFAULT_URL,
+        send_agent: bool = True,
+        verbose: bool = False,
+    ):
         self.webhooks_client = WebhooksClient(auth=auth, url=url, send_agent=send_agent)
         self.url = url
+        self.verbose = verbose
 
     def get_available_events(
         self, verbose: bool = False
@@ -41,6 +49,7 @@ class Webhooks:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.get_available_events(verbose=verbose)
 
         if response.status_code == 200:
@@ -72,6 +81,7 @@ class Webhooks:
             A Result where if the operation is successful it returns a webhook_id.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.create_webhook(webhook=webhook, verbose=verbose)
 
         if response.status_code == 200:
@@ -103,6 +113,7 @@ class Webhooks:
             A Result where if the operation is successful it returns a webhook_id.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.update_webhook(webhook=webhook, verbose=verbose)
 
         if response.status_code == 200:
@@ -136,6 +147,7 @@ class Webhooks:
             A Result where if the operation is successful it returns a webhook_id.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.update_webhook_activation(
             webhook_id=webhook_id, active=active, verbose=verbose
         )
@@ -167,6 +179,7 @@ class Webhooks:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.ping_webhook(
             webhook_id=webhook_id, verbose=verbose
         )
@@ -198,6 +211,7 @@ class Webhooks:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.delete_webhook(
             webhook_id=webhook_id, verbose=verbose
         )
@@ -229,6 +243,7 @@ class Webhooks:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.get_webhook(
             webhook_id=webhook_id, verbose=verbose
         )
@@ -258,6 +273,7 @@ class Webhooks:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.get_webhooks(verbose=verbose)
 
         if response.status_code == 200:
@@ -289,6 +305,7 @@ class Webhooks:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.get_webhook_results(
             webhook_id=webhook_id, verbose=verbose
         )
@@ -320,6 +337,7 @@ class Webhooks:
             A Result where if the operation is successful it returns True.
             Otherwise, it returns an OnboardingError.
         """
+        verbose = self.verbose or verbose
         response = self.webhooks_client.get_last_webhook_result(
             webhook_id=webhook_id, verbose=verbose
         )

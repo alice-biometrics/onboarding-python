@@ -11,23 +11,23 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 @meiga
 def certified_onboarding(api_key: str, verbose: bool = False):
 
-    config = Config(api_key=api_key)
+    config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
     selfie_media_data = given_any_selfie_image_media_data()
     document_front_media_data = given_any_document_front_media_data()
     document_back_media_data = given_any_document_back_media_data()
 
-    user_id = onboarding.create_user(verbose=verbose).unwrap_or_return()
+    user_id = onboarding.create_user().unwrap_or_return()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
-        user_id=user_id, media_data=selfie_media_data, verbose=verbose
+        user_id=user_id, media_data=selfie_media_data
     ).unwrap_or_return()
 
     # Create and upload front and back side from a document
     document_id = onboarding.create_document(
-        user_id=user_id, type="idcard", issuing_country="ESP", verbose=verbose
+        user_id=user_id, type="idcard", issuing_country="ESP"
     ).unwrap_or_return()
     onboarding.add_document(
         user_id=user_id,
@@ -35,7 +35,6 @@ def certified_onboarding(api_key: str, verbose: bool = False):
         media_data=document_front_media_data,
         side="front",
         manual=True,
-        verbose=verbose,
     ).unwrap_or_return()
     onboarding.add_document(
         user_id=user_id,
@@ -43,26 +42,21 @@ def certified_onboarding(api_key: str, verbose: bool = False):
         media_data=document_back_media_data,
         side="back",
         manual=True,
-        verbose=verbose,
     ).unwrap_or_return()
 
     # Create Certificate
-    certificate_id = onboarding.create_certificate(
-        user_id=user_id, verbose=verbose
-    ).unwrap_or_return()
+    certificate_id = onboarding.create_certificate(user_id=user_id).unwrap_or_return()
 
     # Retrieved Certificate from certificate_id
     certificate = onboarding.retrieve_certificate(
-        user_id=user_id, certificate_id=certificate_id, verbose=verbose
+        user_id=user_id, certificate_id=certificate_id
     ).unwrap_or_return()
 
     # Save PdfReport data to a file
     with open(f"certificate_{certificate_id}.pdf", "wb") as outfile:
         outfile.write(certificate)
 
-    certificates = onboarding.retrieve_certificates(
-        user_id=user_id, verbose=verbose
-    ).unwrap_or_return()
+    certificates = onboarding.retrieve_certificates(user_id=user_id).unwrap_or_return()
 
     assert len(certificates) >= 1
 

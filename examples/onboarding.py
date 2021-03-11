@@ -10,24 +10,23 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 @meiga
 def onboarding_example(api_key: str, verbose: bool = False):
-
-    config = Config(api_key=api_key)
+    config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
     selfie_media_data = given_any_selfie_image_media_data()
     document_front_media_data = given_any_document_front_media_data()
     document_back_media_data = given_any_document_back_media_data()
 
-    user_id = onboarding.create_user(verbose=verbose).unwrap_or_return()
+    user_id = onboarding.create_user().unwrap_or_return()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
-        user_id=user_id, media_data=selfie_media_data, verbose=verbose
+        user_id=user_id, media_data=selfie_media_data
     ).unwrap_or_return()
 
     # Create and upload front and back side from a document
     document_id = onboarding.create_document(
-        user_id=user_id, type="idcard", issuing_country="ESP", verbose=verbose
+        user_id=user_id, type="idcard", issuing_country="ESP"
     ).unwrap_or_return()
     onboarding.add_document(
         user_id=user_id,
@@ -35,7 +34,6 @@ def onboarding_example(api_key: str, verbose: bool = False):
         media_data=document_front_media_data,
         side="front",
         manual=True,
-        verbose=verbose,
     ).unwrap_or_return()
     onboarding.add_document(
         user_id=user_id,
@@ -43,25 +41,20 @@ def onboarding_example(api_key: str, verbose: bool = False):
         media_data=document_back_media_data,
         side="back",
         manual=True,
-        verbose=verbose,
     ).unwrap_or_return()
 
     # Generate the report
-    report = onboarding.create_report(
-        user_id=user_id, verbose=verbose
-    ).unwrap_or_return()
+    report = onboarding.create_report(user_id=user_id).unwrap_or_return()
 
     if verbose:
         print(f"report: {report}")
 
     # Authorize an user
     # Based on report results and your business logic, you can authorize an user
-    onboarding.authorize_user(user_id=user_id, verbose=verbose)
+    onboarding.authorize_user(user_id=user_id)
 
     # Authenticate an user (only available if a user is already authorized)
-    onboarding.authenticate_user(
-        user_id=user_id, media_data=selfie_media_data, verbose=verbose
-    )
+    onboarding.authenticate_user(user_id=user_id, media_data=selfie_media_data)
 
     return isSuccess
 
@@ -85,4 +78,4 @@ if __name__ == "__main__":
             "Please configure your ONBOARDING_API_KEY to run the example"
         )
     print("Running onboarding example...")
-    onboarding_example(api_key=api_key, verbose=True)
+    onboarding_example(api_key=api_key, verbose=False)
