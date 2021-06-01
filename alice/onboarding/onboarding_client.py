@@ -1267,3 +1267,36 @@ class OnboardingClient:
         print_response(response=response, verbose=verbose)
 
         return response
+
+    @timeit
+    def download(self, user_id: str, href: str, verbose: bool = False) -> Response:
+        """
+
+        Returns the binary data of a media resource
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        href
+            href obtained, for example from the report
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("download", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_user_token)
+
+        response = requests.get(href, headers=headers)
+
+        print_response(response=response, verbose=verbose)
+
+        return response

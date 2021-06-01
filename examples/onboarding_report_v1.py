@@ -4,6 +4,7 @@ from meiga import isSuccess
 from meiga.decorators import meiga
 
 from alice import Onboarding, Config
+from alice.onboarding.report_version import ReportVersion
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
@@ -44,15 +45,15 @@ def onboarding_example(api_key: str, verbose: bool = False):
     ).unwrap_or_return()
 
     # Generate the report
-    report = onboarding.create_report(user_id=user_id).unwrap_or_return()
+    report = onboarding.create_report(
+        user_id=user_id, report_version=ReportVersion.V1
+    ).unwrap_or_return()
 
     if verbose:
         print(f"report: {report}")
 
-    media_id = list(report.get("selfie_reports").values())[0].get("media_avatar_id")
-    media = onboarding.retrieve_media(
-        user_id=user_id, media_id=media_id
-    ).unwrap_or_return()
+    href = report.get("selfies")[0].get("media").get("cropped_face").get("href")
+    media = onboarding.download(user_id=user_id, href=href).unwrap_or_return()
     assert isinstance(media, bytes)
 
     # Authorize an user

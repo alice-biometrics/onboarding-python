@@ -1262,3 +1262,37 @@ class Onboarding:
                     operation="retrieve_media", response=response
                 )
             )
+
+    def download(
+        self, user_id: str, href: str, verbose: bool = False
+    ) -> Result[bytes, OnboardingError]:
+        """
+
+        Returns the binary data of a media resource
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        href
+            href obtained, for example from the report
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a binary object (bytes).
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.download(
+            user_id=user_id, href=href, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return Success(response.content)
+        else:
+            return Failure(
+                OnboardingError.from_response(operation="download", response=response)
+            )
