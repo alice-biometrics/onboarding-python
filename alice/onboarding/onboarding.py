@@ -491,7 +491,7 @@ class Onboarding:
         user_id
             User identifier
         type
-            Type of document [idcard, driverlicense, passport, residencepermit]
+            Type of document [idcard, driverlicense, passport, residencepermit, healthinsurancecard]
         issuing_country
             Issuing Country [ESP, FRA]. Country codes following ISO 3166-1.
 
@@ -695,7 +695,7 @@ class Onboarding:
         self,
         user_id: str,
         verbose: bool = False,
-        report_version: ReportVersion = ReportVersion.V0,
+        report_version: ReportVersion = ReportVersion.DEFAULT,
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -711,7 +711,7 @@ class Onboarding:
         verbose
             Used for print service response as well as the time elapsed
         report_version
-            Set Report Version (Default and Stable ReportVersion.VO)
+            Set Report Version
 
         Returns
         -------

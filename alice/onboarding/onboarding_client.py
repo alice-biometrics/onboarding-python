@@ -494,7 +494,7 @@ class OnboardingClient:
         user_id
             User identifier
         type
-            Type of document [idcard, driverlicense, passport]
+            Type of document [idcard, driverlicense, passport, residencepermit, healthinsurancecard]
         issuing_country
             Issuing Country
         verbose
@@ -702,7 +702,7 @@ class OnboardingClient:
         self,
         user_id: str,
         verbose: bool = False,
-        report_version: ReportVersion = ReportVersion.V0,
+        report_version: ReportVersion = ReportVersion.DEFAULT,
     ) -> Response:
         """
 
@@ -718,7 +718,7 @@ class OnboardingClient:
         verbose
             Used for print service response as well as the time elapsed
         report_version
-            Set Report Version (Default and Stable ReportVersion.VO)
+            Set Report Version
 
         Returns
         -------
