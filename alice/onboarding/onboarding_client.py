@@ -1,19 +1,18 @@
 import json
 import platform
+from typing import List
 
 import requests
 from requests import Response
-from typing import List
 
+import alice
 from alice.auth.auth import Auth
 from alice.onboarding.decision import Decision
-from alice.onboarding.document_source import DocumentSource
-from alice.onboarding.report_version import ReportVersion
-from alice.onboarding.tools import timeit, print_intro, print_response, print_token
-
 from alice.onboarding.device_info import DeviceInfo
-import alice
+from alice.onboarding.document_source import DocumentSource
+from alice.onboarding.tools import print_intro, print_response, print_token, timeit
 from alice.onboarding.user_info import UserInfo
+from alice.onboarding.version import Version
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
@@ -702,7 +701,7 @@ class OnboardingClient:
         self,
         user_id: str,
         verbose: bool = False,
-        report_version: ReportVersion = ReportVersion.DEFAULT,
+        version: Version = Version.DEFAULT,
     ) -> Response:
         """
 
@@ -717,7 +716,7 @@ class OnboardingClient:
             User identifier
         verbose
             Used for print service response as well as the time elapsed
-        report_version
+        version
             Set Report Version
 
         Returns
@@ -730,7 +729,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        headers["Alice-Report-Version"] = report_version.value
+        headers["Alice-Report-Version"] = version.value
 
         response = requests.get(f"{self.url}/user/report", headers=headers)
 
@@ -980,7 +979,11 @@ class OnboardingClient:
 
     @timeit
     def identify_user(
-        self, target_user_id: str, probe_user_ids: List[str], verbose: bool = False
+        self,
+        target_user_id: str,
+        probe_user_ids: List[str],
+        version: Version = Version.DEFAULT,
+        verbose: bool = False,
     ) -> Response:
         """
         Identifies (1:N matching) a user against a N-length list of users.
@@ -991,6 +994,8 @@ class OnboardingClient:
             User identifier (Target)
         probe_user_ids
             List of user identifier to match against (N Probes)
+        version
+            Set Identify Version
         verbose
             Used for print service response as well as the time elapsed
 
@@ -1007,6 +1012,8 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
+        headers["Alice-Identify-Version"] = version.value
+
         data = {"user_ids": probe_user_ids}
 
         response = requests.post(
@@ -1152,6 +1159,7 @@ class OnboardingClient:
         page: int = 1,
         page_size: int = 0,
         descending: bool = True,
+        version: Version = Version.DEFAULT,
         verbose: bool = False,
     ) -> Response:
         """
@@ -1168,6 +1176,8 @@ class OnboardingClient:
             Numbers of authentications that will be returned for each page. To return all the authentications select 0.
         descending
             Order of the authentications according to their creation date.
+        version
+            Set Authentication Version
         verbose
             Used for print service response as well as the time elapsed
 
@@ -1182,6 +1192,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
+        headers["Alice-Authentication-Version"] = version.value
 
         url_query_params = (
             f"?page={str(page)}&page_size={str(page_size)}&descending={str(descending)}"
@@ -1197,7 +1208,11 @@ class OnboardingClient:
 
     @timeit
     def get_authentication(
-        self, user_id: str, authentication_id: str, verbose: bool = False
+        self,
+        user_id: str,
+        authentication_id: str,
+        version: Version = Version.DEFAULT,
+        verbose: bool = False,
     ) -> Response:
         """
 
@@ -1209,6 +1224,8 @@ class OnboardingClient:
             User identifier
         authentication_id
             Authentication identifier.
+        version
+            Set Authentication Version
         verbose
             Used for print service response as well as the time elapsed
 
@@ -1223,6 +1240,8 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
+        headers["Alice-Authentication-Version"] = version.value
+
         response = requests.get(
             f"{self.url}/user/authentication/{authentication_id}", headers=headers
         )

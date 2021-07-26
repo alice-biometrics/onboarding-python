@@ -1,16 +1,16 @@
-from typing import List, Dict
+from typing import Dict, List
 
-from meiga import Result, Success, Failure, isSuccess
+from meiga import Failure, Result, Success, isSuccess
 
+from alice.auth.auth import Auth
 from alice.config import Config
 from alice.onboarding.decision import Decision
-from alice.onboarding.document_source import DocumentSource
-from alice.onboarding.onboarding_errors import OnboardingError
-from alice.onboarding.report_version import ReportVersion
-from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
+from alice.onboarding.document_source import DocumentSource
 from alice.onboarding.onboarding_client import OnboardingClient
-from alice.auth.auth import Auth
+from alice.onboarding.onboarding_errors import OnboardingError
+from alice.onboarding.user_info import UserInfo
+from alice.onboarding.version import Version
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
@@ -695,7 +695,7 @@ class Onboarding:
         self,
         user_id: str,
         verbose: bool = False,
-        report_version: ReportVersion = ReportVersion.DEFAULT,
+        version: Version = Version.DEFAULT,
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -710,7 +710,7 @@ class Onboarding:
             User identifier
         verbose
             Used for print service response as well as the time elapsed
-        report_version
+        version
             Set Report Version
 
         Returns
@@ -720,7 +720,7 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_report(
-            user_id=user_id, verbose=verbose, report_version=report_version
+            user_id=user_id, verbose=verbose, version=version
         )
 
         if response.status_code == 200:
@@ -975,7 +975,11 @@ class Onboarding:
             )
 
     def identify_user(
-        self, target_user_id: str, probe_user_ids: List[str], verbose: bool = False
+        self,
+        target_user_id: str,
+        probe_user_ids: List[str],
+        version: Version = Version.DEFAULT,
+        verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
         Identifies (1:N matching) a user against a N-lenght list of users.
@@ -986,6 +990,8 @@ class Onboarding:
             User identifier (Target)
         probe_user_ids
             List of user identifier to match against (N Probes)
+        version
+            Set Identify version
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -997,6 +1003,7 @@ class Onboarding:
         response = self.onboarding_client.identify_user(
             target_user_id=target_user_id,
             probe_user_ids=probe_user_ids,
+            version=version,
             verbose=verbose,
         )
         if response.status_code == 200:
@@ -1147,6 +1154,7 @@ class Onboarding:
         page: int = 1,
         page_size: int = 0,
         descending: bool = True,
+        version: Version = Version.DEFAULT,
         verbose: bool = False,
     ) -> Result[List[Dict], OnboardingError]:
         """
@@ -1165,7 +1173,10 @@ class Onboarding:
             Numbers of authentications per page that will be returned. To return all the authentications select 0.
         descending
             Order of the authentications according to their creation date.
-
+        version
+            Set Authentication Version
+        verbose
+            Used for print service response as well as the time elapsed
 
         Returns
         -------
@@ -1179,6 +1190,7 @@ class Onboarding:
             page_size=page_size,
             page=page,
             descending=descending,
+            version=version,
             verbose=verbose,
         )
 
@@ -1192,7 +1204,11 @@ class Onboarding:
             )
 
     def get_authentication(
-        self, user_id: str, authentication_id: str, verbose: bool = False
+        self,
+        user_id: str,
+        authentication_id: str,
+        version: Version = Version.DEFAULT,
+        verbose: bool = False,
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -1204,6 +1220,8 @@ class Onboarding:
             User identifier
         authentication_id
             Authentication identifier
+        version
+            Set Authentication Version
         verbose
             Used for print service response as well as the time elapsed
 
@@ -1215,7 +1233,10 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_authentication(
-            user_id=user_id, authentication_id=authentication_id, verbose=verbose
+            user_id=user_id,
+            authentication_id=authentication_id,
+            version=version,
+            verbose=verbose,
         )
 
         if response.status_code == 200:

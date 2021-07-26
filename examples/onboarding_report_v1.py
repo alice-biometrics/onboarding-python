@@ -3,8 +3,8 @@ import os
 from meiga import isSuccess
 from meiga.decorators import meiga
 
-from alice import Onboarding, Config
-from alice.onboarding.report_version import ReportVersion
+from alice import Config, Onboarding
+from alice.onboarding.version import Version
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
@@ -46,7 +46,7 @@ def onboarding_example(api_key: str, verbose: bool = False):
 
     # Generate the report
     report = onboarding.create_report(
-        user_id=user_id, report_version=ReportVersion.V1
+        user_id=user_id, version=Version.V1
     ).unwrap_or_return()
 
     if verbose:

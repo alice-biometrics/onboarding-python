@@ -1,10 +1,10 @@
 from typing import Dict
 
-from meiga import Result, Error, Success
-from meiga.assertions import assert_success, assert_failure
+from meiga import Error, Result, Success
+from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
 
-from alice import Onboarding, Config
+from alice import Config, Onboarding
 
 
 def test_should_return_an_error_when_the_api_key_is_not_configured():
@@ -53,7 +53,6 @@ def test_should_do_complete_onboarding_process(
         onboarding.document_properties(
             user_id=user_id, document_id=document_id
         ).unwrap_or_return()
-
         report = onboarding.create_report(user_id=user_id).unwrap_or_return()
 
         certificate_id = onboarding.create_certificate(
