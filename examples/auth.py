@@ -1,6 +1,6 @@
 import os
 
-from meiga import Result, Error, isSuccess
+from meiga import Error, Result, isSuccess
 from meiga.decorators import meiga
 
 from alice import Auth, Config, Onboarding
@@ -19,11 +19,11 @@ def auth_example(api_key: str, user_id: str, verbose: bool = False):
     config = Config(api_key=api_key, verbose=verbose)
     auth = Auth.from_config(config)
 
-    backend_token = auth.create_backend_token().unwrap_or_return()
+    backend_token = auth.create_backend_token().unwrap_or_throw()
     backend_token_with_user = auth.create_backend_token(
         user_id=user_id
-    ).unwrap_or_return()
-    user_token = auth.create_user_token(user_id=user_id).unwrap_or_return()
+    ).unwrap_or_throw()
+    user_token = auth.create_user_token(user_id=user_id).unwrap_or_throw()
 
     return isSuccess
 

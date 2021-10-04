@@ -3,7 +3,7 @@ import os
 from meiga import isSuccess
 from meiga.decorators import meiga
 
-from alice import Onboarding, Config, UserInfo
+from alice import Config, Onboarding, UserInfo
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
@@ -18,40 +18,40 @@ def screening_onboarding(api_key: str, verbose: bool = False):
 
     user_id = onboarding.create_user(
         user_info=UserInfo(first_name="Carmen", last_name="Espanola")
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
 
     # # Create and upload front and back side from a document
     document_id = onboarding.create_document(
         user_id=user_id, type="idcard", issuing_country="ESP"
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
         media_data=document_back_media_data,
         side="back",
         manual=True,
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
 
     # Screening
-    screening = onboarding.screening(user_id=user_id).unwrap_or_return()
+    screening = onboarding.screening(user_id=user_id).unwrap_or_throw()
 
     assert isinstance(screening, dict)
 
     # Screening (with detail)
     detailed_screening = onboarding.screening(
         user_id=user_id, detail=True
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
     assert isinstance(detailed_screening, dict)
 
     # Add user to monitoring list
-    onboarding.screening_monitor_add(user_id=user_id).unwrap_or_return()
+    onboarding.screening_monitor_add(user_id=user_id).unwrap_or_throw()
 
-    open_alerts = onboarding.screening_monitor_open_alerts().unwrap_or_return()
+    open_alerts = onboarding.screening_monitor_open_alerts().unwrap_or_throw()
     assert isinstance(open_alerts, dict)
 
     onboarding.screening_monitor_delete(
         user_id=user_id, verbose=verbose
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
 
     return isSuccess
 

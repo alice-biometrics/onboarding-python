@@ -1,11 +1,11 @@
 import os
-import string
 import random
+import string
 
 from meiga import isSuccess
 from meiga.decorators import meiga
 
-from alice import Sandbox, Config, UserInfo
+from alice import Config, Sandbox, UserInfo
 
 
 @meiga
@@ -13,10 +13,10 @@ def sandbox_example(sandbox_token: str, email: str, verbose: bool = False):
     config = Config(sandbox_token=sandbox_token, verbose=verbose)
     sandbox = Sandbox.from_config(config)
 
-    user_id = sandbox.create_user(user_info=UserInfo(email=email)).unwrap_or_return()
-    user_token = sandbox.get_user_token(email=email).unwrap_or_return()
-    user = sandbox.get_user(email=email).unwrap_or_return()
-    sandbox.delete_user(email=email).unwrap_or_return()
+    user_id = sandbox.create_user(user_info=UserInfo(email=email)).unwrap_or_throw()
+    user_token = sandbox.get_user_token(email=email).unwrap_or_throw()
+    user = sandbox.get_user(email=email).unwrap_or_throw()
+    sandbox.delete_user(email=email).unwrap_or_throw()
 
     if verbose:
         print(f"user_id: {user_id}")
