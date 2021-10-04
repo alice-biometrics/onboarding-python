@@ -3,7 +3,7 @@ import os
 from meiga import isSuccess
 from meiga.decorators import meiga
 
-from alice import Onboarding, Config
+from alice import Config, Onboarding
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
@@ -17,34 +17,34 @@ def onboarding_example(api_key: str, verbose: bool = False):
     document_front_media_data = given_any_document_front_media_data()
     document_back_media_data = given_any_document_back_media_data()
 
-    user_id = onboarding.create_user().unwrap_or_return()
+    user_id = onboarding.create_user().unwrap_or_throw()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
 
     # Create and upload front and back side from a document
     document_id = onboarding.create_document(
         user_id=user_id, type="idcard", issuing_country="ESP"
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
         media_data=document_front_media_data,
         side="front",
         manual=True,
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
         media_data=document_back_media_data,
         side="back",
         manual=True,
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
 
     # Generate the report
-    report = onboarding.create_report(user_id=user_id).unwrap_or_return()
+    report = onboarding.create_report(user_id=user_id).unwrap_or_throw()
 
     if verbose:
         print(f"report: {report}")
@@ -52,7 +52,7 @@ def onboarding_example(api_key: str, verbose: bool = False):
     media_id = list(report.get("selfie_reports").values())[0].get("media_avatar_id")
     media = onboarding.retrieve_media(
         user_id=user_id, media_id=media_id
-    ).unwrap_or_return()
+    ).unwrap_or_throw()
     assert isinstance(media, bytes)
 
     # Authorize an user
