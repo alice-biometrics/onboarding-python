@@ -22,6 +22,7 @@ def test_should_do_complete_onboarding_process(
     given_any_selfie_image_media_data,
     given_any_document_front_media_data,
     given_any_document_back_media_data,
+    given_any_pdf_media_data,
 ):
     @meiga
     def do_complete_onboarding() -> Result[dict, Error]:
@@ -50,6 +51,9 @@ def test_should_do_complete_onboarding_process(
             side="back",
             manual=True,
         ).handle()
+        onboarding.add_other_trusted_document(
+            user_id=user_id, document_id=document_id, pdf=given_any_pdf_media_data
+        ).unwrap_or_return()
         onboarding.document_properties(
             user_id=user_id, document_id=document_id
         ).unwrap_or_return()

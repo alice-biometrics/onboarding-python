@@ -697,6 +697,122 @@ class OnboardingClient:
         return response
 
     @timeit
+    def delete_other_trusted_document(
+        self, user_id: str, document_id: str, verbose: bool = False
+    ) -> Response:
+        """
+
+        Delete all the stored/extracted information from an other trusted document
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("delete_other_trusted_document", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        print_token("backend_token_with_user", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+        response = requests.delete(
+            f"{self.url}/user/other-trusted-document/{document_id}", headers=headers
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    def void_other_trusted_document(
+        self, user_id: str, document_id: str, verbose: bool = False
+    ) -> Response:
+        """
+
+        Mark an other trusted document as invalid.
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("void_other_trusted_document", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        print_token("backend_token_with_user", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+        response = requests.patch(
+            f"{self.url}/user/other-trusted-document/{document_id}", headers=headers
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def add_other_trusted_document(
+        self,
+        user_id: str,
+        media_data: bytes,
+        verbose: bool = False,
+    ) -> Response:
+        """
+
+        This call is used to upload an other trusted document (OTD) to the onboarding service.
+        An OTD could be a bank receipt, a proof of address, a bill...
+        From a given pdf media, the platform automatically saves the content.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        media_data
+            Binary media data (pdf).
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("add_other_trusted_document", verbose=verbose)
+
+        user_token = self.auth.create_user_token(user_id).unwrap()
+        print_token("user_token", user_token, verbose=verbose)
+
+        headers = self._auth_headers(user_token)
+        files = {"pdf": ("pdf", media_data)}
+
+        response = requests.post(
+            f"{self.url}/user/other-trusted-document", files=files, headers=headers
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
     def create_report(
         self,
         user_id: str,
