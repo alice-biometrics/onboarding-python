@@ -692,10 +692,10 @@ class Onboarding:
             )
 
     def add_other_trusted_document(
-            self,
-            user_id: str,
-            pdf: bytes,
-            verbose: bool = False,
+        self,
+        user_id: str,
+        pdf: bytes,
+        verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -725,7 +725,7 @@ class Onboarding:
         )
 
         if response.status_code == 200:
-            return isSuccess
+            return Success(response.json()["document_id"])
         else:
             return Failure(
                 OnboardingError.from_response(
