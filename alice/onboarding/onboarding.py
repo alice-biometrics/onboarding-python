@@ -691,6 +691,122 @@ class Onboarding:
                 )
             )
 
+    def add_other_trusted_document(
+            self,
+            user_id: str,
+            pdf: bytes,
+            verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+
+        It uploads an other trusted document (OTD) to the onboarding service.
+        An OTD could be a bank receipt, a proof of address, a bill... in pdf format.
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        pdf
+            Binary media data of pdf file.
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a str with a document_id.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.add_other_trusted_document(
+            user_id=user_id,
+            media_data=pdf,
+            verbose=verbose,
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="add_other_trusted_document", response=response
+                )
+            )
+
+    def delete_other_trusted_document(
+        self, user_id: str, document_id: str, verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+
+        Delete all the stored/extracted information from an other trusted document
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.delete_other_trusted_document(
+            user_id=user_id, document_id=document_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="delete_other_trusted_document", response=response
+                )
+            )
+
+    def void_other_trusted_document(
+        self, user_id: str, document_id: str, verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+
+        Mark an other trusted document as invalid.
+
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        document_id
+            Document identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.void_other_trusted_document(
+            user_id=user_id, document_id=document_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="void_other_trusted_document", response=response
+                )
+            )
+
     def create_report(
         self,
         user_id: str,
