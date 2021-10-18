@@ -52,7 +52,7 @@ def test_should_do_complete_onboarding_process(
             manual=True,
         ).handle()
         onboarding.add_other_trusted_document(
-            user_id=user_id, document_id=document_id, pdf=given_any_pdf_media_data
+            user_id=user_id, pdf=given_any_pdf_media_data
         ).unwrap_or_return()
         onboarding.document_properties(
             user_id=user_id, document_id=document_id
