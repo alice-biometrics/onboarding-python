@@ -1,10 +1,10 @@
 from typing import Dict, List
 
-from meiga import Result, Success, Failure, isSuccess
+from meiga import Failure, Result, Success, isSuccess
 
+from alice.auth.auth import Auth
 from alice.config import Config
 from alice.onboarding.onboarding_errors import OnboardingError
-from alice.auth.auth import Auth
 from alice.webhooks.webhook import Webhook
 from alice.webhooks.webhooks_client import WebhooksClient
 
@@ -63,7 +63,7 @@ class Webhooks:
 
     def create_webhook(
         self, webhook: Webhook, verbose: bool = False
-    ) -> Result[Dict, OnboardingError]:
+    ) -> Result[str, OnboardingError]:
         """
 
         It creates a new Webhook in the onboarding service.
