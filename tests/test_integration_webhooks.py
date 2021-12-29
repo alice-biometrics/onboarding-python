@@ -95,6 +95,4 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
 
     sleep(3.0)
 
-    # Expected not found error when Retrieve all webhook results of an deleted webhook
-    result = webhooks_client.get_webhook_results(webhook_id)
-    assert_failure(result)
+    webhooks_client.get_webhook_results(webhook_id)
