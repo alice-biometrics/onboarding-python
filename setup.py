@@ -1,17 +1,23 @@
+import os
+
 from setuptools import setup
 
+CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
+PACKAGE_NAME = "alice-onboarding"
 VERSION = open("alice/VERSION", "r").read()
-REQUIRES = [
-    "pyjwt==2.1.0",
-    "requests>=2.18.0",
-    "dataclasses>=0.6",
-    "dataclasses-json>=0.2.14",
-    "meiga==1.2.12",
-]
+
+with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
+    README = fid.read()
+
+with open("requirements/requirements.txt") as f:
+    REQUIRES = f.read().splitlines()
 
 setup(
-    name="alice-onboarding",
+    name=PACKAGE_NAME,
     version=VERSION,
+    long_description=README,
+    long_description_content_type="text/markdown",
+    keywords=["onboarding", "biometrics", "kyc", "alice"],
     description="Alice Onboarding Python SDK",
     url="https://github.com/alice-biometrics/onboarding-python",
     author="Alice Biometrics",

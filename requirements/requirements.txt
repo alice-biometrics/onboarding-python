@@ -1,0 +1,5 @@
+pyjwt==2.3.0
+requests>=2.18.0
+dataclasses>=0.6
+dataclasses-json>=0.2.14
+meiga==1.2.12

@@ -1,5 +1,6 @@
 from typing import Dict
 
+import pytest
 from meiga import Error, Result, Success
 from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
@@ -7,6 +8,7 @@ from meiga.decorators import meiga
 from alice import Config, Onboarding
 
 
+@pytest.mark.unit
 def test_should_return_an_error_when_the_api_key_is_not_configured():
 
     config = Config()
@@ -17,6 +19,7 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
     assert_failure(result)
 
 
+@pytest.mark.unit
 def test_should_do_complete_onboarding_process(
     given_valid_api_key,
     given_any_selfie_image_media_data,

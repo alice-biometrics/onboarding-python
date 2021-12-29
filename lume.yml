@@ -1,0 +1,23 @@
+name: onboarding-python
+
+install:
+  run:
+    - pip install --upgrade --upgrade-strategy eager -r requirements/dev-requirements.txt -r requirements/requirements.txt
+    - pip install -e .
+steps:
+  clean:
+    run:
+    - rm -f .coverage
+    - rm -rf output
+    - rm -rf .pytest_cache
+    - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+  lint:
+    run:
+      - black --check .
+      - flake8 alice
+  check-requirements:
+    run: safety check -r requirements/requirements.txt
+  static-analysis:
+    run: mypy --namespace-packages alice
+  test:
+    run: pytest

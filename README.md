@@ -5,7 +5,7 @@
 
 The aim of this Python package is to manage the authentication and backend operations against ALiCE Onboarding API.
 
-If you want more information about how to integrate with ALiCE technology, please contact us at support@alicebiometrics.com.
+If you want more information about how to integrate with Alice technology, please contact us at support@alicebiometrics.com.
 
 ## Table of Contents
 - [Requirements](#requirements)
