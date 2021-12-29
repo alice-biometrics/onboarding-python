@@ -10,7 +10,6 @@ env:
   PACKAGE_NAME: alice
   ONBOARDING_API_KEY: ${{ secrets.ONBOARDING_API_KEY }}
   ONBOARDING_SANDBOX_TOKEN: ${{ secrets.ONBOARDING_SANDBOX_TOKEN }}
-  ALICE_GITHUB_ACCESS_TOKEN: ${{ secrets.ALICE_GITHUB_ACCESS_TOKEN }}
   CONCURRENT_TESTING: True
 
 jobs:
@@ -80,4 +79,4 @@ jobs:
     - name: Push changes
       uses: alice-biometrics/github-push-action@master
       with:
-        github_token: ${{ secrets.ALICE_GITHUB_ACCESS_TOKEN }}
+        github_token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
