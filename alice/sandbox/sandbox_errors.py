@@ -1,15 +1,13 @@
-from typing import Dict
+from typing import Any, Dict, Optional
 
-from dataclasses import dataclass
-from meiga import Error
+from pydantic import BaseModel
 from requests import Response
 
 
-@dataclass
-class SandboxError(Error):
+class SandboxError(BaseModel):
     operation: str
     code: int
-    message: Dict[str, str]
+    message: Optional[Dict[str, Any]] = None
 
     def __repr__(self):
         return f"[SandboxError: [operation: {self.operation} | code: {self.code} | message: {self.message}]]"

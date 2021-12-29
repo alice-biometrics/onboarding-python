@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Config:
+class Config(BaseModel):
     onboarding_url: str = "https://apis.alicebiometrics.com/onboarding"
     sandbox_url: str = "https://apis.alicebiometrics.com/onboarding/sandbox"
     api_key: str = None

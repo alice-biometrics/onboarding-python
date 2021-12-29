@@ -1,5 +1,4 @@
 pyjwt==2.3.0
-requests>=2.18.0
-dataclasses>=0.6
-dataclasses-json>=0.2.14
+pydantic==1.8.2
+requests==2.26.0
 meiga==1.2.12

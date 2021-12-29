@@ -1,15 +1,13 @@
-from typing import Dict
+from typing import Any, Dict, Optional
 
-from dataclasses import dataclass
-from meiga import Error
+from pydantic import BaseModel
 from requests import Response
 
 
-@dataclass
-class OnboardingError(Error):
+class OnboardingError(BaseModel):
     operation: str
     code: int
-    message: Dict[str, str]
+    message: Optional[Dict[str, Any]] = None
 
     def __str__(self):
         return self.__repr__()

@@ -95,10 +95,10 @@ class OnboardingClient:
         data = None
         if user_info:
             data = data if data is not None else {}
-            data.update(json.loads(user_info.to_json()))
+            data.update(user_info.dict())
         if device_info:
             data = data if data is not None else {}
-            data.update(json.loads(device_info.to_json()))
+            data.update(device_info.dict())
 
         response = requests.post(f"{self.url}/user", headers=headers, data=data)
 

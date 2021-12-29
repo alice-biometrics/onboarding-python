@@ -1,7 +1,7 @@
 import pytest
 from meiga.assertions import assert_failure, assert_success
 
-from alice import Config, Sandbox, UserInfo
+from alice import Config, DeviceInfo, Sandbox, UserInfo
 
 
 @pytest.mark.unit
@@ -24,7 +24,8 @@ def test_should_create_a_user_and_get_user_token_and_delete_it(
     sandbox = Sandbox.from_config(config)
 
     result_create_user = sandbox.create_user(
-        user_info=UserInfo(email=given_any_valid_mail)
+        user_info=UserInfo(email=given_any_valid_mail),
+        device_info=DeviceInfo(device_platform="Android"),
     )
     assert_success(result_create_user)
 

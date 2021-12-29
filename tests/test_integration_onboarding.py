@@ -5,7 +5,7 @@ from meiga import Error, Result, Success
 from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
 
-from alice import Config, Onboarding
+from alice import Config, DeviceInfo, Onboarding, UserInfo
 
 
 @pytest.mark.unit
@@ -33,7 +33,10 @@ def test_should_do_complete_onboarding_process(
 
         onboarding = Onboarding.from_config(config)
 
-        user_id = onboarding.create_user().unwrap_or_return()
+        user_id = onboarding.create_user(
+            user_info=UserInfo(first_name="Alice", last_name="Biometrics"),
+            device_info=DeviceInfo(device_platform="Android"),
+        ).unwrap_or_return()
         onboarding.add_selfie(
             user_id=user_id, media_data=given_any_selfie_image_media_data
         ).unwrap_or_return()
