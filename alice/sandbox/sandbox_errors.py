@@ -1,7 +1,7 @@
-from typing import Dict
+from typing import Any, Dict, Optional
 
-from dataclasses import dataclass
 from meiga import Error
+from pydantic.dataclasses import dataclass
 from requests import Response
 
 
@@ -9,7 +9,7 @@ from requests import Response
 class SandboxError(Error):
     operation: str
     code: int
-    message: Dict[str, str]
+    message: Optional[Dict[str, Any]] = None
 
     def __repr__(self):
         return f"[SandboxError: [operation: {self.operation} | code: {self.code} | message: {self.message}]]"

@@ -1,11 +1,14 @@
+import os
 import secrets
 from time import sleep
 
+import pytest
 from meiga.assertions import assert_failure, assert_success
 
-from alice import Config, Webhooks, Webhook
+from alice import Config, Webhook, Webhooks
 
 
+@pytest.mark.unit
 def test_should_return_an_error_when_the_api_key_is_not_configured():
 
     config = Config()
@@ -16,6 +19,7 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
     assert_failure(result)
 
 
+@pytest.mark.unit
 def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     config = Config(api_key=given_valid_api_key)
     webhooks_client = Webhooks.from_config(config)
@@ -92,6 +96,13 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
 
     sleep(3.0)
 
-    # Expected not found error when Retrieve all webhook results of an deleted webhook
-    result = webhooks_client.get_webhook_results(webhook_id)
-    assert_failure(result)
+    assert_webhook_results_status(webhooks_client, webhook_id)
+
+
+def assert_webhook_results_status(webhooks_client: Webhooks, webhook_id: str):
+    if os.getenv("CONCURRENT_TESTING", False):
+        webhooks_client.get_webhook_results(webhook_id)
+    else:
+        # Expected not found error when Retrieve all webhook results of an deleted webhook
+        result = webhooks_client.get_webhook_results(webhook_id)
+        assert_failure(result)

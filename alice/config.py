@@ -1,8 +1,9 @@
-from dataclasses import dataclass
+from meiga import Error
+from pydantic.dataclasses import dataclass
 
 
 @dataclass
-class Config:
+class Config(Error):
     onboarding_url: str = "https://apis.alicebiometrics.com/onboarding"
     sandbox_url: str = "https://apis.alicebiometrics.com/onboarding/sandbox"
     api_key: str = None

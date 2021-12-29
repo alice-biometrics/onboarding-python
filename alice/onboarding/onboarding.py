@@ -1080,7 +1080,6 @@ class Onboarding:
         response = self.onboarding_client.screening_monitor_open_alerts(
             start_index=start_index, size=size, verbose=verbose
         )
-
         if response.status_code == 200:
             return Success(response.json())
         else:

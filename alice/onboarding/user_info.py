@@ -1,12 +1,9 @@
 from typing import Optional
 
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from pydantic import BaseModel
 
 
-@dataclass_json
-@dataclass
-class UserInfo:
+class UserInfo(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[str] = None

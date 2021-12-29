@@ -1,12 +1,8 @@
-import json
+from requests import Response, request
 
-from requests import request, Response
-
-from alice.onboarding.tools import timeit, print_intro, print_response
-
-from alice.onboarding.user_info import UserInfo
 from alice.onboarding.device_info import DeviceInfo
-
+from alice.onboarding.tools import print_intro, print_response, timeit
+from alice.onboarding.user_info import UserInfo
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 
@@ -76,10 +72,10 @@ class SandboxClient:
         data = None
         if user_info:
             data = data if data is not None else {}
-            data.update(json.loads(user_info.to_json()))
+            data.update(user_info.dict())
         if device_info:
             data = data if data is not None else {}
-            data.update(json.loads(device_info.to_json()))
+            data.update(device_info.dict())
 
         response = request("POST", self.url + "/user", headers=headers, data=data)
 

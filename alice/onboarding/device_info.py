@@ -1,12 +1,9 @@
 from typing import Optional
 
-from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from pydantic import BaseModel
 
 
-@dataclass_json
-@dataclass
-class DeviceInfo:
+class DeviceInfo(BaseModel):
     device_platform: Optional[str] = None
     device_platform_version: Optional[str] = None
     device_model: Optional[str] = None
