@@ -3,7 +3,7 @@
 <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png" width=auto>
 
 
-The aim of this Python package is to manage the authentication and backend operations against ALiCE Onboarding API.
+The aim of this Python package is to manage the authentication and backend operations against Alice Onboarding API.
 
 If you want more information about how to integrate with Alice technology, please contact us at support@alicebiometrics.com.
 
@@ -46,7 +46,7 @@ config = Config(api_key=given_valid_api_key)
 
 #### Onboarding
 
-To manage the operations with ALiCE Onboarding API, use *Onboarding* class. 
+To manage the operations with Alice Onboarding API, use *Onboarding* class. 
 This class deals with authentication automatically.
 
 ```console
@@ -108,7 +108,7 @@ see certified onboarding usage [here](examples/onboarding_with_certificate.py)
 
 #### User Screening
 
-ALiCE Onboarding API bring us the opportunity of screening a user over different databases & lists (sanctions, PEP, etc)..
+Alice Onboarding API bring us the opportunity of screening a user over different databases & lists (sanctions, PEP, etc)..
 
 ```console
 export ONBOARDING_API_KEY="<YOUR-API-KEY>"
@@ -133,7 +133,7 @@ Note: You can configure your webhooks using the Onboarding dashboard.
 
 ## Documentation :page_facing_up:
 
-For more information about ALiCE Onboarding:  https://docs.alicebiometrics.com/onboarding/
+For more information about Alice Onboarding:  https://docs.alicebiometrics.com/onboarding/
 
 ## Contact :mailbox_with_mail:
 

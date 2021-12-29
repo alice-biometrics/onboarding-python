@@ -1,9 +1,12 @@
-import time
 import json
+import time
+from typing import Optional
+
 import jwt
 import requests
 from requests import Response
-from alice.onboarding.tools import timeit, print_intro, print_response
+
+from alice.onboarding.tools import print_intro, print_response, timeit
 
 
 class AuthClient:
@@ -14,7 +17,7 @@ class AuthClient:
 
     @timeit
     def create_backend_token(
-        self, user_id: str = None, verbose: bool = False
+        self, user_id: str = None, verbose: Optional[bool] = False
     ) -> Response:
 
         suffix = " (with user)" if user_id else ""
@@ -38,7 +41,9 @@ class AuthClient:
         return response
 
     @timeit
-    def create_user_token(self, user_id: str, verbose: bool = False) -> Response:
+    def create_user_token(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Response:
 
         print_intro("create_user_token", verbose=verbose)
 

@@ -1,9 +1,11 @@
 import json
+from typing import Optional
 
-from meiga import Success, Failure, Result
+from meiga import Failure, Result, Success
+
+from alice.config import Config
 
 from .auth_client import AuthClient
-from alice.config import Config
 from .auth_errors import AuthError
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
@@ -16,13 +18,15 @@ class Auth:
             api_key=config.api_key, url=config.onboarding_url, verbose=config.verbose
         )
 
-    def __init__(self, api_key, url: str = DEFAULT_URL, verbose: bool = False):
+    def __init__(
+        self, api_key, url: str = DEFAULT_URL, verbose: Optional[bool] = False
+    ):
         self._auth_client = AuthClient(url, api_key)
         self.url = url
         self.verbose = verbose
 
     def create_backend_token(
-        self, user_id: str = None, verbose: bool = False
+        self, user_id: str = None, verbose: Optional[bool] = False
     ) -> Result[str, AuthError]:
         """
         Returns a BACKEND_TOKEN or BACKEND_TOKEN_WITH_USER depending of user_id given parameter.
@@ -54,7 +58,7 @@ class Auth:
             )
 
     def create_user_token(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[str, AuthError]:
         """
         Returns a USER_TOKEN.

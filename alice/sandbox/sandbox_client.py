@@ -1,3 +1,5 @@
+from typing import Optional
+
 from requests import Response, request
 
 from alice.onboarding.device_info import DeviceInfo
@@ -17,7 +19,7 @@ class SandboxClient:
         return auth_headers
 
     @timeit
-    def healthcheck(self, verbose: bool = False) -> Response:
+    def healthcheck(self, verbose: Optional[bool] = False) -> Response:
         """
 
         Runs a healthcheck on the service to see if there are any problems.
@@ -45,7 +47,7 @@ class SandboxClient:
         self,
         user_info: UserInfo = None,
         device_info: DeviceInfo = None,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
 
@@ -84,7 +86,7 @@ class SandboxClient:
         return response
 
     @timeit
-    def delete_user(self, email: str, verbose: bool = False) -> Response:
+    def delete_user(self, email: str, verbose: Optional[bool] = False) -> Response:
         """
 
         Delete all the information of a user
@@ -111,7 +113,7 @@ class SandboxClient:
         return response
 
     @timeit
-    def get_user(self, email: str, verbose: bool = False) -> Response:
+    def get_user(self, email: str, verbose: Optional[bool] = False) -> Response:
         """
 
         Returns User status to be used as feedback from the onboarding process
@@ -139,7 +141,7 @@ class SandboxClient:
         return response
 
     @timeit
-    def get_user_token(self, email: str, verbose: bool = False) -> Response:
+    def get_user_token(self, email: str, verbose: Optional[bool] = False) -> Response:
         """
 
         Returns user token linked to Onboarding User managed by the Sandbox Service

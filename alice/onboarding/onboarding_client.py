@@ -1,6 +1,6 @@
 import json
 import platform
-from typing import List
+from typing import List, Optional
 
 import requests
 from requests import Response
@@ -34,7 +34,7 @@ class OnboardingClient:
         return auth_headers
 
     @timeit
-    def healthcheck(self, verbose: bool = False) -> Response:
+    def healthcheck(self, verbose: Optional[bool] = False) -> Response:
         """
 
         Runs a healthcheck on the service to see if there are any problems.
@@ -62,7 +62,7 @@ class OnboardingClient:
         self,
         user_info: UserInfo = None,
         device_info: DeviceInfo = None,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
 
@@ -107,7 +107,7 @@ class OnboardingClient:
         return response
 
     @timeit
-    def delete_user(self, user_id: str, verbose: bool = False) -> Response:
+    def delete_user(self, user_id: str, verbose: Optional[bool] = False) -> Response:
         """
 
         Delete all the information of a user
@@ -137,7 +137,9 @@ class OnboardingClient:
         return response
 
     @timeit
-    def get_user_status(self, user_id: str, verbose: bool = False) -> Response:
+    def get_user_status(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Response:
         """
 
         Returns User status to be used as feedback from the onboarding process
@@ -168,7 +170,7 @@ class OnboardingClient:
         return response
 
     @timeit
-    def get_users_stats(self, verbose: bool = False) -> Response:
+    def get_users_stats(self, verbose: Optional[bool] = False) -> Response:
         """
 
         Returns statistics about users in the Onboarding platform.
@@ -196,7 +198,7 @@ class OnboardingClient:
         return response
 
     @timeit
-    def get_users(self, verbose: bool = False) -> Response:
+    def get_users(self, verbose: Optional[bool] = False) -> Response:
         """
 
         Returns all users you have created, sorted by creation date in descending order.
@@ -226,7 +228,7 @@ class OnboardingClient:
     @timeit
     def get_users_status(
         self,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
         page: int = 1,
         page_size: int = 0,
         descending: bool = True,
@@ -294,7 +296,7 @@ class OnboardingClient:
         selfie_media_id: str,
         decision: Decision,
         additional_feedback: List[str] = [],
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
 
@@ -344,7 +346,7 @@ class OnboardingClient:
 
     @timeit
     def add_selfie(
-        self, user_id: str, media_data: bytes, verbose: bool = False
+        self, user_id: str, media_data: bytes, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -383,7 +385,7 @@ class OnboardingClient:
         return response
 
     @timeit
-    def delete_selfie(self, user_id: str, verbose: bool = False) -> Response:
+    def delete_selfie(self, user_id: str, verbose: Optional[bool] = False) -> Response:
         """
 
         This call is used to delete the video of the user's face to the onboarding service.
@@ -415,7 +417,7 @@ class OnboardingClient:
         return response
 
     @timeit
-    def void_selfie(self, user_id: str, verbose: bool = False) -> Response:
+    def void_selfie(self, user_id: str, verbose: Optional[bool] = False) -> Response:
         """
 
         This call is used to void the video of the user's face to the onboarding service.
@@ -447,7 +449,9 @@ class OnboardingClient:
         return response
 
     @timeit
-    def supported_documents(self, user_id: str, verbose: bool = False) -> Response:
+    def supported_documents(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Response:
         """
         This method is used to obtain a hierarchical-ordered dict with the information of the documents supported by the API.
 
@@ -481,7 +485,11 @@ class OnboardingClient:
 
     @timeit
     def create_document(
-        self, user_id: str, type: str, issuing_country: str, verbose: bool = False
+        self,
+        user_id: str,
+        type: str,
+        issuing_country: str,
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
 
@@ -521,7 +529,7 @@ class OnboardingClient:
 
     @timeit
     def delete_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -556,7 +564,7 @@ class OnboardingClient:
         return response
 
     def void_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -600,7 +608,7 @@ class OnboardingClient:
         manual: bool = False,
         source: DocumentSource = DocumentSource.file,
         fields: dict = None,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
 
@@ -659,7 +667,7 @@ class OnboardingClient:
 
     @timeit
     def document_properties(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -698,7 +706,7 @@ class OnboardingClient:
 
     @timeit
     def delete_other_trusted_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -733,7 +741,7 @@ class OnboardingClient:
         return response
 
     def void_other_trusted_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -772,7 +780,8 @@ class OnboardingClient:
         self,
         user_id: str,
         media_data: bytes,
-        verbose: bool = False,
+        category: Optional[str] = None,
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
 
@@ -788,6 +797,8 @@ class OnboardingClient:
             Document identifier
         media_data
             Binary media data (pdf).
+        category
+            Optional value to identify an Other Trusted Document (e.g invoice)
         verbose
             Used for print service response as well as the time elapsed
 
@@ -804,8 +815,13 @@ class OnboardingClient:
         headers = self._auth_headers(user_token)
         files = {"pdf": ("pdf", media_data)}
 
+        data = dict(category=category) if category else dict()
+
         response = requests.post(
-            f"{self.url}/user/other-trusted-document", files=files, headers=headers
+            f"{self.url}/user/other-trusted-document",
+            files=files,
+            data=data,
+            headers=headers,
         )
 
         print_response(response=response, verbose=verbose)
@@ -816,7 +832,7 @@ class OnboardingClient:
     def create_report(
         self,
         user_id: str,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
         version: Version = Version.DEFAULT,
     ) -> Response:
         """
@@ -855,7 +871,10 @@ class OnboardingClient:
 
     @timeit
     def create_certificate(
-        self, user_id: str, template_name: str = "default", verbose: bool = False
+        self,
+        user_id: str,
+        template_name: str = "default",
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
         This call is used to create a Certificate (Signed PDF Report) of the onboarding process for a specific user.
@@ -894,7 +913,7 @@ class OnboardingClient:
 
     @timeit
     def retrieve_certificate(
-        self, user_id: str, certificate_id: str, verbose: bool = False
+        self, user_id: str, certificate_id: str, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -930,7 +949,9 @@ class OnboardingClient:
         return response
 
     @timeit
-    def retrieve_certificates(self, user_id: str, verbose: bool = False) -> Response:
+    def retrieve_certificates(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Response:
         """
 
         Returns summary info for created certificates
@@ -959,7 +980,7 @@ class OnboardingClient:
 
     @timeit
     def screening(
-        self, user_id: str, detail: bool = False, verbose: bool = False
+        self, user_id: str, detail: bool = False, verbose: Optional[bool] = False
     ) -> Response:
         """
         This call is used to check on the user using different databases & lists (sanctions, PEP, etc)..
@@ -996,7 +1017,9 @@ class OnboardingClient:
         return response
 
     @timeit
-    def screening_monitor_add(self, user_id: str, verbose: bool = False) -> Response:
+    def screening_monitor_add(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Response:
         """
         This call is adds a user to the AML monitoring list.
 

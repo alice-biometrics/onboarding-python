@@ -1,5 +1,6 @@
 import os
 import secrets
+from typing import Optional
 
 from meiga import isSuccess
 from meiga.assertions import assert_success
@@ -11,7 +12,7 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
 @meiga
-def configure_webhooks(api_key: str, verbose: bool = False):
+def configure_webhooks(api_key: str, verbose: Optional[bool] = False):
     config = Config(api_key=api_key, verbose=verbose)
     webhooks_client = Webhooks.from_config(config)
 
