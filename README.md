@@ -7,23 +7,9 @@ The aim of this Python package is to manage the authentication and backend opera
 
 If you want more information about how to integrate with Alice technology, please contact us at support@alicebiometrics.com.
 
-## Table of Contents
-- [Requirements](#requirements)
-- [Installation :computer:](#installation-computer)
-- [Getting Started :chart_with_upwards_trend:](#getting-started-chart_with_upwards_trend)
-  * [Config](#config)
-  * [Onboarding](#onboarding)
-- [Authentication :closed_lock_with_key:](#authentication-closed_lock_with_key)
-- [Advanced Features :tophat:](#advanced-features-tophat)
-  * [Certified Onboarding](#certified-onboarding)
-  * [User Screening](#user-screening)
-- [Documentation :page_facing_up:](#documentation-page_facing_up)
-- [Contact :mailbox_with_mail:](#contact-mailbox_with_mail)
-
-
 ## Requirements
 
-Python 3.6+
+Python 3.7+ 
 
 ## Installation :computer:
 
@@ -31,7 +17,7 @@ Python 3.6+
 pip install alice-onboarding
 ```
 
-## Getting Started :chart_with_upwards_trend:
+## Getting Started 📈
 
 #### Config 
 
@@ -56,7 +42,7 @@ python examples/onboarding.py
 
 see onboarding example [here](examples/onboarding.py)
 
-## Authentication :closed_lock_with_key:
+## Authentication 🔐
 
 To manage authorization and token creations, use *Auth* class.
 
@@ -91,7 +77,7 @@ python examples/sandbox.py
 
 see sandbox example [here](examples/sandbox.py)
 
-## Advanced features :tophat:
+## Advanced features 🎩
 
 :warning: These features could not be available by default. If you obtain a HTTP Error (405 method not allowed). Please, contact us to make them available for your credentials.
 
@@ -131,11 +117,11 @@ see onboarding webhooks usage [here](examples/onboarding_with_webhooks.py)
 
 Note: You can configure your webhooks using the Onboarding dashboard.
 
-## Documentation :page_facing_up:
+## Documentation 📄
 
 For more information about Alice Onboarding:  https://docs.alicebiometrics.com/onboarding/
 
-## Contact :mailbox_with_mail:
+## Contact 📬
 
 support@alicebiometrics.com
 
