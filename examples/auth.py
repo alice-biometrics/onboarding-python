@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from meiga import Error, Result, isSuccess
 from meiga.decorators import meiga
