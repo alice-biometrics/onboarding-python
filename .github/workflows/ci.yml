@@ -27,9 +27,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: actions/cache@v2
-          with:
-            path: ${{ env.pythonLocation }}
-            key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
       - name: Install Requirements
         run: |
           pip install lume
