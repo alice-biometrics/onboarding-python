@@ -100,9 +100,6 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
 
 
 def assert_webhook_results_status(webhooks_client: Webhooks, webhook_id: str):
-    import pdb
-
-    pdb.set_trace()
     if os.getenv("CONCURRENT_TESTING", False):
         webhooks_client.get_webhook_results(webhook_id)
     else:
