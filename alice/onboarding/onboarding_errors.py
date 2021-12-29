@@ -1,10 +1,12 @@
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel
+from meiga import Error
+from pydantic.dataclasses import dataclass
 from requests import Response
 
 
-class OnboardingError(BaseModel):
+@dataclass
+class OnboardingError(Error):
     operation: str
     code: int
     message: Optional[Dict[str, Any]] = None
