@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from meiga import Failure, Result, Success, isSuccess
 
@@ -26,14 +26,14 @@ class Webhooks:
         auth: Auth,
         url: str = DEFAULT_URL,
         send_agent: bool = True,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ):
         self.webhooks_client = WebhooksClient(auth=auth, url=url, send_agent=send_agent)
         self.url = url
         self.verbose = verbose
 
     def get_available_events(
-        self, verbose: bool = False
+        self, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
         Get public available events.
@@ -62,7 +62,7 @@ class Webhooks:
             )
 
     def create_webhook(
-        self, webhook: Webhook, verbose: bool = False
+        self, webhook: Webhook, verbose: Optional[bool] = False
     ) -> Result[str, OnboardingError]:
         """
 
@@ -94,7 +94,7 @@ class Webhooks:
             )
 
     def update_webhook(
-        self, webhook: Webhook, verbose: bool = False
+        self, webhook: Webhook, verbose: Optional[bool] = False
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -126,7 +126,7 @@ class Webhooks:
             )
 
     def update_webhook_activation(
-        self, webhook_id: str, active: bool, verbose: bool = False
+        self, webhook_id: str, active: bool, verbose: Optional[bool] = False
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -162,7 +162,7 @@ class Webhooks:
             )
 
     def ping_webhook(
-        self, webhook_id: str, verbose: bool = False
+        self, webhook_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
         Send ping event to configured and active Webhook
@@ -194,7 +194,7 @@ class Webhooks:
             )
 
     def delete_webhook(
-        self, webhook_id: str, verbose: bool = False
+        self, webhook_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
         Remove a configured Webhook
@@ -226,7 +226,7 @@ class Webhooks:
             )
 
     def get_webhook(
-        self, webhook_id: str, verbose: bool = False
+        self, webhook_id: str, verbose: Optional[bool] = False
     ) -> Result[Webhook, OnboardingError]:
         """
         Returns Webhook info
@@ -258,7 +258,7 @@ class Webhooks:
             )
 
     def get_webhooks(
-        self, verbose: bool = False
+        self, verbose: Optional[bool] = False
     ) -> Result[List[Webhook], OnboardingError]:
         """
         Returns Webhook info
@@ -288,7 +288,7 @@ class Webhooks:
             )
 
     def get_webhook_results(
-        self, webhook_id: str, verbose: bool = False
+        self, webhook_id: str, verbose: Optional[bool] = False
     ) -> Result[Webhook, OnboardingError]:
         """
         Returns all the result of delivered events from a specific Webhook
@@ -320,7 +320,7 @@ class Webhooks:
             )
 
     def get_last_webhook_result(
-        self, webhook_id: str, verbose: bool = False
+        self, webhook_id: str, verbose: Optional[bool] = False
     ) -> Result[Webhook, OnboardingError]:
         """
         Returns last result of delivered event from a specific Webhook

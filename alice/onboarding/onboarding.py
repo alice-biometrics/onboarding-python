@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from meiga import Failure, Result, Success, isSuccess
 
@@ -30,7 +30,7 @@ class Onboarding:
         auth: Auth,
         url: str = DEFAULT_URL,
         send_agent: bool = True,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ):
         self.onboarding_client = OnboardingClient(
             auth=auth, url=url, send_agent=send_agent
@@ -38,7 +38,9 @@ class Onboarding:
         self.url = url
         self.verbose = verbose
 
-    def healthcheck(self, verbose: bool = False) -> Result[bool, OnboardingError]:
+    def healthcheck(
+        self, verbose: Optional[bool] = False
+    ) -> Result[bool, OnboardingError]:
         """
         Runs a healthcheck on the service to see if there are any problems.
 
@@ -69,7 +71,7 @@ class Onboarding:
         self,
         user_info: UserInfo = None,
         device_info: DeviceInfo = None,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Result[str, OnboardingError]:
         """
 
@@ -107,7 +109,7 @@ class Onboarding:
             )
 
     def delete_user(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -139,7 +141,7 @@ class Onboarding:
             )
 
     def get_user_status(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[Dict, OnboardingError]:
         """
 
@@ -172,7 +174,9 @@ class Onboarding:
                 )
             )
 
-    def get_users(self, verbose: bool = False) -> Result[List[str], OnboardingError]:
+    def get_users(
+        self, verbose: Optional[bool] = False
+    ) -> Result[List[str], OnboardingError]:
         """
 
         Returns all users you have created, sorted by creation date in descending order.
@@ -198,7 +202,9 @@ class Onboarding:
                 OnboardingError.from_response(operation="get_users", response=response)
             )
 
-    def get_users_stats(self, verbose: bool = False) -> Result[Dict, OnboardingError]:
+    def get_users_stats(
+        self, verbose: Optional[bool] = False
+    ) -> Result[Dict, OnboardingError]:
         """
 
         Returns statistics about users in the Onboarding platform.
@@ -228,7 +234,7 @@ class Onboarding:
 
     def get_users_status(
         self,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
         page: int = 1,
         page_size: int = 0,
         descending: bool = True,
@@ -294,7 +300,7 @@ class Onboarding:
         selfie_media_id: str,
         decision: Decision,
         additional_feedback: List[str] = [],
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -341,7 +347,7 @@ class Onboarding:
             )
 
     def add_selfie(
-        self, user_id: str, media_data: bytes, verbose: bool = False
+        self, user_id: str, media_data: bytes, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -376,7 +382,7 @@ class Onboarding:
             )
 
     def delete_selfie(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -411,7 +417,7 @@ class Onboarding:
             )
 
     def void_selfie(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -444,7 +450,7 @@ class Onboarding:
             )
 
     def supported_documents(
-        self, user_id: str = None, verbose: bool = False
+        self, user_id: str = None, verbose: Optional[bool] = False
     ) -> Result[Dict[str, str], OnboardingError]:
         """
         This method is used to obtain a hierarchical-ordered dict with the information of the documents supported by the API.
@@ -479,7 +485,11 @@ class Onboarding:
             )
 
     def create_document(
-        self, user_id: str, type: str, issuing_country: str, verbose: bool = False
+        self,
+        user_id: str,
+        type: str,
+        issuing_country: str,
+        verbose: Optional[bool] = False,
     ) -> Result[str, OnboardingError]:
         """
 
@@ -519,7 +529,7 @@ class Onboarding:
             )
 
     def delete_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -556,7 +566,7 @@ class Onboarding:
             )
 
     def void_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -601,7 +611,7 @@ class Onboarding:
         manual: bool = False,
         source: DocumentSource = DocumentSource.file,
         fields: dict = None,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -654,7 +664,7 @@ class Onboarding:
             )
 
     def document_properties(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Result[str, OnboardingError]:
         """
 
@@ -695,7 +705,8 @@ class Onboarding:
         self,
         user_id: str,
         pdf: bytes,
-        verbose: bool = False,
+        category: Optional[str] = None,
+        verbose: Optional[bool] = False,
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -708,6 +719,8 @@ class Onboarding:
             User identifier
         pdf
             Binary media data of pdf file.
+        category
+            Optional value to identify an Other Trusted Document (e.g invoice)
         verbose
             Used for print service response as well as the time elapsed
 
@@ -721,6 +734,7 @@ class Onboarding:
         response = self.onboarding_client.add_other_trusted_document(
             user_id=user_id,
             media_data=pdf,
+            category=category,
             verbose=verbose,
         )
 
@@ -734,7 +748,7 @@ class Onboarding:
             )
 
     def delete_other_trusted_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -771,7 +785,7 @@ class Onboarding:
             )
 
     def void_other_trusted_document(
-        self, user_id: str, document_id: str, verbose: bool = False
+        self, user_id: str, document_id: str, verbose: Optional[bool] = False
     ) -> Result[bool, OnboardingError]:
         """
 
@@ -810,7 +824,7 @@ class Onboarding:
     def create_report(
         self,
         user_id: str,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
         version: Version = Version.DEFAULT,
     ) -> Result[Dict, OnboardingError]:
         """
@@ -849,7 +863,10 @@ class Onboarding:
             )
 
     def create_certificate(
-        self, user_id: str, template_name: str = "default", verbose: bool = False
+        self,
+        user_id: str,
+        template_name: str = "default",
+        verbose: Optional[bool] = False,
     ) -> Result[Dict, OnboardingError]:
         """
         This call is used to create a Certificate (Signed PDF Report) of the onboarding process for a specific user.
@@ -887,7 +904,7 @@ class Onboarding:
             )
 
     def retrieve_certificate(
-        self, user_id: str, certificate_id: str, verbose: bool = False
+        self, user_id: str, certificate_id: str, verbose: Optional[bool] = False
     ) -> Result[bytes, OnboardingError]:
         """
 
@@ -923,7 +940,7 @@ class Onboarding:
             )
 
     def retrieve_certificates(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[List, OnboardingError]:
         """
 
@@ -957,7 +974,7 @@ class Onboarding:
             )
 
     def screening(
-        self, user_id: str, detail: bool = False, verbose: bool = False
+        self, user_id: str, detail: bool = False, verbose: Optional[bool] = False
     ) -> Result[List, OnboardingError]:
         """
 
@@ -991,7 +1008,7 @@ class Onboarding:
             )
 
     def screening_monitor_add(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[List, OnboardingError]:
         """
 
@@ -1024,7 +1041,7 @@ class Onboarding:
             )
 
     def screening_monitor_delete(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, verbose: Optional[bool] = False
     ) -> Result[List, OnboardingError]:
         """
 

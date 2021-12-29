@@ -1,14 +1,14 @@
 import time
-from typing import Dict
+from typing import Dict, Optional
 
 import jwt
+from meiga import Failure, Result, Success, isSuccess
 
 from alice.config import Config
+from alice.onboarding.device_info import DeviceInfo
+from alice.onboarding.user_info import UserInfo
 from alice.sandbox.sandbox_client import SandboxClient
 from alice.sandbox.sandbox_errors import SandboxError
-from alice.onboarding.user_info import UserInfo
-from alice.onboarding.device_info import DeviceInfo
-from meiga import Result, Failure, isSuccess, Success
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 
@@ -23,7 +23,10 @@ class Sandbox:
         )
 
     def __init__(
-        self, sandbox_token: str, url: str = DEFAULT_URL, verbose: bool = False
+        self,
+        sandbox_token: str,
+        url: str = DEFAULT_URL,
+        verbose: Optional[bool] = False,
     ):
         self.sandbox_client = SandboxClient(sandbox_token=sandbox_token, url=url)
         self.url = url
@@ -37,7 +40,9 @@ class Sandbox:
         decoded_token = jwt.decode(token, verify=False)
         return decoded_token["exp"] > time.time() - margin_seconds
 
-    def healthcheck(self, verbose: bool = False) -> Result[bool, SandboxError]:
+    def healthcheck(
+        self, verbose: Optional[bool] = False
+    ) -> Result[bool, SandboxError]:
         """
         Runs a healthcheck on the service to see if there are any problems.
 
@@ -66,7 +71,7 @@ class Sandbox:
         self,
         user_info: UserInfo = None,
         device_info: DeviceInfo = None,
-        verbose: bool = False,
+        verbose: Optional[bool] = False,
     ) -> Result[str, SandboxError]:
         """
 
@@ -103,7 +108,7 @@ class Sandbox:
             )
 
     def delete_user(
-        self, email: str, verbose: bool = False
+        self, email: str, verbose: Optional[bool] = False
     ) -> Result[bool, SandboxError]:
         """
 
@@ -133,7 +138,9 @@ class Sandbox:
                 SandboxError.from_response(operation="delete_user", response=response)
             )
 
-    def get_user(self, email: str, verbose: bool = False) -> Result[Dict, SandboxError]:
+    def get_user(
+        self, email: str, verbose: Optional[bool] = False
+    ) -> Result[Dict, SandboxError]:
         """
 
         Returns User Status of a Sandbox user
@@ -162,7 +169,7 @@ class Sandbox:
             )
 
     def get_user_token(
-        self, email: str, verbose: bool = False
+        self, email: str, verbose: Optional[bool] = False
     ) -> Result[str, SandboxError]:
         """
 

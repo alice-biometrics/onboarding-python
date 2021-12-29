@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from meiga import isSuccess
 from meiga.decorators import meiga
@@ -9,7 +10,7 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
 @meiga
-def onboarding_example(api_key: str, verbose: bool = False):
+def onboarding_example(api_key: str, verbose: Optional[bool] = False):
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
@@ -41,6 +42,12 @@ def onboarding_example(api_key: str, verbose: bool = False):
         media_data=document_back_media_data,
         side="back",
         manual=True,
+    ).unwrap_or_throw()
+
+    onboarding.add_other_trusted_document(
+        user_id=user_id,
+        pdf=document_front_media_data,
+        category="MyCategory",
     ).unwrap_or_throw()
 
     # Generate the report

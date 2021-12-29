@@ -1,3 +1,5 @@
+from typing import Optional
+
 from meiga import Error
 from pydantic.dataclasses import dataclass
 
@@ -8,5 +10,5 @@ class Config(Error):
     sandbox_url: str = "https://apis.alicebiometrics.com/onboarding/sandbox"
     api_key: str = None
     sandbox_token: str = None
-    send_agent: bool = True
-    verbose: bool = False
+    send_agent: Optional[bool] = True
+    verbose: Optional[bool] = False

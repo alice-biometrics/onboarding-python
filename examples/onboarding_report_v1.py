@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from meiga import isSuccess
 from meiga.decorators import meiga
@@ -10,7 +11,7 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
 @meiga
-def onboarding_example(api_key: str, verbose: bool = False):
+def onboarding_example(api_key: str, verbose: Optional[bool] = False):
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 

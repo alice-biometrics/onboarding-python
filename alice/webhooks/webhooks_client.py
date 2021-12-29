@@ -1,11 +1,12 @@
 import platform
+from typing import Optional
+
 import requests
 from requests import Response
 
-from alice.auth.auth import Auth
-from alice.onboarding.tools import timeit, print_intro, print_response, print_token
-
 import alice
+from alice.auth.auth import Auth
+from alice.onboarding.tools import print_intro, print_response, print_token, timeit
 from alice.webhooks.webhook import Webhook
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
@@ -28,7 +29,7 @@ class WebhooksClient:
         return auth_headers
 
     @timeit
-    def get_available_events(self, verbose: bool = False) -> Response:
+    def get_available_events(self, verbose: Optional[bool] = False) -> Response:
         """
 
         Get public available events.
@@ -56,7 +57,7 @@ class WebhooksClient:
 
     @timeit
     def create_webhook(
-        self, webhook: Webhook = None, verbose: bool = False
+        self, webhook: Webhook = None, verbose: Optional[bool] = False
     ) -> Response:
         """
         It creates a new Webhook in the onboarding service.
@@ -94,7 +95,9 @@ class WebhooksClient:
         return response
 
     @timeit
-    def update_webhook(self, webhook: Webhook, verbose: bool = False) -> Response:
+    def update_webhook(
+        self, webhook: Webhook, verbose: Optional[bool] = False
+    ) -> Response:
         """
 
         Update an existent Webhook
@@ -134,7 +137,7 @@ class WebhooksClient:
 
     @timeit
     def update_webhook_activation(
-        self, webhook_id: str, active: bool, verbose: bool = False
+        self, webhook_id: str, active: bool, verbose: Optional[bool] = False
     ) -> Response:
         """
 
@@ -172,7 +175,9 @@ class WebhooksClient:
         return response
 
     @timeit
-    def ping_webhook(self, webhook_id: str, verbose: bool = False) -> Response:
+    def ping_webhook(
+        self, webhook_id: str, verbose: Optional[bool] = False
+    ) -> Response:
         """
 
         Send ping event to configured and active Webhook
@@ -204,7 +209,9 @@ class WebhooksClient:
         return response
 
     @timeit
-    def delete_webhook(self, webhook_id: str, verbose: bool = False) -> Response:
+    def delete_webhook(
+        self, webhook_id: str, verbose: Optional[bool] = False
+    ) -> Response:
         """
 
         Remove a configured Webhook
@@ -234,7 +241,7 @@ class WebhooksClient:
         return response
 
     @timeit
-    def get_webhook(self, webhook_id: str, verbose: bool = False) -> Response:
+    def get_webhook(self, webhook_id: str, verbose: Optional[bool] = False) -> Response:
         """
 
         Returns Webhook info
@@ -265,7 +272,7 @@ class WebhooksClient:
         return response
 
     @timeit
-    def get_webhooks(self, verbose: bool = False) -> Response:
+    def get_webhooks(self, verbose: Optional[bool] = False) -> Response:
         """
 
         Returns all configured webhooks
@@ -293,7 +300,9 @@ class WebhooksClient:
         return response
 
     @timeit
-    def get_webhook_results(self, webhook_id: str, verbose: bool = False) -> Response:
+    def get_webhook_results(
+        self, webhook_id: str, verbose: Optional[bool] = False
+    ) -> Response:
         """
 
         Returns all the result of delivered events from a specific Webhook
@@ -326,7 +335,7 @@ class WebhooksClient:
 
     @timeit
     def get_last_webhook_result(
-        self, webhook_id: str, verbose: bool = False
+        self, webhook_id: str, verbose: Optional[bool] = False
     ) -> Response:
         """
 

@@ -7,7 +7,9 @@ from alice import Auth, Config, Onboarding
 
 
 @meiga
-def get_user_id_from_onboarding(api_key, verbose: bool = False) -> Result[str, Error]:
+def get_user_id_from_onboarding(
+    api_key, verbose: Optional[bool] = False
+) -> Result[str, Error]:
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
@@ -15,7 +17,7 @@ def get_user_id_from_onboarding(api_key, verbose: bool = False) -> Result[str, E
 
 
 @meiga
-def auth_example(api_key: str, user_id: str, verbose: bool = False):
+def auth_example(api_key: str, user_id: str, verbose: Optional[bool] = False):
     config = Config(api_key=api_key, verbose=verbose)
     auth = Auth.from_config(config)
 

@@ -1,6 +1,7 @@
 import os
 import random
 import string
+from typing import Optional
 
 from meiga import isSuccess
 from meiga.decorators import meiga
@@ -9,7 +10,7 @@ from alice import Config, Sandbox, UserInfo
 
 
 @meiga
-def sandbox_example(sandbox_token: str, email: str, verbose: bool = False):
+def sandbox_example(sandbox_token: str, email: str, verbose: Optional[bool] = False):
     config = Config(sandbox_token=sandbox_token, verbose=verbose)
     sandbox = Sandbox.from_config(config)
 
