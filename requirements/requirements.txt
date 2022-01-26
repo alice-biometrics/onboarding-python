@@ -1,4 +1,4 @@
 pyjwt==2.3.0
-pydantic==1.8.2
+pydantic>=1.8.2,<2.0.0
 requests==2.26.0
-meiga==1.2.12
+meiga>=1.2.12,<2.0.0
