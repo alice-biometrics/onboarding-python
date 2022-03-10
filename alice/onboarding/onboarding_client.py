@@ -659,7 +659,7 @@ class OnboardingClient:
         }
 
         if bounding_box:
-            data["bounding_box"] = bounding_box.dict()
+            data["bounding_box"] = bounding_box.json()
 
         files = {"image": ("image", media_data)}
 
