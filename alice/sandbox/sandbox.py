@@ -5,8 +5,8 @@ import jwt
 from meiga import Failure, Result, Success, isSuccess
 
 from alice.config import Config
-from alice.onboarding.device_info import DeviceInfo
-from alice.onboarding.user_info import UserInfo
+from alice.onboarding.models.device_info import DeviceInfo
+from alice.onboarding.models.user_info import UserInfo
 from alice.sandbox.sandbox_client import SandboxClient
 from alice.sandbox.sandbox_errors import SandboxError
 

@@ -6,6 +6,7 @@ from meiga.assertions import assert_failure, assert_success
 from meiga.decorators import meiga
 
 from alice import Config, DeviceInfo, Onboarding, UserInfo
+from alice.onboarding.enums.document_side import DocumentSide
 
 
 @pytest.mark.unit
@@ -47,14 +48,14 @@ def test_should_do_complete_onboarding_process(
             user_id=user_id,
             document_id=document_id,
             media_data=given_any_document_front_media_data,
-            side="front",
+            side=DocumentSide.FRONT,
             manual=True,
         ).unwrap_or_return()
         onboarding.add_document(
             user_id=user_id,
             document_id=document_id,
             media_data=given_any_document_back_media_data,
-            side="back",
+            side=DocumentSide.BACK,
             manual=True,
         ).handle()
         onboarding.add_other_trusted_document(

@@ -11,4 +11,3 @@ class BoundingBox(BaseModel):
     y: int = Field(description="Top left corner y coordinate")
     width: int = Field(description="Rectangle width")
     height: int = Field(description="Rectangle height")
-
