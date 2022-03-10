@@ -10,6 +10,8 @@ from alice.auth.auth import Auth
 from alice.onboarding.decision import Decision
 from alice.onboarding.device_info import DeviceInfo
 from alice.onboarding.document_source import DocumentSource
+
+from alice.onboarding.bounding_box import BoundingBox
 from alice.onboarding.tools import print_intro, print_response, print_token, timeit
 from alice.onboarding.user_info import UserInfo
 from alice.onboarding.version import Version
@@ -607,6 +609,7 @@ class OnboardingClient:
         side: str,
         manual: bool = False,
         source: DocumentSource = DocumentSource.file,
+        bounding_box: BoundingBox = None,
         fields: dict = None,
         verbose: Optional[bool] = False,
     ) -> Response:
@@ -631,6 +634,8 @@ class OnboardingClient:
             Source of the media: camera or file
         fields
             Fields to add regardless of the OCR process
+        bounding_box
+            Document bounding box. If provided, input image will be cropped according to this region of interest.
         verbose
             Used for print service response as well as the time elapsed
 
@@ -650,10 +655,11 @@ class OnboardingClient:
             "side": side,
             "manual": manual,
             "fields": json.dumps(fields),
+            "source": source.value
         }
 
-        if source:
-            data["source"] = source.value
+        if bounding_box:
+            data["bounding_box"] = bounding_box.dict()
 
         files = {"image": ("image", media_data)}
 
