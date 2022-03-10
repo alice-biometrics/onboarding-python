@@ -26,6 +26,8 @@ setup(
     packages=[
         "alice",
         "alice/onboarding",
+        "alice/onboarding/enums",
+        "alice/onboarding/models",
         "alice/auth",
         "alice/sandbox",
         "alice/webhooks",

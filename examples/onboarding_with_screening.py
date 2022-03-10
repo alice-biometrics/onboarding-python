@@ -5,6 +5,7 @@ from meiga import isSuccess
 from meiga.decorators import meiga
 
 from alice import Config, Onboarding, UserInfo
+from alice.onboarding.enums.document_side import DocumentSide
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
@@ -29,7 +30,7 @@ def screening_onboarding(api_key: str, verbose: Optional[bool] = False):
         user_id=user_id,
         document_id=document_id,
         media_data=document_back_media_data,
-        side="back",
+        side=DocumentSide.BACK,
         manual=True,
     ).unwrap_or_throw()
 

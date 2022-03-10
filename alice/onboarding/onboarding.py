@@ -4,13 +4,15 @@ from meiga import Failure, Result, Success, isSuccess
 
 from alice.auth.auth import Auth
 from alice.config import Config
-from alice.onboarding.decision import Decision
-from alice.onboarding.device_info import DeviceInfo
-from alice.onboarding.document_source import DocumentSource
+from alice.onboarding.enums.decision import Decision
+from alice.onboarding.enums.document_side import DocumentSide
+from alice.onboarding.enums.document_source import DocumentSource
+from alice.onboarding.enums.version import Version
+from alice.onboarding.models.bounding_box import BoundingBox
+from alice.onboarding.models.device_info import DeviceInfo
+from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.onboarding_errors import OnboardingError
-from alice.onboarding.user_info import UserInfo
-from alice.onboarding.version import Version
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
@@ -607,10 +609,11 @@ class Onboarding:
         user_id: str,
         document_id: str,
         media_data: bytes,
-        side: str,
+        side: DocumentSide,
         manual: bool = False,
         source: DocumentSource = DocumentSource.file,
         fields: dict = None,
+        bounding_box: BoundingBox = None,
         verbose: Optional[bool] = False,
     ) -> Result[bool, OnboardingError]:
         """
@@ -633,6 +636,8 @@ class Onboarding:
             Source of the media: camera or file
         fields
             Fields to add regardless of the OCR process
+        bounding_box
+            Document bounding box. If provided, input image will be cropped according to this region of interest.
         verbose
             Used for print service response as well as the time elapsed
 
@@ -651,6 +656,7 @@ class Onboarding:
             manual=manual,
             source=source,
             fields=fields,
+            bounding_box=bounding_box,
             verbose=verbose,
         )
 

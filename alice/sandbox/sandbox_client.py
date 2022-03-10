@@ -2,9 +2,9 @@ from typing import Optional
 
 from requests import Response, request
 
-from alice.onboarding.device_info import DeviceInfo
+from alice.onboarding.models.device_info import DeviceInfo
+from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.tools import print_intro, print_response, timeit
-from alice.onboarding.user_info import UserInfo
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 

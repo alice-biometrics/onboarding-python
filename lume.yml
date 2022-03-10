@@ -3,6 +3,7 @@ name: onboarding-python
 install:
   run:
     - pip install --upgrade --upgrade-strategy eager -r requirements/dev-requirements.txt -r requirements/requirements.txt
+    - pre-commit install
     - pip install -e .
 steps:
   clean:
