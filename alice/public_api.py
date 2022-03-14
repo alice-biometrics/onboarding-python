@@ -16,6 +16,11 @@ from alice.config import Config
 from alice.onboarding.enums.decision import Decision
 from alice.onboarding.models.device_info import DeviceInfo
 from alice.onboarding.models.user_info import UserInfo
+from alice.onboarding.models.bounding_box import BoundingBox
+from alice.onboarding.enums.document_side import DocumentSide
+from alice.onboarding.enums.document_source import DocumentSource
+from alice.onboarding.enums.version import Version
+
 
 # Classes
 from alice.onboarding.onboarding import Onboarding
@@ -37,6 +42,10 @@ classes = [
     "WebhooksClient",
     "Webhook",
     "Decision",
+    "DocumentSide",
+    "DocumentSource",
+    "DocumentSide",
+    "BoundingBox"
 ]
 
 
