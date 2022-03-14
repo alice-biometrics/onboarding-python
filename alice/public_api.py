@@ -14,6 +14,7 @@ from alice.auth.auth import Auth
 from alice.auth.auth_client import AuthClient
 from alice.config import Config
 from alice.onboarding.enums.decision import Decision
+from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.version import Version
@@ -41,6 +42,7 @@ classes = [
     "WebhooksClient",
     "Webhook",
     "Decision",
+    "DocumentType",
     "Version",
     "DocumentSide",
     "DocumentSource",

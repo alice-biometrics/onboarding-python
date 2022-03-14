@@ -10,6 +10,7 @@ from alice.auth.auth import Auth
 from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
+from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
@@ -489,7 +490,7 @@ class OnboardingClient:
     def create_document(
         self,
         user_id: str,
-        type: str,
+        type: DocumentType,
         issuing_country: str,
         verbose: Optional[bool] = False,
     ) -> Response:
@@ -520,7 +521,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(user_token)
 
-        data = {"type": type, "issuing_country": issuing_country}
+        data = {"type": type.value, "issuing_country": issuing_country}
         response = requests.post(
             f"{self.url}/user/document", data=data, headers=headers
         )
