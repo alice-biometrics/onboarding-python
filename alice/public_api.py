@@ -14,9 +14,9 @@ from alice.auth.auth import Auth
 from alice.auth.auth_client import AuthClient
 from alice.config import Config
 from alice.onboarding.enums.decision import Decision
-from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
+from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
