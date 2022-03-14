@@ -6,6 +6,7 @@ from meiga.decorators import meiga
 
 from alice import Config, Onboarding
 from alice.onboarding.enums.document_side import DocumentSide
+from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.version import Version
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
@@ -29,7 +30,7 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False):
 
     # Create and upload front and back side from a document
     document_id = onboarding.create_document(
-        user_id=user_id, type="idcard", issuing_country="ESP"
+        user_id=user_id, type=DocumentType.ID_CARD, issuing_country="ESP"
     ).unwrap_or_throw()
     onboarding.add_document(
         user_id=user_id,
