@@ -15,7 +15,8 @@ steps:
   lint:
     run:
       - black --check .
-      - flake8 alice
+      - flake8 alice tests
+      - isort --check .
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:
