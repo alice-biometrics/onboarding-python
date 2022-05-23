@@ -1,9 +1,14 @@
 from typing import Optional
 
 from pydantic.dataclasses import dataclass
+from requests import Session
 
 
-@dataclass
+class PydanticConfig:
+    arbitrary_types_allowed = True
+
+
+@dataclass(config=PydanticConfig)
 class Config:
     onboarding_url: str = "https://apis.alicebiometrics.com/onboarding"
     sandbox_url: str = "https://apis.alicebiometrics.com/onboarding/sandbox"
@@ -11,3 +16,4 @@ class Config:
     sandbox_token: str = None
     send_agent: Optional[bool] = True
     verbose: Optional[bool] = False
+    session: Optional[Session] = None
