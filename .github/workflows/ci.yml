@@ -6,7 +6,7 @@ on:
       - '*.md'
       - 'alice/VERSION'
     branches:
-      - master
+      - main
 
 env:
   ONBOARDING_API_KEY: ${{ secrets.ONBOARDING_API_KEY }}
