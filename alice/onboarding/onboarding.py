@@ -671,7 +671,11 @@ class Onboarding:
             )
 
     def document_properties(
-        self, user_id: str, document_id: str, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        type: DocumentType,
+        issuing_country: str,
+        verbose: Optional[bool] = False,
     ) -> Result[str, OnboardingError]:
         """
 
@@ -682,8 +686,11 @@ class Onboarding:
         user_id
             User identifier
 
-        document_id
-            Document identifier
+        type
+            Type of document [idcard, driverlicense, passport, residencepermit, healthinsurancecard]
+
+        issuing_country
+            Issuing Country [ESP, FRA]. Country codes following ISO 3166-1.
 
         verbose
             Used for print service response as well as the time elapsed
@@ -696,7 +703,7 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.document_properties(
-            user_id=user_id, document_id=document_id, verbose=verbose
+            user_id=user_id, type=type, issuing_country=issuing_country, verbose=verbose
         )
 
         if response.status_code == 200:
