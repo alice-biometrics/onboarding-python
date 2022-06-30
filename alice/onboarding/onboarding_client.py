@@ -674,7 +674,11 @@ class OnboardingClient:
 
     @timeit
     def document_properties(
-        self, user_id: str, document_id: str, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        type: DocumentType,
+        issuing_country: str,
+        verbose: Optional[bool] = False,
     ) -> Response:
         """
 
@@ -685,8 +689,10 @@ class OnboardingClient:
         ----------
         user_id
             User identifier
-        document_id
-            Document identifier
+        type
+            Type of document [idcard, driverlicense, passport, residencepermit, healthinsurancecard]
+        issuing_country
+            Issuing Country [ESP, FRA]. Country codes following ISO 3166-1.
         verbose
             Used for print service response as well as the time elapsed
 
@@ -701,7 +707,7 @@ class OnboardingClient:
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
-        data = {"document_id": document_id}
+        data = {"type": type.value, "issuing_country": issuing_country}
 
         response = requests.post(
             f"{self.url}/user/document/properties", data=data, headers=headers
