@@ -7,6 +7,7 @@ from requests import Response
 
 import alice
 from alice.auth.auth import Auth
+from alice.onboarding.enums.certificate_locale import CertificateLocale
 from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
@@ -886,6 +887,7 @@ class OnboardingClient:
     def create_certificate(
         self,
         user_id: str,
+        locale: CertificateLocale = CertificateLocale.EN,
         template_name: str = "default",
         verbose: Optional[bool] = False,
     ) -> Response:
@@ -901,6 +903,8 @@ class OnboardingClient:
             User identifier
         template_name
             'default' (only available)
+        locale
+            The language of the certificate
         verbose
             Used for print service response as well as the time elapsed
 
@@ -913,7 +917,7 @@ class OnboardingClient:
 
         backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
-        options = {"template_name": template_name}
+        options = {"template_name": template_name, "locale": locale.value}
         headers = self._auth_headers(backend_user_token)
         headers["Content-Type"] = "application/json"
         response = requests.post(
