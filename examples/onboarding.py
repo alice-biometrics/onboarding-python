@@ -46,22 +46,14 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False):
         manual=True,
     ).unwrap_or_throw()
 
-    onboarding.add_other_trusted_document(
-        user_id=user_id,
-        pdf=document_front_media_data,
-        category="MyCategory",
-    ).unwrap_or_throw()
-
     # Generate the report
     report = onboarding.create_report(user_id=user_id).unwrap_or_throw()
 
     if verbose:
         print(f"report: {report}")
 
-    media_id = list(report.get("selfie_reports").values())[0].get("media_avatar_id")
-    media = onboarding.retrieve_media(
-        user_id=user_id, media_id=media_id
-    ).unwrap_or_throw()
+    href = report.selfies[0].media.get("cropped_face").href
+    media = onboarding.download(user_id=user_id, href=href).unwrap_or_throw()
     assert isinstance(media, bytes)
 
     # Authorize an user
