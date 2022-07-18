@@ -847,7 +847,6 @@ class OnboardingClient:
         self,
         user_id: str,
         verbose: Optional[bool] = False,
-        version: Version = Version.DEFAULT,
     ) -> Response:
         """
 
@@ -862,8 +861,6 @@ class OnboardingClient:
             User identifier
         verbose
             Used for print service response as well as the time elapsed
-        version
-            Set Report Version
 
         Returns
         -------
@@ -875,7 +872,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        headers["Alice-Report-Version"] = version.value
+        headers["Alice-Report-Version"] = Version.V1.value
 
         response = requests.get(f"{self.url}/user/report", headers=headers)
 
