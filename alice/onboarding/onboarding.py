@@ -865,7 +865,7 @@ class Onboarding:
         )
 
         if response.status_code == 200:
-            return Success(Report.parse_raw(response.json()["report"]))
+            return Success(Report.parse_obj(response.json()["report"]))
         else:
             return Failure(
                 OnboardingError.from_response(
