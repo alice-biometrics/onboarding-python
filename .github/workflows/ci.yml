@@ -41,6 +41,8 @@ jobs:
         run: lume -test
       - name: Example [Onboarding]
         run: python examples/onboarding.py
+      - name: Example [Onboarding Report V0]
+        run: python examples/onboarding_report_v0.py
       - name: Example [Onboarding with Identification]
         run: python examples/onboarding_with_identification.py
       - name: Example [Onboarding with Certificate]
