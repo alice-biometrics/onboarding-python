@@ -7,6 +7,7 @@ from meiga.decorators import meiga
 from alice import Config, Onboarding
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.enums.version import Version
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
@@ -53,7 +54,9 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False):
     ).unwrap_or_throw()
 
     # Generate the report
-    report = onboarding.create_report(user_id=user_id).unwrap_or_throw()
+    report = onboarding.create_report(
+        user_id=user_id, version=Version.V0
+    ).unwrap_or_throw()
 
     if verbose:
         print(f"report: {report}")
