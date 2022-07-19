@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from meiga import Failure, Result, Success, isSuccess
 
@@ -844,7 +844,7 @@ class Onboarding:
         user_id: str,
         version: Version = Version.V1,
         verbose: Optional[bool] = False,
-    ) -> Result[[Report, Dict], OnboardingError]:
+    ) -> Result[Union[Report, Dict], OnboardingError]:
         """
 
         This call is used to get the report of the onboarding process for a specific user.
