@@ -1,5 +1,6 @@
 import json
 import platform
+from datetime import datetime
 from typing import List, Optional
 
 import requests
@@ -12,6 +13,7 @@ from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
@@ -1469,6 +1471,115 @@ class OnboardingClient:
 
         response = requests.get(href, headers=headers)
 
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def request_duplicates_search(
+        self,
+        start_date: datetime,
+        end_date: datetime,
+        resource_type: DuplicatesResourceType,
+        verbose: bool = False,
+    ) -> Response:
+        """
+
+        Returns the binary data of a media resource
+
+        Parameters
+        ----------
+        start_date
+            Beginning datetime of the temporal window
+        end_date
+            Ending datetime of the temporal window
+        resource_type
+            Entity to analyze (selfie or document)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("request_duplicates_search", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        data = {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "resource_type": resource_type.value,
+        }
+        response = requests.post(
+            f"{self.url}/duplicates/search", data=data, headers=headers
+        )
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def get_duplicates_search(self, search_id: str, verbose: bool = False) -> Response:
+        """
+
+        Retrieves a previously requested duplicates search from the onboarding platform
+
+        Parameters
+        ----------
+        search_id
+            Duplicates search unique identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("get_duplicates_search", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        response = requests.get(
+            f"{self.url}/duplicates/search/{search_id}", headers=headers
+        )
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def get_duplicates_searches(self, verbose: bool = False) -> Response:
+        """
+
+        Retrieves all previously requested duplicates searches from the onboarding platform
+
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("get_duplicates_searches", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        response = requests.get(f"{self.url}/duplicates/searches", headers=headers)
         print_response(response=response, verbose=verbose)
 
         return response

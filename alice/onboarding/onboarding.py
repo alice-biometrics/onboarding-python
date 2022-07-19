@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Optional
 
 from meiga import Failure, Result, Success, isSuccess
@@ -9,6 +10,7 @@ from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
@@ -1462,4 +1464,113 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(operation="download", response=response)
+            )
+
+    def request_duplicates_search(
+        self,
+        start_date: datetime,
+        end_date: datetime,
+        resource_type: DuplicatesResourceType,
+        verbose: bool = False,
+    ) -> Result[Dict, OnboardingError]:
+        """
+
+        Requests a duplicates search to the onboarding platform
+
+        Parameters
+        ----------
+        start_date
+            Beginning datetime of the temporal window
+        end_date
+            Ending datetime of the temporal window
+        resource_type
+            Entity to analyze (selfie or document)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a search_id.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.request_duplicates_search(
+            start_date=start_date,
+            end_date=end_date,
+            resource_type=resource_type,
+            verbose=verbose,
+        )
+
+        if response.status_code == 202:
+            return Success(response.content)
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="request_duplicates_search", response=response
+                )
+            )
+
+    def get_duplicates_search(
+        self, search_id: str, verbose: bool = False
+    ) -> Result[Dict, OnboardingError]:
+        """
+
+        Retrieves a previously requested duplicates search from the onboarding platform
+
+        Parameters
+        ----------
+        search_id
+            Duplicates search unique identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns the duplicates result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_duplicates_search(
+            search_id=search_id, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return Success(response.content)
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="get_duplicates_search", response=response
+                )
+            )
+
+    def get_duplicates_searches(
+        self, verbose: bool = False
+    ) -> Result[List[Dict], OnboardingError]:
+        """
+
+        Retrieves a previously requested duplicates search from the onboarding platform
+
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns the duplicates result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_duplicates_searches(verbose=verbose)
+
+        if response.status_code == 200:
+            return Success(response.content)
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="get_duplicates_searches", response=response
+                )
             )
