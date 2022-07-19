@@ -1472,7 +1472,7 @@ class Onboarding:
         end_date: datetime,
         resource_type: DuplicatesResourceType,
         verbose: bool = False,
-    ) -> Result[Dict, OnboardingError]:
+    ) -> Result[str, OnboardingError]:
         """
 
         Requests a duplicates search to the onboarding platform
