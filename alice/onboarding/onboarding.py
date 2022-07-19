@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from meiga import Failure, Result, Success, isSuccess
 
@@ -840,8 +840,11 @@ class Onboarding:
             )
 
     def create_report(
-        self, user_id: str, verbose: Optional[bool] = False
-    ) -> Result[Report, OnboardingError]:
+        self,
+        user_id: str,
+        version: Version = Version.V1,
+        verbose: Optional[bool] = False,
+    ) -> Result[Union[Report, Dict], OnboardingError]:
         """
 
         This call is used to get the report of the onboarding process for a specific user.
@@ -853,21 +856,26 @@ class Onboarding:
         ----------
         user_id
             User identifier
+        version
+            Set Report Version
         verbose
             Used for print service response as well as the time elapsed
 
         Returns
         -------
-            A Result where if the operation is successful it returns a Report object.
+            A Result where if the operation is successful it returns a Report object if Version.V1 or Dict otherwise.
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_report(
-            user_id=user_id, verbose=verbose
+            user_id=user_id, version=version, verbose=verbose
         )
 
         if response.status_code == 200:
-            return Success(Report.parse_obj(response.json()["report"]))
+            if version is Version.V1:
+                return Success(Report.parse_obj(response.json()["report"]))
+            else:
+                return Success(response.json()["report"])
         else:
             return Failure(
                 OnboardingError.from_response(
