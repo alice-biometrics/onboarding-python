@@ -1503,7 +1503,7 @@ class Onboarding:
         )
 
         if response.status_code == 202:
-            return Success(response.content)
+            return Success(response.json()["search_id"])
         else:
             return Failure(
                 OnboardingError.from_response(
@@ -1537,7 +1537,7 @@ class Onboarding:
         )
 
         if response.status_code == 200:
-            return Success(response.content)
+            return Success(response.json())
         else:
             return Failure(
                 OnboardingError.from_response(
@@ -1567,7 +1567,7 @@ class Onboarding:
         response = self.onboarding_client.get_duplicates_searches(verbose=verbose)
 
         if response.status_code == 200:
-            return Success(response.content)
+            return Success(response.json()["searches"])
         else:
             return Failure(
                 OnboardingError.from_response(
