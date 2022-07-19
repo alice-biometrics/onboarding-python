@@ -12,6 +12,7 @@ from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
+from alice.onboarding.models.report.report import Report
 from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.onboarding_errors import OnboardingError
@@ -837,11 +838,8 @@ class Onboarding:
             )
 
     def create_report(
-        self,
-        user_id: str,
-        verbose: Optional[bool] = False,
-        version: Version = Version.DEFAULT,
-    ) -> Result[Dict, OnboardingError]:
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Result[Report, OnboardingError]:
         """
 
         This call is used to get the report of the onboarding process for a specific user.
@@ -855,21 +853,19 @@ class Onboarding:
             User identifier
         verbose
             Used for print service response as well as the time elapsed
-        version
-            Set Report Version
 
         Returns
         -------
-            A Result where if the operation is successful it returns a Dict with the generated report.
+            A Result where if the operation is successful it returns a Report object.
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_report(
-            user_id=user_id, verbose=verbose, version=version
+            user_id=user_id, verbose=verbose
         )
 
         if response.status_code == 200:
-            return Success(response.json()["report"])
+            return Success(Report.parse_obj(response.json()["report"]))
         else:
             return Failure(
                 OnboardingError.from_response(

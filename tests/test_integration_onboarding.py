@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pytest
 from meiga import Error, Result, Success
 from meiga.assertions import assert_failure, assert_success
@@ -8,6 +6,7 @@ from meiga.decorators import meiga
 from alice import Config, DeviceInfo, Onboarding, UserInfo
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.models.report.report import Report
 
 
 @pytest.mark.unit
@@ -83,4 +82,4 @@ def test_should_do_complete_onboarding_process(
 
     result = do_complete_onboarding()
 
-    assert_success(result, value_is_instance_of=Dict)
+    assert_success(result, value_is_instance_of=Report)

@@ -20,6 +20,15 @@ from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
+from alice.onboarding.models.report.document.document_report import DocumentReport
+from alice.onboarding.models.report.other_trusted_document.other_trusted_document_report import (
+    OtherTrustedDocumentReport,
+)
+
+# Report
+from alice.onboarding.models.report.report import Report
+from alice.onboarding.models.report.selfie.selfie_report import SelfieReport
+from alice.onboarding.models.report.summary.report_summary import ReportSummary
 from alice.onboarding.models.user_info import UserInfo
 
 # Classes
@@ -47,6 +56,11 @@ classes = [
     "DocumentSide",
     "DocumentSource",
     "BoundingBox",
+    "Report",
+    "ReportSummary",
+    "DocumentReport",
+    "SelfieReport",
+    "OtherTrustedDocumentReport",
 ]
 
 
