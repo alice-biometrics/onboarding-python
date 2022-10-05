@@ -19,7 +19,7 @@ class FaceMatchingMeta(BaseModel):
     selfie_id: str = Field(
         description="Unique selfie identifier (UUID v4 standard)",
         min_length=16,
-        max_length=36,
+        max_length=42,
     )
     created_at: datetime = Field(
         description="Face match creation time in ISO 8601 format"
