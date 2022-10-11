@@ -843,6 +843,7 @@ class Onboarding:
         self,
         user_id: str,
         version: Version = Version.V1,
+        raw: Optional[bool] = False,
         verbose: Optional[bool] = False,
     ) -> Result[Union[Report, Dict], OnboardingError]:
         """
@@ -858,12 +859,14 @@ class Onboarding:
             User identifier
         version
             Set Report Version
+        raw
+            Whether to return the report as a Dict or as a Report object
         verbose
             Used for print service response as well as the time elapsed
 
         Returns
         -------
-            A Result where if the operation is successful it returns a Report object if Version.V1 or Dict otherwise.
+            A Result where if the operation is successful it returns a Report object if raw=True or Dict otherwise.
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
@@ -872,7 +875,7 @@ class Onboarding:
         )
 
         if response.status_code == 200:
-            if version is Version.V1:
+            if version is Version.V1 and not raw:
                 return Success(Report.parse_obj(response.json()["report"]))
             else:
                 return Success(response.json()["report"])
