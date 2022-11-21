@@ -4,7 +4,7 @@ from setuptools import setup
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 PACKAGE_NAME = "alice-onboarding"
-VERSION = open("alice/VERSION", "r").read()
+VERSION = open("alice/VERSION").read()
 
 with open(os.path.join(CURRENT_DIR, "README.md")) as fid:
     README = fid.read()
@@ -31,6 +31,17 @@ setup(
         "alice/auth",
         "alice/sandbox",
         "alice/webhooks",
+    ],
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        # "Programming Language :: Python :: 3.11", # TODO
     ],
     zip_safe=False,
     install_requires=REQUIRES,

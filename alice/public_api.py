@@ -1,14 +1,14 @@
-# coding=utf-8
 # Copyright (C) 2019+ Alice, Vigo, Spain
 
 """Public API of Alice Onboarding Python SDK"""
+from typing import List
 
 # Modules
 from alice.webhooks.webhook import Webhook
 from alice.webhooks.webhooks import Webhooks
 from alice.webhooks.webhooks_client import WebhooksClient
 
-modules = []
+modules: List[str] = []
 
 from alice.auth.auth import Auth
 from alice.auth.auth_client import AuthClient

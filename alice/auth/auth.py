@@ -91,7 +91,7 @@ class Auth:
             )
 
     @staticmethod
-    def __get_token_from_response(response):
+    def __get_token_from_response(response) -> str:
         response_json = json.loads(response.content)
         token = response_json["token"]
-        return token
+        return str(token)

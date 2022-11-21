@@ -1,6 +1,6 @@
 import json
 import platform
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from requests import Response
@@ -26,7 +26,7 @@ class OnboardingClient:
         self.url = url
         self.send_agent = send_agent
 
-    def _auth_headers(self, token: str):
+    def _auth_headers(self, token: str) -> Dict[str, Any]:
         auth_headers = {"Authorization": f"Bearer {token}"}
         if self.send_agent:
             auth_headers.update(
@@ -236,9 +236,9 @@ class OnboardingClient:
         page_size: int = 0,
         descending: bool = True,
         authorized: bool = False,
-        sort_by: str = None,
-        filter_field: str = None,
-        filter_value: str = None,
+        sort_by: Union[str, None] = None,
+        filter_field: Union[str, None] = None,
+        filter_value: Union[str, None] = None,
     ) -> Response:
         """
 
@@ -610,8 +610,8 @@ class OnboardingClient:
         side: DocumentSide,
         manual: bool = False,
         source: DocumentSource = DocumentSource.file,
-        bounding_box: BoundingBox = None,
-        fields: dict = None,
+        bounding_box: Union[BoundingBox, None] = None,
+        fields: Union[Dict[str, Any], None] = None,
         verbose: Optional[bool] = False,
     ) -> Response:
         """
