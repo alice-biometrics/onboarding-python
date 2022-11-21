@@ -17,7 +17,7 @@ class Sandbox:
     @staticmethod
     def from_config(config: Config) -> "Sandbox":
         return Sandbox(
-            sandbox_token=config.sandbox_token,
+            sandbox_token=config.sandbox_token,  # type: ignore
             url=config.sandbox_url,
             verbose=config.verbose,
         )

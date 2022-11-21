@@ -3,10 +3,12 @@ import platform
 from typing import Any, Dict, List, Optional, Union
 
 import requests
+from meiga import Error, Result, Success, early_return
 from requests import Response
 
 import alice
 from alice.auth.auth import Auth
+from alice.auth.auth_errors import AuthError
 from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
@@ -37,7 +39,7 @@ class OnboardingClient:
         return auth_headers
 
     @timeit
-    def healthcheck(self, verbose: Optional[bool] = False) -> Response:
+    def healthcheck(self, verbose: Optional[bool] = False) -> Result[Response, Error]:
         """
 
         Runs a healthcheck on the service to see if there are any problems.
@@ -50,7 +52,7 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("healthcheck", verbose=verbose)
 
@@ -58,15 +60,16 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def create_user(
         self,
-        user_info: UserInfo = None,
-        device_info: DeviceInfo = None,
+        user_info: Union[UserInfo, None] = None,
+        device_info: Union[DeviceInfo, None] = None,
         verbose: Optional[bool] = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         It creates a new User in the onboarding service.
@@ -85,11 +88,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("create_user", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
 
         print_token("backend_token", backend_token, verbose=verbose)
 
@@ -107,10 +110,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def delete_user(self, user_id: str, verbose: Optional[bool] = False) -> Response:
+    def delete_user(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
 
         Delete all the information of a user
@@ -125,11 +131,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("delete_user", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -137,12 +143,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def get_user_status(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns User status to be used as feedback from the onboarding process
@@ -157,11 +164,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("get_user_status", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id).unwrap()
+        user_token = self.auth.create_user_token(user_id).unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -170,10 +177,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def get_users_stats(self, verbose: Optional[bool] = False) -> Response:
+    def get_users_stats(
+        self, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
 
         Returns statistics about users in the Onboarding platform.
@@ -186,11 +196,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("get_users_stats", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -198,10 +208,11 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def get_users(self, verbose: Optional[bool] = False) -> Response:
+    def get_users(self, verbose: Optional[bool] = False) -> Result[Response, AuthError]:
         """
 
         Returns all users you have created, sorted by creation date in descending order.
@@ -214,11 +225,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("get_users", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -226,8 +237,9 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def get_users_status(
         self,
@@ -239,7 +251,7 @@ class OnboardingClient:
         sort_by: Union[str, None] = None,
         filter_field: Union[str, None] = None,
         filter_value: Union[str, None] = None,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns every UserStatus available for all the Users in the onboarding platform ordered by creation date.
@@ -265,11 +277,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("get_users_status", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -289,8 +301,9 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def add_user_feedback(
         self,
@@ -300,7 +313,7 @@ class OnboardingClient:
         decision: Decision,
         additional_feedback: List[str] = [],
         verbose: Optional[bool] = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Adds client's feedback about an user onboarding. Usually it comes after human review.
@@ -323,11 +336,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("add_user_feedback", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -345,12 +358,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def add_selfie(
         self, user_id: str, media_data: bytes, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to upload for the first time the video of the user's face to the onboarding service.
@@ -368,11 +382,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("add_selfie", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id).unwrap()
+        user_token = self.auth.create_user_token(user_id).unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -385,10 +399,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def delete_selfie(self, user_id: str, verbose: Optional[bool] = False) -> Response:
+    def delete_selfie(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to delete the video of the user's face to the onboarding service.
@@ -404,11 +421,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("delete_selfie", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -417,10 +434,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def void_selfie(self, user_id: str, verbose: Optional[bool] = False) -> Response:
+    def void_selfie(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to void the video of the user's face to the onboarding service.
@@ -436,11 +456,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("void_selfie", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -449,12 +469,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def supported_documents(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
         This method is used to obtain a hierarchical-ordered dict with the information of the documents supported by the API.
 
@@ -468,15 +489,15 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("supported_documents", verbose=verbose)
 
         if user_id:
-            token = self.auth.create_user_token(user_id).unwrap()
+            token = self.auth.create_user_token(user_id).unwrap_or_return()
             print_token("user_token", token, verbose=verbose)
         else:
-            token = self.auth.create_backend_token().unwrap()
+            token = self.auth.create_backend_token().unwrap_or_return()
             print_token("backend_token", token, verbose=verbose)
 
         headers = self._auth_headers(token)
@@ -484,8 +505,9 @@ class OnboardingClient:
         response = requests.get(f"{self.url}/documents/supported", headers=headers)
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def create_document(
         self,
@@ -493,7 +515,7 @@ class OnboardingClient:
         type: DocumentType,
         issuing_country: str,
         verbose: Optional[bool] = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to obtain a new document_id
@@ -513,10 +535,10 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("create_document", verbose=verbose)
-        user_token = self.auth.create_user_token(user_id).unwrap()
+        user_token = self.auth.create_user_token(user_id).unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -528,12 +550,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def delete_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Delete all the stored/extracted information from a document
@@ -550,11 +573,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("delete_document", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -564,11 +587,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
+    @timeit
     def void_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Mark a document as invalid.
@@ -585,11 +610,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("void_document", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -599,8 +624,9 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def add_document(
         self,
@@ -613,7 +639,7 @@ class OnboardingClient:
         bounding_box: Union[BoundingBox, None] = None,
         fields: Union[Dict[str, Any], None] = None,
         verbose: Optional[bool] = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to upload for the first time the photo or video of a document to the onboarding service.
@@ -643,11 +669,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("add_document", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id).unwrap()
+        user_token = self.auth.create_user_token(user_id).unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -670,12 +696,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def document_properties(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns the properties of a previously added document, such as face, MRZ or NFC availability
@@ -693,11 +720,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("document_properties", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id).unwrap()
+        user_token = self.auth.create_user_token(user_id).unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -709,12 +736,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def delete_other_trusted_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Delete all the stored/extracted information from an other trusted document
@@ -731,11 +759,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("delete_other_trusted_document", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -745,14 +773,16 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
+    @timeit
     def void_other_trusted_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
-        Mark an other trusted document as invalid.
+        Mark other trusted document as invalid.
 
 
         Parameters
@@ -766,11 +796,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("void_other_trusted_document", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token(user_id).unwrap()
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -780,8 +810,9 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def add_other_trusted_document(
         self,
@@ -789,7 +820,7 @@ class OnboardingClient:
         media_data: bytes,
         category: Optional[str] = None,
         verbose: Optional[bool] = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to upload an other trusted document (OTD) to the onboarding service.
@@ -812,11 +843,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("add_other_trusted_document", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id).unwrap()
+        user_token = self.auth.create_user_token(user_id).unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -833,7 +864,7 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
     @timeit
     def create_report(
@@ -841,7 +872,7 @@ class OnboardingClient:
         user_id: str,
         verbose: Optional[bool] = False,
         version: Version = Version.DEFAULT,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to get the report of the onboarding process for a specific user.
@@ -860,11 +891,13 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("create_report", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -874,15 +907,16 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def create_certificate(
         self,
         user_id: str,
         template_name: str = "default",
         verbose: Optional[bool] = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
         This call is used to create a Certificate (Signed PDF Report) of the onboarding process for a specific user.
         It returns a identifier (certificate_id) as a reference of created resource.
@@ -901,11 +935,13 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("create_certificate", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         options = {"template_name": template_name}
         headers = self._auth_headers(backend_user_token)
@@ -916,12 +952,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def retrieve_certificate(
         self, user_id: str, certificate_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         This call is used to retrieve a Certificate (Signed PDF Report) of the onboarding process for a specific user.
@@ -940,11 +977,13 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("retrieve_certificate", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
         response = requests.get(
@@ -953,12 +992,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def retrieve_certificates(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns summary info for created certificates
@@ -972,23 +1012,26 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("retrieve_certificates", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
         response = requests.get(f"{self.url}/user/certificates", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def screening(
         self, user_id: str, detail: bool = False, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
         This call is used to check on the user using different databases & lists (sanctions, PEP, etc)..
         It returns retrieved information from public lists.
@@ -1005,11 +1048,13 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("screening", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
 
@@ -1021,12 +1066,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def screening_monitor_add(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
         This call is adds a user to the AML monitoring list.
 
@@ -1041,11 +1087,13 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("screening_monitor_add", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
 
@@ -1053,10 +1101,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def screening_monitor_delete(self, user_id: str, verbose: bool = False) -> Response:
+    def screening_monitor_delete(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[Response, AuthError]:
         """
         This call is adds a user to the AML monitoring list.
 
@@ -1071,11 +1122,13 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("screening_monitor_delete", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
 
@@ -1085,12 +1138,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def screening_monitor_open_alerts(
         self, start_index: int = 0, size: int = 100, verbose: bool = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
         Retrieves from the monitoring list the users with open alerts
 
@@ -1106,11 +1160,11 @@ class OnboardingClient:
 
         Returns
         -------
-              A Response object [requests library]
+              A Result object with Response object [requests library] if Success
         """
         print_intro("screening_monitor_open_alerts", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token", backend_token, verbose=verbose)
         headers = self._auth_headers(backend_token)
 
@@ -1121,8 +1175,9 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def identify_user(
         self,
@@ -1130,7 +1185,7 @@ class OnboardingClient:
         probe_user_ids: List[str],
         version: Version = Version.DEFAULT,
         verbose: bool = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
         Identifies (1:N matching) a user against a N-length list of users.
 
@@ -1148,13 +1203,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("identify_user", verbose=verbose)
 
         backend_user_token = self.auth.create_backend_token(
             user_id=target_user_id
-        ).unwrap()
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1168,10 +1223,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def authorize_user(self, user_id: str, verbose: bool = False) -> Response:
+    def authorize_user(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[Response, AuthError]:
         """
         Authorizes a user. Now it can be authenticate.
 
@@ -1185,11 +1243,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("authorize_user", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1197,10 +1257,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def deauthorize_user(self, user_id: str, verbose: bool = False) -> Response:
+    def deauthorize_user(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[Response, AuthError]:
         """
         Deauthorizes a user. Now it cannot be authenticate.
 
@@ -1214,11 +1277,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("deauthorize_user", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1226,12 +1291,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def authenticate_user(
         self, user_id: str, media_data: bytes, verbose: bool = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Authenticates a previously registered User against a given media to verify the identity
@@ -1248,11 +1314,11 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("authenticate_user", verbose=verbose)
 
-        user_token = self.auth.create_user_token(user_id=user_id).unwrap()
+        user_token = self.auth.create_user_token(user_id=user_id).unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -1265,10 +1331,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def get_authentications_ids(self, user_id: str, verbose: bool = False) -> Response:
+    def get_authentications_ids(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[Response, AuthError]:
         """
 
         Returns all authentication you have performed for a User, sorted by creation date in descending order.
@@ -1283,11 +1352,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("get_authentications_ids", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1296,8 +1367,9 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def get_authentications(
         self,
@@ -1307,7 +1379,7 @@ class OnboardingClient:
         descending: bool = True,
         version: Version = Version.DEFAULT,
         verbose: bool = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns all authentications you have performed for a User.
@@ -1330,11 +1402,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("get_authentications", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1350,8 +1424,9 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def get_authentication(
         self,
@@ -1359,7 +1434,7 @@ class OnboardingClient:
         authentication_id: str,
         version: Version = Version.DEFAULT,
         verbose: bool = False,
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Gets a information from a previous authentication using the verification_id
@@ -1378,11 +1453,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("get_authentication", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1394,12 +1471,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def retrieve_media(
         self, user_id: str, media_id: str, verbose: bool = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns the binary data of a media resource
@@ -1416,11 +1494,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Result object with Response object [requests library] if Success
         """
         print_intro("retrieve_media", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1431,10 +1511,13 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def download(self, user_id: str, href: str, verbose: bool = False) -> Response:
+    def download(
+        self, user_id: str, href: str, verbose: bool = False
+    ) -> Result[Response, AuthError]:
         """
 
         Returns the binary data of a media resource
@@ -1451,11 +1534,13 @@ class OnboardingClient:
 
         Returns
         -------
-            A Response object [requests library]
+             A Result object with Response object [requests library] if Success
         """
         print_intro("download", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1464,4 +1549,4 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)

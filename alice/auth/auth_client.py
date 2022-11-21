@@ -13,7 +13,7 @@ class AuthClient:
     def __init__(self, url: str, api_key: str) -> None:
         self.url = url
         self._api_key = api_key
-        self._login_token = None
+        self._login_token: Union[str, None] = None
 
     @timeit
     def create_backend_token(
