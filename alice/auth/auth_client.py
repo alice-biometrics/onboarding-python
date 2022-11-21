@@ -78,5 +78,5 @@ class AuthClient:
     @staticmethod
     def _get_token_from_response(response: Response) -> str:
         response_json = json.loads(response.content)
-        token = response_json["token"]
-        return str(token)
+        token: str = response_json["token"]
+        return token

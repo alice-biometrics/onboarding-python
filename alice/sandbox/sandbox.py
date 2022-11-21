@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import jwt
 from meiga import Failure, Result, Success, isSuccess
@@ -140,7 +140,7 @@ class Sandbox:
 
     def get_user(
         self, email: str, verbose: Optional[bool] = False
-    ) -> Result[Dict, SandboxError]:
+    ) -> Result[Dict[str, Any], SandboxError]:
         """
 
         Returns User Status of a Sandbox user
