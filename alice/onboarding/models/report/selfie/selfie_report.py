@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from meiga import Failure, Result, Success, isFailure
+from meiga import Error, Result, Success, isFailure
 from pydantic import Field
 from pydantic.main import BaseModel
 
@@ -33,7 +33,7 @@ class SelfieReport(BaseModel):
         description="Number of faces detected in the selfie"
     )
 
-    def get_check(self, check_key: str) -> Result[Check, Failure]:
+    def get_check(self, check_key: str) -> Result[Check, Error]:
         for doc_check in self.checks:
             if check_key == doc_check.key:
                 return Success(doc_check)
@@ -47,6 +47,6 @@ class SelfieReport(BaseModel):
             ]
         )
 
-    def add_check(self, check: Check):
+    def add_check(self, check: Check) -> None:
         if not self.has_check(check):
             self.checks.append(check)
