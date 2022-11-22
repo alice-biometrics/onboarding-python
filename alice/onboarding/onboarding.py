@@ -923,7 +923,7 @@ class Onboarding:
         template_name: str = "default",
         locale: CertificateLocale = CertificateLocale.EN,
         verbose: Optional[bool] = False,
-    ) -> Result[Dict[str, Any], Union[OnboardingError, AuthError]]:
+    ) -> Result[str, Union[OnboardingError, AuthError]]:
         """
         This call is used to create a Certificate (Signed PDF Report) of the onboarding process for a specific user.
         It returns a identifier (certificate_id) as a reference of created resource.
@@ -944,7 +944,7 @@ class Onboarding:
 
         Returns
         -------
-            A Result where if the operation is successful it returns a str with a pdf_report_id.
+            A Result where if the operation is successful it returns a str with a certificate_id.
             Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
