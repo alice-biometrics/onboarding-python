@@ -35,6 +35,8 @@ jobs:
           lume -install
       - name: Lint
         run: lume -lint
+      - name: Static Analysis
+        run: lume -static-analysis
       - name: Check Requirements
         run: lume -check-requirements
       - name: Test [pytest]
