@@ -6,6 +6,7 @@ from meiga.decorators import meiga
 
 from alice import Config, Onboarding
 from alice.onboarding.enums.document_side import DocumentSide
+from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
@@ -38,6 +39,7 @@ def certified_onboarding(api_key: str, verbose: Optional[bool] = False):
         media_data=document_front_media_data,
         side=DocumentSide.FRONT,
         manual=True,
+        source=DocumentSource.camera,
     ).unwrap_or_throw()
     onboarding.add_document(
         user_id=user_id,
@@ -45,6 +47,7 @@ def certified_onboarding(api_key: str, verbose: Optional[bool] = False):
         media_data=document_back_media_data,
         side=DocumentSide.BACK,
         manual=True,
+        source=DocumentSource.camera,
     ).unwrap_or_throw()
 
     # Create Certificate

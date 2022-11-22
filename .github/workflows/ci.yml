@@ -6,10 +6,10 @@ on:
       - '*.md'
       - 'alice/VERSION'
     branches:
-      - master
+      - main
 
 env:
-  ONBOARDING_API_KEY: ${{ secrets.ONBOARDING_API_KEY }}
+  ONBOARDING_API_KEY: ${{ secrets.API_KEY_TESTING_PRO_ONBOARDING_ALL_FEATURES }}
   ONBOARDING_SANDBOX_TOKEN: ${{ secrets.ONBOARDING_SANDBOX_TOKEN }}
   CONCURRENT_TESTING: True
 
@@ -19,7 +19,7 @@ jobs:
       max-parallel: 4
       matrix:
         os: [ macOS-latest, ubuntu-latest ]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v2
@@ -35,12 +35,16 @@ jobs:
           lume -install
       - name: Lint
         run: lume -lint
+      - name: Static Analysis
+        run: lume -static-analysis
       - name: Check Requirements
         run: lume -check-requirements
       - name: Test [pytest]
         run: lume -test
       - name: Example [Onboarding]
         run: python examples/onboarding.py
+      - name: Example [Onboarding Report V0]
+        run: python examples/onboarding_report_v0.py
       - name: Example [Onboarding with Identification]
         run: python examples/onboarding_with_identification.py
       - name: Example [Onboarding with Certificate]

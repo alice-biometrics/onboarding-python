@@ -11,11 +11,18 @@ class SandboxError(Error):
     code: int
     message: Optional[Dict[str, Any]] = None
 
-    def __repr__(self):
+    def __init__(
+        self, operation: str, code: int, message: Optional[Dict[str, Any]] = None
+    ):
+        self.operation = operation
+        self.code = code
+        self.message = message
+
+    def __repr__(self) -> str:
         return f"[SandboxError: [operation: {self.operation} | code: {self.code} | message: {self.message}]]"
 
     @staticmethod
-    def from_response(operation: str, response: Response):
+    def from_response(operation: str, response: Response) -> "SandboxError":
         code = response.status_code
         try:
             message = response.json()

@@ -1,22 +1,22 @@
 import json
-from typing import Optional
+from typing import Any, Dict, Optional, Union
 
 
 class Webhook:
     @staticmethod
-    def from_dict(kdict: dict):
+    def from_dict(kdict: Dict[str, Any]) -> "Webhook":
         return Webhook(
             webhook_id=kdict.get("webhook_id"),
-            active=kdict.get("active"),
-            post_url=kdict.get("post_url"),
-            api_key=kdict.get("api_key"),
-            secret=kdict.get("secret"),
+            active=kdict.get("active"),  # type: ignore
+            post_url=kdict.get("post_url"),  # type: ignore
+            api_key=kdict.get("api_key"),  # type: ignore
+            secret=kdict.get("secret"),  # type: ignore
             algorithm=kdict.get("algorithm"),
-            event_name=kdict.get("event_name"),
+            event_name=kdict.get("event_name"),  # type: ignore
             event_version=kdict.get("event_version"),
         )
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         kdict = {
             "active": self.active,
             "post_url": self.post_url,
@@ -41,8 +41,8 @@ class Webhook:
         secret: str,
         event_name: str,
         event_version: Optional[str] = "1",
-        webhook_id: str = None,
-        algorithm: str = None,
+        webhook_id: Union[str, None] = None,
+        algorithm: Union[str, None] = None,
     ):
         self.webhook_id = webhook_id
         self.active = active
@@ -54,13 +54,13 @@ class Webhook:
         self.event_version = event_version
         super().__init__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return json.dumps(self.to_dict())
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if issubclass(other.__class__, self.__class__) or issubclass(
             self.__class__, other.__class__
         ):
-            return self.to_dict() == other.to_dict()
+            return bool(self.to_dict() == other.to_dict())
         else:
             return False

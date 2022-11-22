@@ -11,14 +11,14 @@ class AuthError(Error):
     code: int
     message: Dict[str, str]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__repr__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"[AuthError: [operation: {self.operation} | code: {self.code} | message: {self.message}]]"
 
     @staticmethod
-    def from_response(operation: str, response: Response):
+    def from_response(operation: str, response: Response) -> "AuthError":
         code = response.status_code
         try:
             message = response.json()

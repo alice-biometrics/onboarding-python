@@ -1,18 +1,15 @@
 import pytest
-from meiga.assertions import assert_failure
 
 from alice import Auth, Config
 
 
 @pytest.mark.unit
 def test_should_return_an_error_when_the_api_key_is_not_configured():
-
     config = Config()
     auth = Auth.from_config(config)
 
     result = auth.create_backend_token()
-
-    assert_failure(result)
+    result.assert_failure()
 
 
 @pytest.mark.unit
@@ -43,6 +40,8 @@ def test_should_create_a_valid_user_token(given_valid_api_key):
     config = Config(api_key=given_valid_api_key)
     auth = Auth.from_config(config)
 
-    user_token = auth.create_user_token(user_id="user_id")
+    result = auth.create_user_token(user_id="user_id")
+    import pdb
 
-    assert user_token is not None
+    pdb.set_trace()
+    result.assert_success(value_is_instance_of=str)

@@ -49,19 +49,23 @@ def given_resources_path():
 
 @pytest.fixture
 def given_any_selfie_image_media_data(given_resources_path):
-    return open(f"{given_resources_path}/selfie.png", "rb").read()
+    with open(f"{given_resources_path}/selfie.png", "rb") as f:
+        yield f.read()
 
 
 @pytest.fixture
 def given_any_document_front_media_data(given_resources_path):
-    return open(f"{given_resources_path}/idcard_esp_front_example.png", "rb").read()
+    with open(f"{given_resources_path}/idcard_esp_front_example.png", "rb") as f:
+        yield f.read()
 
 
 @pytest.fixture
 def given_any_document_back_media_data(given_resources_path):
-    return open(f"{given_resources_path}/idcard_esp_back_example.png", "rb").read()
+    with open(f"{given_resources_path}/idcard_esp_back_example.png", "rb") as f:
+        yield f.read()
 
 
 @pytest.fixture
 def given_any_pdf_media_data(given_resources_path):
-    return open(f"{given_resources_path}/test.pdf", "rb").read()
+    with open(f"{given_resources_path}/test.pdf", "rb") as f:
+        yield f.read()

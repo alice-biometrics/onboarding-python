@@ -1,10 +1,12 @@
 import platform
-from typing import Optional
+from typing import Any, Dict, Optional, Union
 
+from meiga import Result, Success, early_return
 from requests import Response, Session
 
 import alice
 from alice.auth.auth import Auth
+from alice.auth.auth_errors import AuthError
 from alice.onboarding.tools import print_intro, print_response, print_token, timeit
 from alice.webhooks.webhook import Webhook
 
@@ -24,7 +26,7 @@ class WebhooksClient:
         self.send_agent = send_agent
         self.session = session
 
-    def _auth_headers(self, token: str):
+    def _auth_headers(self, token: str) -> Dict[str, Any]:
         auth_headers = {"Authorization": f"Bearer {token}"}
         if self.send_agent:
             auth_headers.update(
@@ -34,8 +36,11 @@ class WebhooksClient:
             )
         return auth_headers
 
+    @early_return
     @timeit
-    def get_available_events(self, verbose: Optional[bool] = False) -> Response:
+    def get_available_events(
+        self, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
 
         Get public available events.
@@ -48,23 +53,24 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("get_available_events", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
         headers = self._auth_headers(backend_token)
         response = self.session.get(self.url + "/events", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def create_webhook(
-        self, webhook: Webhook = None, verbose: Optional[bool] = False
-    ) -> Response:
+        self, webhook: Union[Webhook, None] = None, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
         It creates a new Webhook in the onboarding service.
 
@@ -78,11 +84,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("create_webhook", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
 
         print_token("backend_token", backend_token, verbose=verbose)
 
@@ -98,12 +104,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def update_webhook(
         self, webhook: Webhook, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Update an existent Webhook
@@ -118,11 +125,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("update_webhook", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -139,12 +146,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def update_webhook_activation(
         self, webhook_id: str, active: bool, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Update Webhook activation
@@ -160,11 +168,11 @@ class WebhooksClient:
 
          Returns
          -------
-             A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("update_webhook_activation", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -178,12 +186,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def ping_webhook(
         self, webhook_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Send ping event to configured and active Webhook
@@ -198,11 +207,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("ping_webhook", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -212,12 +221,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def delete_webhook(
         self, webhook_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Remove a configured Webhook
@@ -232,11 +242,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("delete_webhook", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -246,10 +256,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def get_webhook(self, webhook_id: str, verbose: Optional[bool] = False) -> Response:
+    def get_webhook(
+        self, webhook_id: str, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
 
         Returns Webhook info
@@ -264,11 +277,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("get_webhook", verbose=verbose)
 
-        user_token = self.auth.create_backend_token().unwrap()
+        user_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
@@ -279,10 +292,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
-    def get_webhooks(self, verbose: Optional[bool] = False) -> Response:
+    def get_webhooks(
+        self, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
         """
 
         Returns all configured webhooks
@@ -295,11 +311,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("get_webhooks", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -307,12 +323,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def get_webhook_results(
         self, webhook_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns all the result of delivered events from a specific Webhook
@@ -327,11 +344,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("get_webhook_results", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -341,12 +358,13 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
+    @early_return
     @timeit
     def get_last_webhook_result(
         self, webhook_id: str, verbose: Optional[bool] = False
-    ) -> Response:
+    ) -> Result[Response, AuthError]:
         """
 
         Returns last result of delivered event from a specific Webhook
@@ -361,11 +379,11 @@ class WebhooksClient:
 
         Returns
         -------
-            A Response object [requests library]
+            A Response object [requests library] if success
         """
         print_intro("get_last_webhook_result", verbose=verbose)
 
-        backend_token = self.auth.create_backend_token().unwrap()
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
@@ -375,4 +393,4 @@ class WebhooksClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)

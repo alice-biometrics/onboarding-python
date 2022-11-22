@@ -1,13 +1,12 @@
-from typing import Dict
-
 import pytest
-from meiga import Error, Result, Success
-from meiga.assertions import assert_failure, assert_success
-from meiga.decorators import meiga
+from meiga import Error, Result, Success, early_return
 
 from alice import Config, DeviceInfo, Onboarding, UserInfo
 from alice.onboarding.enums.document_side import DocumentSide
+from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.enums.version import Version
+from alice.onboarding.models.report.report import Report
 
 
 @pytest.mark.unit
@@ -18,7 +17,7 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
 
     result = onboarding.create_user()
 
-    assert_failure(result)
+    result.assert_failure()
 
 
 @pytest.mark.unit
@@ -29,10 +28,9 @@ def test_should_do_complete_onboarding_process(
     given_any_document_back_media_data,
     given_any_pdf_media_data,
 ):
-    @meiga
+    @early_return
     def do_complete_onboarding() -> Result[dict, Error]:
         config = Config(api_key=given_valid_api_key)
-
         onboarding = Onboarding.from_config(config)
 
         user_id = onboarding.create_user(
@@ -45,12 +43,16 @@ def test_should_do_complete_onboarding_process(
         document_id = onboarding.create_document(
             user_id=user_id, type=DocumentType.ID_CARD, issuing_country="ESP"
         ).unwrap_or_return()
+        onboarding.document_properties(
+            user_id=user_id, type=DocumentType.ID_CARD, issuing_country="ESP"
+        ).unwrap_or_return()
         onboarding.add_document(
             user_id=user_id,
             document_id=document_id,
             media_data=given_any_document_front_media_data,
             side=DocumentSide.FRONT,
             manual=True,
+            source=DocumentSource.camera,
         ).unwrap_or_return()
         onboarding.add_document(
             user_id=user_id,
@@ -58,14 +60,14 @@ def test_should_do_complete_onboarding_process(
             media_data=given_any_document_back_media_data,
             side=DocumentSide.BACK,
             manual=True,
-        ).handle()
+            source=DocumentSource.camera,
+        ).unwrap_or_return()
         onboarding.add_other_trusted_document(
             user_id=user_id, pdf=given_any_pdf_media_data
         ).unwrap_or_return()
-        onboarding.document_properties(
-            user_id=user_id, document_id=document_id
+        report = onboarding.create_report(
+            user_id=user_id, version=Version.V1
         ).unwrap_or_return()
-        report = onboarding.create_report(user_id=user_id).unwrap_or_return()
 
         certificate_id = onboarding.create_certificate(
             user_id=user_id
@@ -83,4 +85,4 @@ def test_should_do_complete_onboarding_process(
 
     result = do_complete_onboarding()
 
-    assert_success(result, value_is_instance_of=Dict)
+    result.assert_success(value_is_instance_of=Report)
