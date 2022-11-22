@@ -953,13 +953,13 @@ class OnboardingClient:
             user_id=user_id
         ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+
         options = {"template_name": template_name, "locale": locale.value}
         headers = self._auth_headers(backend_user_token)
         headers["Content-Type"] = "application/json"
         response = requests.post(
             f"{self.url}/user/certificate", data=json.dumps(options), headers=headers
         )
-
         print_response(response=response, verbose=verbose)
 
         return Success(response)

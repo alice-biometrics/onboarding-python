@@ -905,10 +905,11 @@ class Onboarding:
         ).unwrap_or_return()
 
         if response.status_code == 200:
-            if version is Version.V1 and not raw:
-                return Success(Report.parse_obj(response.json()["report"]))
+            report_dict = response.json()["report"]
+            if report_dict["version"] == 1 and not raw:
+                return Success(Report.parse_obj(report_dict))
             else:
-                return Success(response.json()["report"])
+                return Success(report_dict)
         else:
             return Failure(
                 OnboardingError.from_response(
