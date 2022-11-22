@@ -35,10 +35,10 @@ class ReportV1Field(BaseModel):
             self.checks.append(check)
 
     def has_critical_checks(self) -> bool:
-        from onboardingrest.src.modules.kyc.report.shared.domain.aggregate_roots.v1.checks.field.valid_date_format_check import (
+        from alice.onboarding.models.report.checks.field.valid_date_format_check import (
             ValidDateFormatCheck,
         )
-        from onboardingrest.src.modules.kyc.report.shared.domain.aggregate_roots.v1.checks.field.valid_date_range_check import (
+        from alice.onboarding.models.report.checks.field.valid_date_range_check import (
             ValidDateRangeCheck,
         )
 
@@ -51,7 +51,7 @@ class ReportV1Field(BaseModel):
         )
 
     def is_checked(self) -> bool:  # has CheckedFieldCheck to True
-        from onboardingrest.src.modules.kyc.report.shared.domain.aggregate_roots.v1.checks.field.cheked_field_check import (
+        from alice.onboarding.models.report.checks.field.cheked_field_check import (
             CheckedFieldCheck,
         )
 

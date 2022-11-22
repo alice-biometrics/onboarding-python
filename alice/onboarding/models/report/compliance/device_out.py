@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 from pydantic import Field
 from pydantic.main import BaseModel
@@ -18,22 +18,3 @@ class DeviceOut(BaseModel):
 
     def __hash__(self) -> int:
         return hash((type(self),) + tuple(self.__dict__.values()))
-
-    @staticmethod
-    def from_event(event) -> Union["DeviceOut", None]:
-        if not event.event_meta:
-            return None
-
-        device = event.event_meta.get("device")
-        if not device:
-            return None
-        ip = event.event_info_id.get("ip") if event.event_info_id else None
-
-        return DeviceOut(
-            agent=device.get("agent"),
-            agent_version=device.get("agent_version"),
-            platform=device.get("platform"),
-            platform_version=device.get("platform_version"),
-            model=device.get("model"),
-            ip=ip,
-        )
