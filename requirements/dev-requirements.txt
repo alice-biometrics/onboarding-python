@@ -12,3 +12,4 @@ pytest-variables[yaml]==2.0.0
 pytest-clarity==1.0.1
 requests-mock==1.8.0
 pyupgrade==3.2.0
+types-requests==2.28.11.5
