@@ -49,7 +49,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.get_available_events(
@@ -84,7 +84,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns a webhook_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.create_webhook(
@@ -119,7 +119,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns a webhook_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.update_webhook(
@@ -156,7 +156,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns a webhook_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.update_webhook_activation(
@@ -189,7 +189,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.ping_webhook(
@@ -222,7 +222,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.delete_webhook(
@@ -255,7 +255,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.get_webhook(
@@ -286,7 +286,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.get_webhooks(verbose=verbose).unwrap_or_return()
@@ -319,7 +319,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.get_webhook_results(
@@ -352,7 +352,7 @@ class Webhooks:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.webhooks_client.get_last_webhook_result(

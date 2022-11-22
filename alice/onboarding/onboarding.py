@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 from meiga import Failure, Result, Success, early_return, isSuccess
@@ -5,13 +6,16 @@ from meiga import Failure, Result, Success, early_return, isSuccess
 from alice.auth.auth import Auth
 from alice.auth.auth_errors import AuthError
 from alice.config import Config
+from alice.onboarding.enums.certificate_locale import CertificateLocale
 from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
+from alice.onboarding.models.report.report import Report
 from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.onboarding_errors import OnboardingError
@@ -58,7 +62,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.healthcheck(
@@ -100,7 +104,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a user_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_user(
@@ -135,7 +139,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.delete_user(
@@ -170,7 +174,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a Dict with the status info.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_user_status(
@@ -203,7 +207,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns list of string with already created user_ids.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_users(verbose=verbose).unwrap_or_return()
@@ -232,7 +236,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a dict with users information
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_users_stats(
@@ -287,7 +291,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns list of dict which represent the status of each user.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_users_status(
@@ -343,7 +347,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.add_user_feedback(
@@ -386,7 +390,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.add_selfie(
@@ -420,7 +424,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.delete_selfie(
@@ -456,7 +460,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.void_selfie(
@@ -493,7 +497,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns dict with supported document.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.supported_documents(
@@ -537,7 +541,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a str with a document_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_document(
@@ -575,7 +579,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.delete_document(
@@ -613,7 +617,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.void_document(
@@ -671,7 +675,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.add_document(
@@ -697,7 +701,11 @@ class Onboarding:
 
     @early_return
     def document_properties(
-        self, user_id: str, document_id: str, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        type: DocumentType,
+        issuing_country: str,
+        verbose: Optional[bool] = False,
     ) -> Result[str, Union[OnboardingError, AuthError]]:
         """
 
@@ -708,8 +716,11 @@ class Onboarding:
         user_id
             User identifier
 
-        document_id
-            Document identifier
+        type
+            Type of document [idcard, driverlicense, passport, residencepermit, healthinsurancecard]
+
+        issuing_country
+            Issuing Country [ESP, FRA]. Country codes following ISO 3166-1.
 
         verbose
             Used for print service response as well as the time elapsed
@@ -718,11 +729,11 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns dict with document properties.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.document_properties(
-            user_id=user_id, document_id=document_id, verbose=verbose
+            user_id=user_id, type=type, issuing_country=issuing_country, verbose=verbose
         ).unwrap_or_return()
 
         if response.status_code == 200:
@@ -762,7 +773,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a str with a document_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.add_other_trusted_document(
@@ -803,7 +814,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.delete_other_trusted_document(
@@ -841,7 +852,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.void_other_trusted_document(
@@ -861,9 +872,10 @@ class Onboarding:
     def create_report(
         self,
         user_id: str,
-        verbose: Optional[bool] = False,
         version: Version = Version.DEFAULT,
-    ) -> Result[Dict[str, Any], Union[OnboardingError, AuthError]]:
+        raw: Optional[bool] = False,
+        verbose: Optional[bool] = False,
+    ) -> Result[Union[Report, Dict[str, Any]], Union[OnboardingError, AuthError]]:
         """
 
         This call is used to get the report of the onboarding process for a specific user.
@@ -875,23 +887,28 @@ class Onboarding:
         ----------
         user_id
             User identifier
-        verbose
-            Used for print service response as well as the time elapsed
         version
             Set Report Version
+        raw
+            Whether to return the report as a Dict or as a Report object
+        verbose
+            Used for print service response as well as the time elapsed
 
         Returns
         -------
-            A Result where if the operation is successful it returns a Dict with the generated report.
-            Otherwise, it returns an OnboardingError.
+            A Result where if the operation is successful it returns a Report object if raw=True or Dict otherwise.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_report(
-            user_id=user_id, verbose=verbose, version=version
+            user_id=user_id, version=version, verbose=verbose
         ).unwrap_or_return()
 
         if response.status_code == 200:
-            return Success(response.json()["report"])
+            if version is Version.V1 and not raw:
+                return Success(Report.parse_obj(response.json()["report"]))
+            else:
+                return Success(response.json()["report"])
         else:
             return Failure(
                 OnboardingError.from_response(
@@ -904,6 +921,7 @@ class Onboarding:
         self,
         user_id: str,
         template_name: str = "default",
+        locale: CertificateLocale = CertificateLocale.EN,
         verbose: Optional[bool] = False,
     ) -> Result[Dict[str, Any], Union[OnboardingError, AuthError]]:
         """
@@ -918,6 +936,8 @@ class Onboarding:
             User identifier
         template_name
             'default' (only available)
+        locale
+            The language of the certificate
         verbose
             Used for print service response as well as the time elapsed
 
@@ -925,11 +945,11 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a str with a pdf_report_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_certificate(
-            user_id=user_id, template_name=template_name, verbose=verbose
+            user_id=user_id, template_name=template_name, locale=locale, verbose=verbose
         ).unwrap_or_return()
 
         if response.status_code == 200:
@@ -962,7 +982,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a binary pdf (bytes).
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.retrieve_certificate(
@@ -997,7 +1017,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a list of dictionaries.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.retrieve_certificates(
@@ -1034,7 +1054,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a dictionary.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.screening(
@@ -1066,7 +1086,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.screening_monitor_add(
@@ -1100,7 +1120,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.screening_monitor_delete(
@@ -1135,7 +1155,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a dictionary.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.screening_monitor_open_alerts(
@@ -1175,7 +1195,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a dict with sorted users by face score.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.identify_user(
@@ -1209,7 +1229,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.authorize_user(
@@ -1243,7 +1263,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.deauthorize_user(
@@ -1280,7 +1300,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a authentication_id.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.authenticate_user(
@@ -1315,7 +1335,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a List of string with all the authentication_ids.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_authentications_ids(
@@ -1366,7 +1386,7 @@ class Onboarding:
         -------
             A Result where if the operation is successful it returns a Dictionary with a List of authentications and
             the total number of authentications.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_authentications(
@@ -1414,7 +1434,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a Dict with the information of one authentication.
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.get_authentication(
@@ -1454,7 +1474,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a binary image (bytes).
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.retrieve_media(
@@ -1491,7 +1511,7 @@ class Onboarding:
         Returns
         -------
             A Result where if the operation is successful it returns a binary object (bytes).
-            Otherwise, it returns an OnboardingError.
+            Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.download(
@@ -1503,4 +1523,118 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(operation="download", response=response)
+            )
+
+    @early_return
+    def request_duplicates_search(
+        self,
+        start_date: datetime,
+        end_date: datetime,
+        resource_type: DuplicatesResourceType,
+        verbose: bool = False,
+    ) -> Result[str, Union[OnboardingError, AuthError]]:
+        """
+
+        Requests a duplicates search to the onboarding platform
+
+        Parameters
+        ----------
+        start_date
+            Beginning datetime of the temporal window
+        end_date
+            Ending datetime of the temporal window
+        resource_type
+            Entity to analyze (selfie or document)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a search_id.
+            Otherwise, it returns an OnboardingError or AuthError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.request_duplicates_search(
+            start_date=start_date,
+            end_date=end_date,
+            resource_type=resource_type,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 202:
+            return Success(response.json()["search_id"])
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="request_duplicates_search", response=response
+                )
+            )
+
+    @early_return
+    def get_duplicates_search(
+        self, search_id: str, verbose: bool = False
+    ) -> Result[Dict[str, Any], Union[OnboardingError, AuthError]]:
+        """
+
+        Retrieves a previously requested duplicates search from the onboarding platform
+
+        Parameters
+        ----------
+        search_id
+            Duplicates search unique identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns the duplicates result.
+            Otherwise, it returns an OnboardingError or AuthError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_duplicates_search(
+            search_id=search_id, verbose=verbose
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="get_duplicates_search", response=response
+                )
+            )
+
+    @early_return
+    def get_duplicates_searches(
+        self, verbose: bool = False
+    ) -> Result[List[Dict[str, Any]], Union[OnboardingError, AuthError]]:
+        """
+
+        Retrieves a previously requested duplicates search from the onboarding platform
+
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns the duplicates result.
+            Otherwise, it returns an OnboardingError or AuthError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_duplicates_searches(
+            verbose=verbose
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.json()["searches"])
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="get_duplicates_searches", response=response
+                )
             )

@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pytest
 from meiga import Error, Result, Success
 from meiga.assertions import assert_failure, assert_success
@@ -8,6 +6,7 @@ from meiga.decorators import meiga
 from alice import Config, DeviceInfo, Onboarding, UserInfo
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.models.report.report import Report
 
 
 @pytest.mark.unit
@@ -45,6 +44,9 @@ def test_should_do_complete_onboarding_process(
         document_id = onboarding.create_document(
             user_id=user_id, type=DocumentType.ID_CARD, issuing_country="ESP"
         ).unwrap_or_return()
+        onboarding.document_properties(
+            user_id=user_id, type=DocumentType.ID_CARD, issuing_country="ESP"
+        ).unwrap_or_return()
         onboarding.add_document(
             user_id=user_id,
             document_id=document_id,
@@ -61,9 +63,6 @@ def test_should_do_complete_onboarding_process(
         ).handle()
         onboarding.add_other_trusted_document(
             user_id=user_id, pdf=given_any_pdf_media_data
-        ).unwrap_or_return()
-        onboarding.document_properties(
-            user_id=user_id, document_id=document_id
         ).unwrap_or_return()
         report = onboarding.create_report(user_id=user_id).unwrap_or_return()
 
@@ -83,4 +82,4 @@ def test_should_do_complete_onboarding_process(
 
     result = do_complete_onboarding()
 
-    assert_success(result, value_is_instance_of=Dict)
+    assert_success(result, value_is_instance_of=Report)

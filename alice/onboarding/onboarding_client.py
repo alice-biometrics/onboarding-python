@@ -1,5 +1,6 @@
 import json
 import platform
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 import requests
@@ -9,10 +10,12 @@ from requests import Response
 import alice
 from alice.auth.auth import Auth
 from alice.auth.auth_errors import AuthError
+from alice.onboarding.enums.certificate_locale import CertificateLocale
 from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
@@ -701,7 +704,11 @@ class OnboardingClient:
     @early_return
     @timeit
     def document_properties(
-        self, user_id: str, document_id: str, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        type: DocumentType,
+        issuing_country: str,
+        verbose: Optional[bool] = False,
     ) -> Result[Response, AuthError]:
         """
 
@@ -712,8 +719,10 @@ class OnboardingClient:
         ----------
         user_id
             User identifier
-        document_id
-            Document identifier
+        type
+            Type of document [idcard, driverlicense, passport, residencepermit, healthinsurancecard]
+        issuing_country
+            Issuing Country [ESP, FRA]. Country codes following ISO 3166-1.
         verbose
             Used for print service response as well as the time elapsed
 
@@ -728,7 +737,7 @@ class OnboardingClient:
         print_token("user_token", user_token, verbose=verbose)
 
         headers = self._auth_headers(user_token)
-        data = {"document_id": document_id}
+        data = {"type": type.value, "issuing_country": issuing_country}
 
         response = requests.post(
             f"{self.url}/user/document/properties", data=data, headers=headers
@@ -831,8 +840,6 @@ class OnboardingClient:
         ----------
         user_id
             User identifier
-        document_id
-            Document identifier
         media_data
             Binary media data (pdf).
         category
@@ -870,8 +877,8 @@ class OnboardingClient:
     def create_report(
         self,
         user_id: str,
-        verbose: Optional[bool] = False,
         version: Version = Version.DEFAULT,
+        verbose: Optional[bool] = False,
     ) -> Result[Response, AuthError]:
         """
 
@@ -884,10 +891,10 @@ class OnboardingClient:
         ----------
         user_id
             User identifier
-        verbose
-            Used for print service response as well as the time elapsed
         version
             Set Report Version
+        verbose
+            Used for print service response as well as the time elapsed
 
         Returns
         -------
@@ -914,6 +921,7 @@ class OnboardingClient:
     def create_certificate(
         self,
         user_id: str,
+        locale: CertificateLocale = CertificateLocale.EN,
         template_name: str = "default",
         verbose: Optional[bool] = False,
     ) -> Result[Response, AuthError]:
@@ -929,6 +937,8 @@ class OnboardingClient:
             User identifier
         template_name
             'default' (only available)
+        locale
+            The language of the certificate
         verbose
             Used for print service response as well as the time elapsed
 
@@ -943,7 +953,7 @@ class OnboardingClient:
             user_id=user_id
         ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
-        options = {"template_name": template_name}
+        options = {"template_name": template_name, "locale": locale.value}
         headers = self._auth_headers(backend_user_token)
         headers["Content-Type"] = "application/json"
         response = requests.post(
@@ -1547,6 +1557,122 @@ class OnboardingClient:
 
         response = requests.get(href, headers=headers)
 
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def request_duplicates_search(
+        self,
+        start_date: datetime,
+        end_date: datetime,
+        resource_type: DuplicatesResourceType,
+        verbose: bool = False,
+    ) -> Result[Response, AuthError]:
+        """
+
+        Returns the binary data of a media resource
+
+        Parameters
+        ----------
+        start_date
+            Beginning datetime of the temporal window
+        end_date
+            Ending datetime of the temporal window
+        resource_type
+            Entity to analyze (selfie or document)
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library] if success
+        """
+        print_intro("request_duplicates_search", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        data = {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "resource_type": resource_type.value,
+        }
+        response = requests.post(
+            f"{self.url}/duplicates/search", data=data, headers=headers
+        )
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def get_duplicates_search(
+        self, search_id: str, verbose: bool = False
+    ) -> Result[Response, AuthError]:
+        """
+
+        Retrieves a previously requested duplicates search from the onboarding platform
+
+        Parameters
+        ----------
+        search_id
+            Duplicates search unique identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+
+        Returns
+        -------
+            A Response object [requests library] if success
+        """
+        print_intro("get_duplicates_search", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        response = requests.get(
+            f"{self.url}/duplicates/search/{search_id}", headers=headers
+        )
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def get_duplicates_searches(
+        self, verbose: bool = False
+    ) -> Result[Response, AuthError]:
+        """
+
+        Retrieves all previously requested duplicates searches from the onboarding platform
+
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("get_duplicates_searches", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        response = requests.get(f"{self.url}/duplicates/searches", headers=headers)
         print_response(response=response, verbose=verbose)
 
         return Success(response)

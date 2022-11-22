@@ -6,10 +6,10 @@ on:
       - '*.md'
       - 'alice/VERSION'
     branches:
-      - master
+      - main
 
 env:
-  ONBOARDING_API_KEY: ${{ secrets.ONBOARDING_API_KEY }}
+  ONBOARDING_API_KEY: ${{ secrets.API_KEY_TESTING_PRO_ONBOARDING_ALL_FEATURES }}
   ONBOARDING_SANDBOX_TOKEN: ${{ secrets.ONBOARDING_SANDBOX_TOKEN }}
   CONCURRENT_TESTING: True
 
@@ -41,6 +41,8 @@ jobs:
         run: lume -test
       - name: Example [Onboarding]
         run: python examples/onboarding.py
+      - name: Example [Onboarding Report V0]
+        run: python examples/onboarding_report_v0.py
       - name: Example [Onboarding with Identification]
         run: python examples/onboarding_with_identification.py
       - name: Example [Onboarding with Certificate]
