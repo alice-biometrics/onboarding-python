@@ -21,6 +21,6 @@ steps:
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:
-    run: yes | mypy --install-types --namespace-packages alice
+    run: mypy --install-types --namespace-packages alice
   test:
     run: pytest
