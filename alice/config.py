@@ -1,13 +1,15 @@
-from typing import Optional
+from typing import Union
 
-from pydantic.dataclasses import dataclass
+from pydantic.fields import Field
+from pydantic.main import BaseModel
 
 
-@dataclass
-class Config:
-    onboarding_url: str = "https://apis.alicebiometrics.com/onboarding"
-    sandbox_url: str = "https://apis.alicebiometrics.com/onboarding/sandbox"
-    api_key: str = None
-    sandbox_token: str = None
-    send_agent: Optional[bool] = True
-    verbose: Optional[bool] = False
+class Config(BaseModel):
+    onboarding_url: str = Field(default="https://apis.alicebiometrics.com/onboarding")
+    sandbox_url: str = Field(
+        default="https://apis.alicebiometrics.com/onboarding/sandbox"
+    )
+    api_key: Union[str, None] = Field(default=None)
+    sandbox_token: Union[str, None] = Field(default=None)
+    send_agent: bool = Field(default=True)
+    verbose: bool = Field(default=False)

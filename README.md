@@ -1,4 +1,5 @@
-# onboarding-python <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/python.png?raw=true" width="30"> [![version](https://img.shields.io/github/release/alice-biometrics/onboarding-python/all.svg)](https://github.com/alice-biometrics/onboarding-python/releases) [![doc](https://img.shields.io/badge/doc-onboarding-51CB56)](https://docs.alicebiometrics.com/onboarding/sections/server/server_side_sdks/python.html)
+# onboarding-python [![version](https://img.shields.io/github/release/alice-biometrics/petisco/all.svg)](https://github.com/alice-biometrics/petisco/releases) 
+<img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/python.png?raw=true" width="30"> [![version](https://img.shields.io/github/release/alice-biometrics/onboarding-python/all.svg)](https://github.com/alice-biometrics/onboarding-python/releases) [![doc](https://img.shields.io/badge/doc-onboarding-51CB56)](https://docs.alicebiometrics.com/onboarding/sections/server/server_side_sdks/python.html)
 
 <img src="https://github.com/alice-biometrics/custom-emojis/blob/master/images/alice_header.png?raw=true" width=auto>
 

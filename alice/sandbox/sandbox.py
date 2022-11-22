@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import jwt
 from meiga import Failure, Result, Success, isSuccess
@@ -15,9 +15,9 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 
 class Sandbox:
     @staticmethod
-    def from_config(config: Config):
+    def from_config(config: Config) -> "Sandbox":
         return Sandbox(
-            sandbox_token=config.sandbox_token,
+            sandbox_token=config.sandbox_token,  # type: ignore
             url=config.sandbox_url,
             verbose=config.verbose,
         )
@@ -27,18 +27,18 @@ class Sandbox:
         sandbox_token: str,
         url: str = DEFAULT_URL,
         verbose: Optional[bool] = False,
-    ):
+    ) -> None:
         self.sandbox_client = SandboxClient(sandbox_token=sandbox_token, url=url)
         self.url = url
         self.verbose = verbose
 
     @staticmethod
-    def _is_token_valid(token, margin_seconds: int = 60):
+    def _is_token_valid(token: Union[str, None], margin_seconds: int = 60) -> bool:
         if not token:
             return False
 
         decoded_token = jwt.decode(token, verify=False)
-        return decoded_token["exp"] > time.time() - margin_seconds
+        return bool(decoded_token["exp"] > time.time() - margin_seconds)
 
     def healthcheck(
         self, verbose: Optional[bool] = False
@@ -69,8 +69,8 @@ class Sandbox:
 
     def create_user(
         self,
-        user_info: UserInfo = None,
-        device_info: DeviceInfo = None,
+        user_info: Union[UserInfo, None] = None,
+        device_info: Union[DeviceInfo, None] = None,
         verbose: Optional[bool] = False,
     ) -> Result[str, SandboxError]:
         """
@@ -140,7 +140,7 @@ class Sandbox:
 
     def get_user(
         self, email: str, verbose: Optional[bool] = False
-    ) -> Result[Dict, SandboxError]:
+    ) -> Result[Dict[str, Any], SandboxError]:
         """
 
         Returns User Status of a Sandbox user

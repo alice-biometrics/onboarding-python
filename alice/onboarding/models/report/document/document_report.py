@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import List
+from typing import List, Union
 
-from meiga import Error, Failure, Result, Success, isFailure
+from meiga import Error, Result, Success, isFailure
 from pydantic import Field
 from pydantic.main import BaseModel
 
@@ -16,11 +16,11 @@ from alice.onboarding.models.report.document.document_side_report import (
 
 
 class DocumentSidesDetailReport(BaseModel):
-    front: DocumentSideReport = None
-    back: DocumentSideReport = None
-    internal: DocumentSideReport = None
+    front: Union[DocumentSideReport, None] = None
+    back: Union[DocumentSideReport, None] = None
+    internal: Union[DocumentSideReport, None] = None
 
-    def get_completed_sides(self):
+    def get_completed_sides(self) -> int:
         completed_sides = 0
         if self.front:
             completed_sides += 1
@@ -62,17 +62,17 @@ class DocumentReport(BaseModel):
             [field_name == summary_field.name for summary_field in self.summary_fields]
         )
 
-    def add_field(self, field: ReportV1Field):
+    def add_field(self, field: ReportV1Field) -> None:
         if not self.has_field(field.name):
             self.summary_fields.append(field)
 
-    def update_field(self, field: ReportV1Field):
+    def update_field(self, field: ReportV1Field) -> None:
         self.summary_fields[:] = [
             field if field.name == summary_field.name else summary_field
             for summary_field in self.summary_fields
         ]
 
-    def get_check(self, check_key: str) -> Result[Check, Failure]:
+    def get_check(self, check_key: str) -> Result[Check, Error]:
         for doc_check in self.checks:
             if check_key == doc_check.key:
                 return Success(doc_check)
@@ -86,6 +86,6 @@ class DocumentReport(BaseModel):
             ]
         )
 
-    def add_check(self, check: Check):
+    def add_check(self, check: Check) -> None:
         if not self.has_check(check):
             self.checks.append(check)

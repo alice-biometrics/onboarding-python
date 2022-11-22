@@ -14,12 +14,13 @@ steps:
     - find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   lint:
     run:
-      - black --check .
+      - black --check alice tests
       - flake8 alice tests
-      - isort --check .
+      - pyupgrade --py36-plus `find alice tests -name "*.py" -type f`
+      - isort --check alice tests
   check-requirements:
     run: safety check -r requirements/requirements.txt
   static-analysis:
-    run: mypy --namespace-packages alice
+    run: mypy --install-types --namespace-packages alice
   test:
     run: pytest

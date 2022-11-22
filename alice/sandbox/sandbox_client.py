@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Optional, Union
 
 from requests import Response, request
 
@@ -14,7 +14,7 @@ class SandboxClient:
         self.sandbox_token = sandbox_token
         self.url = url
 
-    def _auth_headers(self, token: str):
+    def _auth_headers(self, token: str) -> Dict[str, Any]:
         auth_headers = {"Authorization": f"Bearer {token}"}
         return auth_headers
 
@@ -45,8 +45,8 @@ class SandboxClient:
     @timeit
     def create_user(
         self,
-        user_info: UserInfo = None,
-        device_info: DeviceInfo = None,
+        user_info: Union[UserInfo, None] = None,
+        device_info: Union[DeviceInfo, None] = None,
         verbose: Optional[bool] = False,
     ) -> Response:
         """

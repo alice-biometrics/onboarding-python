@@ -1,6 +1,6 @@
 import json
 import time
-from typing import Optional
+from typing import Optional, Union
 
 import jwt
 import requests
@@ -10,14 +10,14 @@ from alice.onboarding.tools import print_intro, print_response, timeit
 
 
 class AuthClient:
-    def __init__(self, url, api_key):
+    def __init__(self, url: str, api_key: str) -> None:
         self.url = url
         self._api_key = api_key
-        self._login_token = None
+        self._login_token: Union[str, None] = None
 
     @timeit
     def create_backend_token(
-        self, user_id: str = None, verbose: Optional[bool] = False
+        self, user_id: Union[str, None] = None, verbose: Optional[bool] = False
     ) -> Response:
 
         suffix = " (with user)" if user_id else ""
@@ -62,22 +62,21 @@ class AuthClient:
 
         return response
 
-    def _create_login_token(self):
+    def _create_login_token(self) -> Response:
         final_url = f"{self.url}/login_token"
         headers = {"apikey": self._api_key}
         response = requests.get(final_url, headers=headers)
-
         return response
 
     @staticmethod
-    def _is_valid_token(token, margin_seconds: int = 60):
+    def _is_valid_token(token: Union[str, None], margin_seconds: int = 60) -> bool:
         if not token:
             return False
         decoded_token = jwt.decode(token, options={"verify_signature": False})
-        return decoded_token["exp"] > time.time() - margin_seconds
+        return bool(decoded_token["exp"] > time.time() - margin_seconds)
 
     @staticmethod
-    def _get_token_from_response(response):
+    def _get_token_from_response(response: Response) -> str:
         response_json = json.loads(response.content)
-        token = response_json["token"]
+        token: str = response_json["token"]
         return token

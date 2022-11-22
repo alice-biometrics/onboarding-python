@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from meiga import Failure, Result, Success, isFailure
+from meiga import Error, Result, Success, isFailure
 from pydantic.main import BaseModel
 
 from alice.onboarding.models.report.checks.check import Check
@@ -16,7 +16,7 @@ class ReportV1Field(BaseModel):
     score: Optional[int]
     checks: List[Check] = []
 
-    def get_check(self, check_key: str) -> Result[Check, Failure]:
+    def get_check(self, check_key: str) -> Result[Check, Error]:
         for doc_check in self.checks:
             if check_key == doc_check.key:
                 return Success(doc_check)
@@ -30,15 +30,15 @@ class ReportV1Field(BaseModel):
             ]
         )
 
-    def add_check(self, check: Check):
+    def add_check(self, check: Check) -> None:
         if not self.has_check(check):
             self.checks.append(check)
 
     def has_critical_checks(self) -> bool:
-        from onboardingrest.src.modules.kyc.report.shared.domain.aggregate_roots.v1.checks.field.valid_date_format_check import (
+        from alice.onboarding.models.report.checks.field.valid_date_format_check import (
             ValidDateFormatCheck,
         )
-        from onboardingrest.src.modules.kyc.report.shared.domain.aggregate_roots.v1.checks.field.valid_date_range_check import (
+        from alice.onboarding.models.report.checks.field.valid_date_range_check import (
             ValidDateRangeCheck,
         )
 
@@ -51,7 +51,7 @@ class ReportV1Field(BaseModel):
         )
 
     def is_checked(self) -> bool:  # has CheckedFieldCheck to True
-        from onboardingrest.src.modules.kyc.report.shared.domain.aggregate_roots.v1.checks.field.cheked_field_check import (
+        from alice.onboarding.models.report.checks.field.cheked_field_check import (
             CheckedFieldCheck,
         )
 
