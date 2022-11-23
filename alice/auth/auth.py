@@ -21,7 +21,7 @@ class Auth:
         else:
             session = requests.Session()
         return Auth(
-            api_key=config.api_key,
+            api_key=config.api_key,  # type: ignore
             session=session,
             url=config.onboarding_url,
             verbose=config.verbose,
