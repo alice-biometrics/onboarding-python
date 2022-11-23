@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional, Union
 
 from meiga import Failure, Result, Success, early_return, isSuccess
+from requests import Session
 
 from alice.auth.auth import Auth
 from alice.auth.auth_errors import AuthError
@@ -15,21 +16,29 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 class Webhooks:
     @staticmethod
     def from_config(config: Config) -> "Webhooks":
+        if config.session:
+            session = config.session
+        else:
+            session = Session()
         return Webhooks(
             auth=Auth.from_config(config),
             url=config.onboarding_url,
             send_agent=config.send_agent,
             verbose=config.verbose,
+            session=session,
         )
 
     def __init__(
         self,
         auth: Auth,
+        session: Session,
         url: str = DEFAULT_URL,
         send_agent: bool = True,
         verbose: Optional[bool] = False,
-    ) -> None:
-        self.webhooks_client = WebhooksClient(auth=auth, url=url, send_agent=send_agent)
+    ):
+        self.webhooks_client = WebhooksClient(
+            auth=auth, url=url, send_agent=send_agent, session=session
+        )
         self.url = url
         self.verbose = verbose
 

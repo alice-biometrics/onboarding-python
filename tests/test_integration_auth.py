@@ -1,48 +1,51 @@
 import pytest
-from meiga.assertions import assert_failure
 
 from alice import Auth, Config
+from alice.auth.auth_errors import AuthError
+from alice.onboarding.onboarding import Onboarding
 
 
 @pytest.mark.unit
-def test_should_return_an_error_when_the_api_key_is_not_configured():
+class TestAuth:
+    user_id: str
 
-    config = Config()
-    auth = Auth.from_config(config)
+    def setup_method(self):
+        self.user_id = "85c38a91-e4f8-4d51-b3b5-2db7dc98ada0"
 
-    result = auth.create_backend_token()
+    def _get_user_id(self, config: Config) -> str:
+        onboarding = Onboarding.from_config(config)
+        return onboarding.create_user().unwrap_or_throw()
 
-    assert_failure(result)
+    def should_return_an_error_when_the_api_key_is_not_configured(self):
+        config = Config()
+        auth = Auth.from_config(config)
 
+        result = auth.create_backend_token()
+        result.assert_failure(value_is_instance_of=AuthError)
 
-@pytest.mark.unit
-def test_should_create_a_valid_backend_token(given_valid_api_key):
+    def should_create_a_valid_backend_token(self, given_valid_api_key):
 
-    config = Config(api_key=given_valid_api_key)
-    auth = Auth.from_config(config)
+        config = Config(api_key=given_valid_api_key)
+        auth = Auth.from_config(config)
 
-    backend_token = auth.create_backend_token()
+        result = auth.create_backend_token()
+        result.assert_success(value_is_instance_of=str)
 
-    assert backend_token is not None
+    def should_create_a_valid_backend_token_with_user(self, given_valid_api_key):
 
+        config = Config(api_key=given_valid_api_key)
+        auth = Auth.from_config(config)
 
-@pytest.mark.unit
-def test_should_create_a_valid_backend_token_with_user(given_valid_api_key):
+        result = auth.create_backend_token(user_id=self._get_user_id(config))
+        result.assert_success(value_is_instance_of=str)
 
-    config = Config(api_key=given_valid_api_key)
-    auth = Auth.from_config(config)
+    def should_create_a_valid_user_token(self, given_valid_api_key):
 
-    backend_token_with_user = auth.create_backend_token(user_id="user_id")
+        config = Config(api_key=given_valid_api_key)
+        auth = Auth.from_config(config)
 
-    assert backend_token_with_user is not None
+        onboarding = Onboarding.from_config(config)
+        user_id = onboarding.create_user().unwrap_or_throw()
 
-
-@pytest.mark.unit
-def test_should_create_a_valid_user_token(given_valid_api_key):
-
-    config = Config(api_key=given_valid_api_key)
-    auth = Auth.from_config(config)
-
-    user_token = auth.create_user_token(user_id="user_id")
-
-    assert user_token is not None
+        result = auth.create_user_token(user_id=self._get_user_id(config))
+        result.assert_success(value_is_instance_of=str)

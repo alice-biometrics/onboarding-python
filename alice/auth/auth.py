@@ -1,8 +1,9 @@
 import json
 from typing import Optional, Union
 
+import requests
 from meiga import Failure, Result, Success
-from requests import Response
+from requests import Response, Session
 
 from alice.config import Config
 
@@ -15,14 +16,25 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 class Auth:
     @staticmethod
     def from_config(config: Config) -> "Auth":
+        if config.session:
+            session = config.session
+        else:
+            session = requests.Session()
         return Auth(
-            api_key=config.api_key, url=config.onboarding_url, verbose=config.verbose  # type: ignore
+            api_key=config.api_key,  # type: ignore
+            session=session,
+            url=config.onboarding_url,
+            verbose=config.verbose,
         )
 
     def __init__(
-        self, api_key: str, url: str = DEFAULT_URL, verbose: Optional[bool] = False
-    ) -> None:
-        self._auth_client = AuthClient(url, api_key)
+        self,
+        api_key: str,
+        session: Session,
+        url: str = DEFAULT_URL,
+        verbose: Optional[bool] = False,
+    ):
+        self._auth_client = AuthClient(url=url, api_key=api_key, session=session)
         self.url = url
         self.verbose = verbose
 

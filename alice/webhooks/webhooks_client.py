@@ -1,9 +1,8 @@
 import platform
 from typing import Any, Dict, Optional, Union
 
-import requests
 from meiga import Result, Success, early_return
-from requests import Response
+from requests import Response, Session
 
 import alice
 from alice.auth.auth import Auth
@@ -15,10 +14,17 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
 
 class WebhooksClient:
-    def __init__(self, auth: Auth, url: str = DEFAULT_URL, send_agent: bool = True):
+    def __init__(
+        self,
+        auth: Auth,
+        session: Session,
+        url: str = DEFAULT_URL,
+        send_agent: bool = True,
+    ):
         self.auth = auth
         self.url = url
         self.send_agent = send_agent
+        self.session = session
 
     def _auth_headers(self, token: str) -> Dict[str, Any]:
         auth_headers = {"Authorization": f"Bearer {token}"}
@@ -54,7 +60,7 @@ class WebhooksClient:
         backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
         headers = self._auth_headers(backend_token)
-        response = requests.get(self.url + "/events", headers=headers)
+        response = self.session.get(self.url + "/events", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -94,7 +100,7 @@ class WebhooksClient:
             data = data if data is not None else {}
             data.update(webhook.to_dict())
 
-        response = requests.post(self.url + "/webhook", headers=headers, json=data)
+        response = self.session.post(self.url + "/webhook", headers=headers, json=data)
 
         print_response(response=response, verbose=verbose)
 
@@ -134,7 +140,7 @@ class WebhooksClient:
             data = data if data is not None else {}
             data.update(webhook.to_dict())
 
-        response = requests.put(
+        response = self.session.put(
             self.url + f"/webhook/{webhook.webhook_id}", headers=headers, json=data
         )
 
@@ -172,7 +178,7 @@ class WebhooksClient:
         headers = self._auth_headers(backend_token)
         headers["Content-Type"] = "application/json"
 
-        response = requests.patch(
+        response = self.session.patch(
             self.url + f"/webhook/{webhook_id}",
             headers=headers,
             json={"active": active},
@@ -209,7 +215,7 @@ class WebhooksClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.post(
+        response = self.session.post(
             self.url + f"/webhook/{webhook_id}/ping", headers=headers
         )
 
@@ -244,7 +250,9 @@ class WebhooksClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.delete(self.url + f"/webhook/{webhook_id}", headers=headers)
+        response = self.session.delete(
+            self.url + f"/webhook/{webhook_id}", headers=headers
+        )
 
         print_response(response=response, verbose=verbose)
 
@@ -278,7 +286,9 @@ class WebhooksClient:
 
         headers = self._auth_headers(user_token)
 
-        response = requests.get(self.url + f"/webhook/{webhook_id}", headers=headers)
+        response = self.session.get(
+            self.url + f"/webhook/{webhook_id}", headers=headers
+        )
 
         print_response(response=response, verbose=verbose)
 
@@ -309,7 +319,7 @@ class WebhooksClient:
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.get(self.url + "/webhooks", headers=headers)
+        response = self.session.get(self.url + "/webhooks", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
@@ -342,7 +352,7 @@ class WebhooksClient:
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.get(
+        response = self.session.get(
             self.url + f"/webhook/results/{webhook_id}", headers=headers
         )
 
@@ -377,7 +387,7 @@ class WebhooksClient:
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = requests.get(
+        response = self.session.get(
             self.url + f"/webhook/result/{webhook_id}/last", headers=headers
         )
 
