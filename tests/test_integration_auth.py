@@ -41,7 +41,4 @@ def test_should_create_a_valid_user_token(given_valid_api_key):
     auth = Auth.from_config(config)
 
     result = auth.create_user_token(user_id="user_id")
-    import pdb
-
-    pdb.set_trace()
     result.assert_success(value_is_instance_of=str)
