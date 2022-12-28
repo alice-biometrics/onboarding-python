@@ -1687,3 +1687,72 @@ class OnboardingClient:
         print_response(response=response, verbose=verbose)
 
         return Success(response)
+
+    @timeit
+    def accept_user(self, user_id: str, verbose: bool = False) -> Response:
+        """
+        Mark a user state as ACCEPTED
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("accept_user", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_user_token)
+        response = requests.post(f"{self.url}/user/state/accept", headers=headers)
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    @timeit
+    def reject_user(
+        self,
+        user_id: str,
+        rejection_reasons: Optional[List[Dict[str, str]]] = None,
+        verbose: bool = False,
+    ) -> Response:
+        """
+        Mark a user state as REJECTED
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        rejection_reasons
+            List of rejection reasons
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("accept_user", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_user_token)
+        response = requests.post(
+            f"{self.url}/user/state/reject",
+            headers=headers,
+            json={"rejection_reasons": rejection_reasons},
+        )
+
+        print_response(response=response, verbose=verbose)
+
+        return response

@@ -1646,3 +1646,66 @@ class Onboarding:
                     operation="get_duplicates_searches", response=response
                 )
             )
+
+    def accept_user(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[bool, OnboardingError]:
+        """
+        Mark a user state as ACCEPTED
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.accept_user(user_id=user_id, verbose=verbose)
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="accept_user", response=response
+                )
+            )
+
+    def reject_user(
+        self,
+        user_id: str,
+        rejection_reasons: Optional[List[Dict[str, str]]] = None,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+        Mark a user state as REJECTED
+        Parameters
+        ----------
+        user_id
+            User identifier
+        rejection_reasons
+            List of rejection reasons
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns True.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.reject_user(
+            user_id=user_id, rejection_reasons=rejection_reasons, verbose=verbose
+        )
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="accept_user", response=response
+                )
+            )
