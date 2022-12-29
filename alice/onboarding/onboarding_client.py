@@ -1707,7 +1707,9 @@ class OnboardingClient:
         """
         print_intro("accept_user", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
@@ -1743,7 +1745,9 @@ class OnboardingClient:
         """
         print_intro("accept_user", verbose=verbose)
 
-        backend_user_token = self.auth.create_backend_token(user_id=user_id).unwrap()
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
