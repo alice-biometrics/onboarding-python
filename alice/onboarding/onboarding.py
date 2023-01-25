@@ -1648,7 +1648,7 @@ class Onboarding:
             )
 
     def accept_user(
-        self, user_id: str, verbose: bool = False
+        self, user_id: str, subject: str = "auto", verbose: bool = False
     ) -> Result[bool, OnboardingError]:
         """
         Mark a user state as ACCEPTED
@@ -1656,6 +1656,8 @@ class Onboarding:
         ----------
         user_id
             User identifier
+        subject
+            Who is accepting the user
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -1664,7 +1666,9 @@ class Onboarding:
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
-        response = self.onboarding_client.accept_user(user_id=user_id, verbose=verbose)
+        response = self.onboarding_client.accept_user(
+            user_id=user_id, subject=subject, verbose=verbose
+        )
 
         if response.status_code == 200:
             return isSuccess
@@ -1679,6 +1683,7 @@ class Onboarding:
         self,
         user_id: str,
         rejection_reasons: Optional[List[Dict[str, str]]] = None,
+        subject: str = "auto",
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
@@ -1689,6 +1694,8 @@ class Onboarding:
             User identifier
         rejection_reasons
             List of rejection reasons
+        subject
+            Who is rejecting the user
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -1698,7 +1705,10 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.reject_user(
-            user_id=user_id, rejection_reasons=rejection_reasons, verbose=verbose
+            user_id=user_id,
+            rejection_reasons=rejection_reasons,
+            subject=subject,
+            verbose=verbose,
         )
 
         if response.status_code == 200:
