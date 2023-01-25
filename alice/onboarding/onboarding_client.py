@@ -1690,7 +1690,7 @@ class OnboardingClient:
 
     @timeit
     def accept_user(
-        self, user_id: str, subject: str = "auto", verbose: bool = False
+        self, user_id: str, operator: str = "auto", verbose: bool = False
     ) -> Response:
         """
         Mark a user state as ACCEPTED
@@ -1699,7 +1699,7 @@ class OnboardingClient:
         ----------
         user_id
             User identifier
-        subject
+        operator
             Who is accepting the user
         verbose
             Used for print service response as well as the time elapsed
@@ -1721,7 +1721,7 @@ class OnboardingClient:
             f"{self.url}/user/state/accept",
             headers=headers,
             json={
-                "subject": subject,
+                "operator": operator,
             },
         )
 
@@ -1734,7 +1734,7 @@ class OnboardingClient:
         self,
         user_id: str,
         rejection_reasons: Optional[List[Dict[str, str]]] = None,
-        subject: str = "auto",
+        operator: str = "auto",
         verbose: bool = False,
     ) -> Response:
         """
@@ -1746,7 +1746,7 @@ class OnboardingClient:
             User identifier
         rejection_reasons
             List of rejection reasons
-        subject
+        operator
             Who is rejecting the user
         verbose
             Used for print service response as well as the time elapsed
@@ -1767,7 +1767,7 @@ class OnboardingClient:
         response = requests.post(
             f"{self.url}/user/state/reject",
             headers=headers,
-            json={"subject": subject, "rejection_reasons": rejection_reasons},
+            json={"operator": operator, "rejection_reasons": rejection_reasons},
         )
 
         print_response(response=response, verbose=verbose)
