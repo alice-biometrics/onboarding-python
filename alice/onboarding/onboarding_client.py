@@ -444,7 +444,7 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        if selfie_id is None:
+        if not selfie_id:
             response = self.session.delete(f"{self.url}/user/selfie", headers=headers)
         else:
             response = self.session.delete(
