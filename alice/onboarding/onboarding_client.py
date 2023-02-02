@@ -414,7 +414,10 @@ class OnboardingClient:
     @early_return
     @timeit
     def delete_selfie(
-        self, user_id: str, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        selfie_id: Optional[str] = None,
+        verbose: Optional[bool] = False,
     ) -> Result[Response, AuthError]:
         """
 
@@ -425,6 +428,8 @@ class OnboardingClient:
         ----------
         user_id
             User identifier
+        selfie_id
+            Optional selfie identifier
         verbose
             Used for print service response as well as the time elapsed
 
@@ -439,8 +444,12 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-
-        response = self.session.delete(f"{self.url}/user/selfie", headers=headers)
+        if selfie_id is None:
+            response = self.session.delete(f"{self.url}/user/selfie", headers=headers)
+        else:
+            response = self.session.delete(
+                f"{self.url}/user/selfie/{selfie_id}", headers=headers
+            )
 
         print_response(response=response, verbose=verbose)
 

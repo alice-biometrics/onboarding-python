@@ -413,7 +413,10 @@ class Onboarding:
 
     @early_return
     def delete_selfie(
-        self, user_id: str, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        selfie_id: Optional[str] = None,
+        verbose: Optional[bool] = False,
     ) -> Result[bool, Union[OnboardingError, AuthError]]:
         """
 
@@ -424,6 +427,8 @@ class Onboarding:
         ----------
         user_id
             User identifier
+        selfie_id
+            Optional selfie identifier
         verbose
             Used for print service response as well as the time elapsed
 
@@ -435,7 +440,7 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.delete_selfie(
-            user_id=user_id, verbose=verbose
+            user_id=user_id, selfie_id=selfie_id, verbose=verbose
         ).unwrap_or_return()
 
         if response.status_code == 200:
