@@ -4,12 +4,11 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 import requests
-from meiga import Error, Result, Success, early_return
+from meiga import Error, Failure, Result, Success, early_return
 from requests import Response, Session
 
 import alice
 from alice.auth.auth import Auth
-from alice.auth.auth_errors import AuthError
 from alice.onboarding.enums.certificate_locale import CertificateLocale
 from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
@@ -20,6 +19,7 @@ from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
 from alice.onboarding.models.user_info import UserInfo
+from alice.onboarding.onboarding_errors import OnboardingError
 from alice.onboarding.tools import print_intro, print_response, print_token, timeit
 
 DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
@@ -31,10 +31,12 @@ class OnboardingClient:
         auth: Auth,
         session: Session,
         url: str = DEFAULT_URL,
+        timeout: Union[float, None] = None,
         send_agent: bool = True,
     ):
         self.auth = auth
         self.url = url
+        self.timeout = timeout
         self.send_agent = send_agent
         self.session = session
 
@@ -66,8 +68,10 @@ class OnboardingClient:
         """
         print_intro("healthcheck", verbose=verbose)
 
-        response = self.session.get(f"{self.url}/healthcheck")
-
+        try:
+            response = self.session.get(f"{self.url}/healthcheck", timeout=self.timeout)
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="healthcheck"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -79,7 +83,7 @@ class OnboardingClient:
         user_info: Union[UserInfo, None] = None,
         device_info: Union[DeviceInfo, None] = None,
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         It creates a new User in the onboarding service.
@@ -115,9 +119,12 @@ class OnboardingClient:
         if device_info:
             data = data if data is not None else {}
             data.update(device_info.dict())
-
-        response = self.session.post(f"{self.url}/user", headers=headers, data=data)
-
+        try:
+            response = self.session.post(
+                f"{self.url}/user", headers=headers, data=data, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="create_user"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -126,7 +133,7 @@ class OnboardingClient:
     @timeit
     def delete_user(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Delete all the information of a user
@@ -149,8 +156,13 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = self.session.delete(f"{self.url}/user", headers=headers)
 
+        try:
+            response = self.session.delete(
+                f"{self.url}/user", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="delete_user"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -159,7 +171,7 @@ class OnboardingClient:
     @timeit
     def get_user_status(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns User status to be used as feedback from the onboarding process
@@ -183,8 +195,12 @@ class OnboardingClient:
 
         headers = self._auth_headers(user_token)
 
-        response = self.session.get(f"{self.url}/user/status", headers=headers)
-
+        try:
+            response = self.session.get(
+                f"{self.url}/user/status", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_user_status"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -193,7 +209,7 @@ class OnboardingClient:
     @timeit
     def get_users_stats(
         self, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns statistics about users in the Onboarding platform.
@@ -214,15 +230,19 @@ class OnboardingClient:
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = self.session.get(f"{self.url}/users/stats", headers=headers)
-
+        try:
+            response = self.session.get(
+                f"{self.url}/users/stats", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_users_stats"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
 
     @early_return
     @timeit
-    def get_users(self, verbose: Optional[bool] = False) -> Result[Response, AuthError]:
+    def get_users(self, verbose: Optional[bool] = False) -> Result[Response, Error]:
         """
 
         Returns all users you have created, sorted by creation date in descending order.
@@ -243,7 +263,12 @@ class OnboardingClient:
         print_token("backend_token", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = self.session.get(f"{self.url}/users", headers=headers)
+        try:
+            response = self.session.get(
+                f"{self.url}/users", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_users"))
 
         print_response(response=response, verbose=verbose)
 
@@ -261,7 +286,7 @@ class OnboardingClient:
         sort_by: Union[str, None] = None,
         filter_field: Union[str, None] = None,
         filter_value: Union[str, None] = None,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns every UserStatus available for all the Users in the onboarding platform ordered by creation date.
@@ -305,10 +330,14 @@ class OnboardingClient:
         if sort_by:
             url_query_params = url_query_params + f"&sort_by={sort_by}"
 
-        response = self.session.get(
-            f"{self.url}/users/status{url_query_params}", headers=headers
-        )
-
+        try:
+            response = self.session.get(
+                f"{self.url}/users/status{url_query_params}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_users_status"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -323,7 +352,7 @@ class OnboardingClient:
         decision: Decision,
         additional_feedback: List[str] = [],
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Adds client's feedback about an user onboarding. Usually it comes after human review.
@@ -362,9 +391,15 @@ class OnboardingClient:
             "additional_feedback": additional_feedback,
         }
 
-        response = self.session.post(
-            self.url + "/user/feedback", data=data, headers=headers
-        )
+        try:
+            response = self.session.post(
+                self.url + "/user/feedback",
+                data=data,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="add_user_feedback"))
 
         print_response(response=response, verbose=verbose)
 
@@ -374,7 +409,7 @@ class OnboardingClient:
     @timeit
     def add_selfie(
         self, user_id: str, media_data: bytes, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to upload for the first time the video of the user's face to the onboarding service.
@@ -403,9 +438,15 @@ class OnboardingClient:
 
         files = {"video": ("video", media_data)}
 
-        response = self.session.post(
-            f"{self.url}/user/selfie", files=files, headers=headers
-        )
+        try:
+            response = self.session.post(
+                f"{self.url}/user/selfie",
+                files=files,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="add_selfie"))
 
         print_response(response=response, verbose=verbose)
 
@@ -418,7 +459,7 @@ class OnboardingClient:
         user_id: str,
         selfie_id: Optional[str] = None,
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to delete the video of the user's face to the onboarding service.
@@ -444,12 +485,19 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        if not selfie_id:
-            response = self.session.delete(f"{self.url}/user/selfie", headers=headers)
-        else:
-            response = self.session.delete(
-                f"{self.url}/user/selfie/{selfie_id}", headers=headers
-            )
+        try:
+            if not selfie_id:
+                response = self.session.delete(
+                    f"{self.url}/user/selfie", headers=headers, timeout=self.timeout
+                )
+            else:
+                response = self.session.delete(
+                    f"{self.url}/user/selfie/{selfie_id}",
+                    headers=headers,
+                    timeout=self.timeout,
+                )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="delete_selfie"))
 
         print_response(response=response, verbose=verbose)
 
@@ -459,7 +507,7 @@ class OnboardingClient:
     @timeit
     def void_selfie(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to void the video of the user's face to the onboarding service.
@@ -484,7 +532,12 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
 
-        response = self.session.patch(f"{self.url}/user/selfie", headers=headers)
+        try:
+            response = self.session.patch(
+                f"{self.url}/user/selfie", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="void_selfie"))
 
         print_response(response=response, verbose=verbose)
 
@@ -494,7 +547,7 @@ class OnboardingClient:
     @timeit
     def supported_documents(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         This method is used to obtain a hierarchical-ordered dict with the information of the documents supported by the API.
 
@@ -521,7 +574,12 @@ class OnboardingClient:
 
         headers = self._auth_headers(token)
 
-        response = self.session.get(f"{self.url}/documents/supported", headers=headers)
+        try:
+            response = self.session.get(
+                f"{self.url}/documents/supported", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="supported_documents"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -534,7 +592,7 @@ class OnboardingClient:
         type: DocumentType,
         issuing_country: str,
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to obtain a new document_id
@@ -563,9 +621,15 @@ class OnboardingClient:
         headers = self._auth_headers(user_token)
 
         data = {"type": type.value, "issuing_country": issuing_country}
-        response = self.session.post(
-            f"{self.url}/user/document", data=data, headers=headers
-        )
+        try:
+            response = self.session.post(
+                f"{self.url}/user/document",
+                data=data,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="create_document"))
 
         print_response(response=response, verbose=verbose)
 
@@ -575,7 +639,7 @@ class OnboardingClient:
     @timeit
     def delete_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Delete all the stored/extracted information from a document
@@ -600,10 +664,14 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = self.session.delete(
-            f"{self.url}/user/document/{document_id}", headers=headers
-        )
-
+        try:
+            response = self.session.delete(
+                f"{self.url}/user/document/{document_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="delete_document"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -612,7 +680,7 @@ class OnboardingClient:
     @timeit
     def void_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Mark a document as invalid.
@@ -637,9 +705,14 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = self.session.patch(
-            f"{self.url}/user/document/{document_id}", headers=headers
-        )
+        try:
+            response = self.session.patch(
+                f"{self.url}/user/document/{document_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="void_document"))
 
         print_response(response=response, verbose=verbose)
 
@@ -658,7 +731,7 @@ class OnboardingClient:
         bounding_box: Union[BoundingBox, None] = None,
         fields: Union[Dict[str, Any], None] = None,
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to upload for the first time the photo or video of a document to the onboarding service.
@@ -709,9 +782,16 @@ class OnboardingClient:
 
         files = {"image": ("image", media_data)}
 
-        response = self.session.put(
-            f"{self.url}/user/document", files=files, data=data, headers=headers
-        )
+        try:
+            response = self.session.put(
+                f"{self.url}/user/document",
+                files=files,
+                data=data,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="add_document"))
 
         print_response(response=response, verbose=verbose)
 
@@ -725,7 +805,7 @@ class OnboardingClient:
         type: DocumentType,
         issuing_country: str,
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns the properties of a previously added document, such as face, MRZ or NFC availability
@@ -755,10 +835,15 @@ class OnboardingClient:
         headers = self._auth_headers(user_token)
         data = {"type": type.value, "issuing_country": issuing_country}
 
-        response = self.session.post(
-            f"{self.url}/user/document/properties", data=data, headers=headers
-        )
-
+        try:
+            response = self.session.post(
+                f"{self.url}/user/document/properties",
+                data=data,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="document_properties"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -767,7 +852,7 @@ class OnboardingClient:
     @timeit
     def delete_other_trusted_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Delete all the stored/extracted information from an other trusted document
@@ -792,9 +877,16 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = self.session.delete(
-            f"{self.url}/user/other-trusted-document/{document_id}", headers=headers
-        )
+        try:
+            response = self.session.delete(
+                f"{self.url}/user/other-trusted-document/{document_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(
+                OnboardingError.timeout(operation="delete_other_trusted_document")
+            )
 
         print_response(response=response, verbose=verbose)
 
@@ -804,7 +896,7 @@ class OnboardingClient:
     @timeit
     def void_other_trusted_document(
         self, user_id: str, document_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Mark other trusted document as invalid.
@@ -829,10 +921,16 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_token, verbose=verbose)
 
         headers = self._auth_headers(backend_token)
-        response = self.session.patch(
-            f"{self.url}/user/other-trusted-document/{document_id}", headers=headers
-        )
-
+        try:
+            response = self.session.patch(
+                f"{self.url}/user/other-trusted-document/{document_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(
+                OnboardingError.timeout(operation="void_other_trusted_document")
+            )
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -845,7 +943,7 @@ class OnboardingClient:
         media_data: bytes,
         category: Optional[str] = None,
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to upload an other trusted document (OTD) to the onboarding service.
@@ -878,12 +976,18 @@ class OnboardingClient:
 
         data = dict(category=category) if category else dict()
 
-        response = self.session.post(
-            f"{self.url}/user/other-trusted-document",
-            files=files,
-            data=data,
-            headers=headers,
-        )
+        try:
+            response = self.session.post(
+                f"{self.url}/user/other-trusted-document",
+                files=files,
+                data=data,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(
+                OnboardingError.timeout(operation="add_other_trusted_document")
+            )
 
         print_response(response=response, verbose=verbose)
 
@@ -895,7 +999,7 @@ class OnboardingClient:
         user_id: str,
         version: Version = Version.DEFAULT,
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to get the report of the onboarding process for a specific user.
@@ -926,7 +1030,12 @@ class OnboardingClient:
         headers = self._auth_headers(backend_user_token)
         headers["Alice-Report-Version"] = version.value
 
-        response = self.session.get(f"{self.url}/user/report", headers=headers)
+        try:
+            response = self.session.get(
+                f"{self.url}/user/report", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="create_report"))
 
         print_response(response=response, verbose=verbose)
 
@@ -940,7 +1049,7 @@ class OnboardingClient:
         locale: CertificateLocale = CertificateLocale.EN,
         template_name: str = "default",
         verbose: Optional[bool] = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         This call is used to create a Certificate (Signed PDF Report) of the onboarding process for a specific user.
         It returns a identifier (certificate_id) as a reference of created resource.
@@ -973,9 +1082,16 @@ class OnboardingClient:
         options = {"template_name": template_name, "locale": locale.value}
         headers = self._auth_headers(backend_user_token)
         headers["Content-Type"] = "application/json"
-        response = self.session.post(
-            f"{self.url}/user/certificate", data=json.dumps(options), headers=headers
-        )
+        try:
+            response = self.session.post(
+                f"{self.url}/user/certificate",
+                data=json.dumps(options),
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="create_certificate"))
+
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -984,7 +1100,7 @@ class OnboardingClient:
     @timeit
     def retrieve_certificate(
         self, user_id: str, certificate_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         This call is used to retrieve a Certificate (Signed PDF Report) of the onboarding process for a specific user.
@@ -1012,9 +1128,14 @@ class OnboardingClient:
         ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
-        response = self.session.get(
-            f"{self.url}/user/certificate/{certificate_id}", headers=headers
-        )
+        try:
+            response = self.session.get(
+                f"{self.url}/user/certificate/{certificate_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="retrieve_certificate"))
 
         print_response(response=response, verbose=verbose)
 
@@ -1024,7 +1145,7 @@ class OnboardingClient:
     @timeit
     def retrieve_certificates(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns summary info for created certificates
@@ -1047,8 +1168,12 @@ class OnboardingClient:
         ).unwrap_or_return()
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
-        response = self.session.get(f"{self.url}/user/certificates", headers=headers)
-
+        try:
+            response = self.session.get(
+                f"{self.url}/user/certificates", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="retrieve_certificates"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1057,7 +1182,7 @@ class OnboardingClient:
     @timeit
     def screening(
         self, user_id: str, detail: bool = False, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         This call is used to check on the user using different databases & lists (sanctions, PEP, etc)..
         It returns retrieved information from public lists.
@@ -1088,8 +1213,10 @@ class OnboardingClient:
         if detail:
             url += "/detail"
 
-        response = self.session.get(url, headers=headers)
-
+        try:
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="screening"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1098,7 +1225,7 @@ class OnboardingClient:
     @timeit
     def screening_monitor_add(
         self, user_id: str, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         This call is adds a user to the AML monitoring list.
 
@@ -1120,12 +1247,20 @@ class OnboardingClient:
         backend_user_token = self.auth.create_backend_token(
             user_id=user_id
         ).unwrap_or_return()
-        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+        print_token(
+            "backend_token_with_user",
+            backend_user_token,
+            verbose=verbose,
+            timeout=self.timeout,
+        )
         headers = self._auth_headers(backend_user_token)
 
-        response = self.session.get(
-            f"{self.url}/user/screening/monitor", headers=headers
-        )
+        try:
+            response = self.session.get(
+                f"{self.url}/user/screening/monitor", headers=headers
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="screening_monitor_add"))
 
         print_response(response=response, verbose=verbose)
 
@@ -1135,7 +1270,7 @@ class OnboardingClient:
     @timeit
     def screening_monitor_delete(
         self, user_id: str, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         This call is adds a user to the AML monitoring list.
 
@@ -1160,9 +1295,16 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
         headers = self._auth_headers(backend_user_token)
 
-        response = self.session.delete(
-            f"{self.url}/user/screening/monitor", headers=headers
-        )
+        try:
+            response = self.session.delete(
+                f"{self.url}/user/screening/monitor",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(
+                OnboardingError.timeout(operation="screening_monitor_delete")
+            )
 
         print_response(response=response, verbose=verbose)
 
@@ -1172,7 +1314,7 @@ class OnboardingClient:
     @timeit
     def screening_monitor_open_alerts(
         self, start_index: int = 0, size: int = 100, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         Retrieves from the monitoring list the users with open alerts
 
@@ -1196,11 +1338,16 @@ class OnboardingClient:
         print_token("backend_token", backend_token, verbose=verbose)
         headers = self._auth_headers(backend_token)
 
-        response = self.session.get(
-            f"{self.url}/users/screening/monitor/alerts?start_index={start_index}&size={size}",
-            headers=headers,
-        )
-
+        try:
+            response = self.session.get(
+                f"{self.url}/users/screening/monitor/alerts?start_index={start_index}&size={size}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(
+                OnboardingError.timeout(operation="screening_monitor_open_alerts")
+            )
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1213,7 +1360,7 @@ class OnboardingClient:
         probe_user_ids: List[str],
         version: Version = Version.DEFAULT,
         verbose: bool = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         Identifies (1:N matching) a user against a N-length list of users.
 
@@ -1245,10 +1392,15 @@ class OnboardingClient:
 
         data = {"user_ids": probe_user_ids}
 
-        response = self.session.post(
-            f"{self.url}/user/identify", headers=headers, data=data
-        )
-
+        try:
+            response = self.session.post(
+                f"{self.url}/user/identify",
+                headers=headers,
+                data=data,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="identify_user"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1257,7 +1409,7 @@ class OnboardingClient:
     @timeit
     def authorize_user(
         self, user_id: str, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         Authorizes a user. Now it can be authenticate.
 
@@ -1281,8 +1433,12 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        response = self.session.post(f"{self.url}/user/authorize", headers=headers)
-
+        try:
+            response = self.session.post(
+                f"{self.url}/user/authorize", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="authorize_user"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1291,7 +1447,7 @@ class OnboardingClient:
     @timeit
     def deauthorize_user(
         self, user_id: str, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
         Deauthorizes a user. Now it cannot be authenticate.
 
@@ -1315,8 +1471,12 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        response = self.session.post(f"{self.url}/user/deauthorize", headers=headers)
-
+        try:
+            response = self.session.post(
+                f"{self.url}/user/deauthorize", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="deauthorize_user"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1325,7 +1485,7 @@ class OnboardingClient:
     @timeit
     def authenticate_user(
         self, user_id: str, media_data: bytes, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Authenticates a previously registered User against a given media to verify the identity
@@ -1353,10 +1513,15 @@ class OnboardingClient:
 
         files = {"video": ("video", media_data)}
 
-        response = self.session.post(
-            f"{self.url}/user/authenticate", files=files, headers=headers
-        )
-
+        try:
+            response = self.session.post(
+                f"{self.url}/user/authenticate",
+                files=files,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="authenticate_user"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1365,7 +1530,7 @@ class OnboardingClient:
     @timeit
     def get_authentications_ids(
         self, user_id: str, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns all authentication you have performed for a User, sorted by creation date in descending order.
@@ -1391,10 +1556,14 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
 
-        response = self.session.get(
-            f"{self.url}/user/authentications/ids", headers=headers
-        )
-
+        try:
+            response = self.session.get(
+                f"{self.url}/user/authentications/ids",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_authentications_ids"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1409,7 +1578,7 @@ class OnboardingClient:
         descending: bool = True,
         version: Version = Version.DEFAULT,
         verbose: bool = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns all authentications you have performed for a User.
@@ -1448,10 +1617,14 @@ class OnboardingClient:
             f"?page={str(page)}&page_size={str(page_size)}&descending={str(descending)}"
         )
 
-        response = self.session.get(
-            f"{self.url}/user/authentications" + url_query_params, headers=headers
-        )
-
+        try:
+            response = self.session.get(
+                f"{self.url}/user/authentications" + url_query_params,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_authentications"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1464,7 +1637,7 @@ class OnboardingClient:
         authentication_id: str,
         version: Version = Version.DEFAULT,
         verbose: bool = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Gets a information from a previous authentication using the verification_id
@@ -1495,10 +1668,14 @@ class OnboardingClient:
         headers = self._auth_headers(backend_user_token)
         headers["Alice-Authentication-Version"] = version.value
 
-        response = self.session.get(
-            f"{self.url}/user/authentication/{authentication_id}", headers=headers
-        )
-
+        try:
+            response = self.session.get(
+                f"{self.url}/user/authentication/{authentication_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_authentication"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1507,7 +1684,7 @@ class OnboardingClient:
     @timeit
     def retrieve_media(
         self, user_id: str, media_id: str, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns the binary data of a media resource
@@ -1535,10 +1712,14 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
 
-        response = self.session.get(
-            f"{self.url}/media/{media_id}/download", headers=headers
-        )
-
+        try:
+            response = self.session.get(
+                f"{self.url}/media/{media_id}/download",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="retrieve_media"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1547,7 +1728,7 @@ class OnboardingClient:
     @timeit
     def download(
         self, user_id: str, href: str, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns the binary data of a media resource
@@ -1575,8 +1756,10 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
 
-        response = self.session.get(href, headers=headers)
-
+        try:
+            response = self.session.get(href, headers=headers, timeout=self.timeout)
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="download"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1589,7 +1772,7 @@ class OnboardingClient:
         end_date: datetime,
         resource_type: DuplicatesResourceType,
         verbose: bool = False,
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Returns the binary data of a media resource
@@ -1622,9 +1805,17 @@ class OnboardingClient:
             "end_date": end_date.isoformat(),
             "resource_type": resource_type.value,
         }
-        response = requests.post(
-            f"{self.url}/duplicates/search", data=data, headers=headers
-        )
+        try:
+            response = requests.post(
+                f"{self.url}/duplicates/search",
+                data=data,
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(
+                OnboardingError.timeout(operation="request_duplicates_search")
+            )
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1633,7 +1824,7 @@ class OnboardingClient:
     @timeit
     def get_duplicates_search(
         self, search_id: str, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    ) -> Result[Response, Error]:
         """
 
         Retrieves a previously requested duplicates search from the onboarding platform
@@ -1658,18 +1849,21 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
 
-        response = requests.get(
-            f"{self.url}/duplicates/search/{search_id}", headers=headers
-        )
+        try:
+            response = requests.get(
+                f"{self.url}/duplicates/search/{search_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_duplicates_search"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
 
     @early_return
     @timeit
-    def get_duplicates_searches(
-        self, verbose: bool = False
-    ) -> Result[Response, AuthError]:
+    def get_duplicates_searches(self, verbose: bool = False) -> Result[Response, Error]:
         """
 
         Retrieves all previously requested duplicates searches from the onboarding platform
@@ -1692,7 +1886,12 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
 
-        response = requests.get(f"{self.url}/duplicates/searches", headers=headers)
+        try:
+            response = requests.get(
+                f"{self.url}/duplicates/searches", headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_duplicates_searches"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
@@ -1726,13 +1925,17 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        response = requests.post(
-            f"{self.url}/user/state/accept",
-            headers=headers,
-            json={
-                "operator": operator,
-            },
-        )
+        try:
+            response = requests.post(
+                f"{self.url}/user/state/accept",
+                headers=headers,
+                json={
+                    "operator": operator,
+                },
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="accept_user"))
 
         print_response(response=response, verbose=verbose)
 
@@ -1773,11 +1976,15 @@ class OnboardingClient:
         print_token("backend_token_with_user", backend_user_token, verbose=verbose)
 
         headers = self._auth_headers(backend_user_token)
-        response = requests.post(
-            f"{self.url}/user/state/reject",
-            headers=headers,
-            json={"operator": operator, "rejection_reasons": rejection_reasons},
-        )
+        try:
+            response = requests.post(
+                f"{self.url}/user/state/reject",
+                headers=headers,
+                json={"operator": operator, "rejection_reasons": rejection_reasons},
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="accept_user"))
 
         print_response(response=response, verbose=verbose)
 

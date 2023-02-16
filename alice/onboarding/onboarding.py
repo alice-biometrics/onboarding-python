@@ -34,6 +34,7 @@ class Onboarding:
         return Onboarding(
             auth=Auth.from_config(config),
             url=config.onboarding_url,
+            timeout=config.timeout,
             send_agent=config.send_agent,
             verbose=config.verbose,
             session=session,
@@ -44,11 +45,12 @@ class Onboarding:
         auth: Auth,
         session: Session,
         url: str = DEFAULT_URL,
+        timeout: Union[float, None] = None,
         send_agent: bool = True,
         verbose: bool = False,
     ):
         self.onboarding_client = OnboardingClient(
-            auth=auth, url=url, send_agent=send_agent, session=session
+            auth=auth, url=url, timeout=timeout, send_agent=send_agent, session=session
         )
         self.url = url
         self.verbose = verbose

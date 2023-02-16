@@ -31,6 +31,14 @@ class TestAuth:
         result = auth.create_backend_token()
         result.assert_success(value_is_instance_of=str)
 
+    def should_create_a_valid_backend_token_with_timeout(self, given_valid_api_key):
+
+        config = Config(api_key=given_valid_api_key, timeout=5)
+        auth = Auth.from_config(config)
+
+        result = auth.create_backend_token()
+        result.assert_success(value_is_instance_of=str)
+
     def should_create_a_valid_backend_token_with_user(self, given_valid_api_key):
 
         config = Config(api_key=given_valid_api_key)
