@@ -1,19 +1,28 @@
 import json
 import time
 from typing import Optional, Union
+from unittest.mock import Mock
 
 import jwt
+import requests
 from requests import Response, Session
 
 from alice.onboarding.tools import print_intro, print_response, timeit
 
 
 class AuthClient:
-    def __init__(self, url: str, api_key: str, session: Session):
+    def __init__(
+        self,
+        url: str,
+        api_key: str,
+        session: Session,
+        timeout: Union[float, None] = None,
+    ):
         self.url = url
         self._api_key = api_key
         self._login_token: Union[str, None] = None
         self.session = session
+        self.timeout = timeout
 
     @timeit
     def create_backend_token(
@@ -35,7 +44,16 @@ class AuthClient:
             final_url += f"/{user_id}"
 
         headers = {"Authorization": f"Bearer {self._login_token}"}
-        response = self.session.get(final_url, headers=headers)
+        try:
+            response = self.session.get(
+                final_url, headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            response = Mock(spec=Response)
+            response.json.return_value = {"message": "Request timed out"}
+            response.text.return_value = "Request timed out"
+            response.status_code = 408
+
         print_response(response=response, verbose=verbose)
 
         return response
@@ -56,7 +74,15 @@ class AuthClient:
 
         final_url = f"{self.url}/user_token/{user_id}"
         headers = {"Authorization": f"Bearer {self._login_token}"}
-        response = self.session.get(final_url, headers=headers)
+        try:
+            response = self.session.get(
+                final_url, headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            response = Mock(spec=Response)
+            response.json.return_value = {"message": "Request timed out"}
+            response.text.return_value = "Request timed out"
+            response.status_code = 408
 
         print_response(response=response, verbose=verbose)
 
@@ -65,7 +91,16 @@ class AuthClient:
     def _create_login_token(self) -> Response:
         final_url = f"{self.url}/login_token"
         headers = {"apikey": self._api_key}
-        response = self.session.get(final_url, headers=headers)
+        try:
+            response = self.session.get(
+                final_url, headers=headers, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            response = Mock(spec=Response)
+            response.json.return_value = {"message": "Request timed out"}
+            response.text.return_value = "Request timed out"
+            response.status_code = 408
+
         return response
 
     @staticmethod

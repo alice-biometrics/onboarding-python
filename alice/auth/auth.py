@@ -24,6 +24,7 @@ class Auth:
             api_key=config.api_key,  # type: ignore
             session=session,
             url=config.onboarding_url,
+            timeout=config.timeout,
             verbose=config.verbose,
         )
 
@@ -32,9 +33,12 @@ class Auth:
         api_key: str,
         session: Session,
         url: str = DEFAULT_URL,
+        timeout: Union[float, None] = None,
         verbose: Optional[bool] = False,
     ):
-        self._auth_client = AuthClient(url=url, api_key=api_key, session=session)
+        self._auth_client = AuthClient(
+            url=url, api_key=api_key, session=session, timeout=timeout
+        )
         self.url = url
         self.verbose = verbose
 

@@ -32,3 +32,9 @@ class OnboardingError(Error):
         except Exception:
             message = {"message": "no content"}
         return OnboardingError(operation=operation, code=code, message=message)
+
+    @staticmethod
+    def timeout(operation: str) -> "OnboardingError":
+        return OnboardingError(
+            operation=operation, code=408, message={"message": "Request timed out"}
+        )

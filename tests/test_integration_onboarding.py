@@ -7,6 +7,7 @@ from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.report.report import Report
+from alice.onboarding.onboarding_errors import OnboardingError
 
 
 @pytest.mark.unit
@@ -18,6 +19,28 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
     result = onboarding.create_user()
 
     result.assert_failure()
+
+
+@pytest.mark.unit
+def test_should_timeout_when_time_exceeded(
+    given_valid_api_key, given_any_selfie_image_media_data
+):
+    config = Config(api_key=given_valid_api_key, timeout=1)
+    onboarding = Onboarding.from_config(config)
+
+    user_id = onboarding.create_user(
+        user_info=UserInfo(first_name="Alice", last_name="Biometrics"),
+        device_info=DeviceInfo(device_platform="Android"),
+    ).unwrap_or_throw()
+
+    result = onboarding.add_selfie(
+        user_id=user_id, media_data=given_any_selfie_image_media_data
+    )
+    result.assert_failure(
+        value_is_equal_to=OnboardingError(
+            operation="add_selfie", code=408, message={"message": "Request timed out"}
+        )
+    )
 
 
 @pytest.mark.unit
