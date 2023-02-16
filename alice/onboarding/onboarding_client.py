@@ -1251,13 +1251,14 @@ class OnboardingClient:
             "backend_token_with_user",
             backend_user_token,
             verbose=verbose,
-            timeout=self.timeout,
         )
         headers = self._auth_headers(backend_user_token)
 
         try:
             response = self.session.get(
-                f"{self.url}/user/screening/monitor", headers=headers
+                f"{self.url}/user/screening/monitor",
+                headers=headers,
+                timeout=self.timeout,
             )
         except requests.exceptions.Timeout:
             return Failure(OnboardingError.timeout(operation="screening_monitor_add"))
@@ -1899,7 +1900,7 @@ class OnboardingClient:
     @timeit
     def accept_user(
         self, user_id: str, operator: str = "auto", verbose: bool = False
-    ) -> Response:
+    ) -> Result[Response, Error]:
         """
         Mark a user state as ACCEPTED
 
@@ -1939,7 +1940,7 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)
 
     @timeit
     def reject_user(
@@ -1948,7 +1949,7 @@ class OnboardingClient:
         rejection_reasons: Optional[List[Dict[str, str]]] = None,
         operator: str = "auto",
         verbose: bool = False,
-    ) -> Response:
+    ) -> Result[Response, Error]:
         """
         Mark a user state as REJECTED
 
@@ -1988,4 +1989,4 @@ class OnboardingClient:
 
         print_response(response=response, verbose=verbose)
 
-        return response
+        return Success(response)

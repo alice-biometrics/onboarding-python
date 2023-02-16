@@ -1675,7 +1675,7 @@ class Onboarding:
         verbose = self.verbose or verbose
         response = self.onboarding_client.accept_user(
             user_id=user_id, operator=operator, verbose=verbose
-        )
+        ).unwrap_or_return()
 
         if response.status_code == 200:
             return isSuccess
@@ -1716,7 +1716,7 @@ class Onboarding:
             rejection_reasons=rejection_reasons,
             operator=operator,
             verbose=verbose,
-        )
+        ).unwrap_or_return()
 
         if response.status_code == 200:
             return isSuccess
