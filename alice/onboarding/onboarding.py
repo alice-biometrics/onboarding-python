@@ -155,7 +155,7 @@ class Onboarding:
             user_id=user_id, verbose=verbose
         ).unwrap_or_return()
 
-        if response.status_code == 200:
+        if response.status_code in [200, 202]:
             return isSuccess
         else:
             return Failure(
