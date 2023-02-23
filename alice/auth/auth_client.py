@@ -1,6 +1,6 @@
 import json
 import time
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 from unittest.mock import Mock
 
 import jwt
@@ -22,8 +22,8 @@ class AuthClient:
         self._api_key = api_key
         self._login_token: Union[str, None] = None
         self.backend_token: Union[str, None] = None
-        self.user_tokens: dict[str, Union[str, None]] = {}
-        self.backend_user_tokens: dict[str, Union[str, None]] = {}
+        self.user_tokens: Dict[str, Union[str, None]] = {}
+        self.backend_user_tokens: Dict[str, Union[str, None]] = {}
         self.session = session
         self.timeout = timeout
 
@@ -35,7 +35,11 @@ class AuthClient:
         suffix = " (with user)" if user_id else ""
         print_intro(f"create_backend_token{suffix}", verbose=verbose)
 
-        if not user_id and self._is_valid_token(self.backend_token):
+        if (
+            not user_id
+            and self._is_valid_token(self.backend_token)
+            and self.backend_token
+        ):
             return AuthClient._token_to_response(self.backend_token)
         elif user_id and self._is_valid_backend_user_token(user_id):
             return AuthClient._token_to_response(self.backend_user_tokens[user_id])
@@ -137,10 +141,10 @@ class AuthClient:
         return token
 
     @staticmethod
-    def _token_to_response(token: str) -> Response:
+    def _token_to_response(token: Union[str, None]) -> Response:
         response = Response()
         response.status_code = 200
-        response._content = {"token": token}
+        response._content = json.dumps({"token": token}).encode()
         return response
 
     def _is_valid_user_token(self, user_id: str) -> bool:
