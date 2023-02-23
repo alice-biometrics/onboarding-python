@@ -4,7 +4,7 @@ from uuid import uuid4
 import jwt
 import pytest
 
-from alice.auth.catched_token_stack import CachedTokenStack
+from alice.auth.cached_token_stack import CachedTokenStack
 
 
 def generate_dummy_token(

@@ -1,4 +1,4 @@
-from alice.auth.catched_token_stack import CachedTokenStack
+from alice.auth.cached_token_stack import CachedTokenStack
 from tests.test_unit_cached_token_stack import generate_dummy_token
 
 stack = CachedTokenStack(max_size=10)

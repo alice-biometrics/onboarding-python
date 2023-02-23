@@ -1,10 +1,11 @@
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 from unittest.mock import Mock
 
 import requests
 from meiga import Failure, Result, Success
 from requests import Response, Session
 
+from alice.auth.cached_token_stack import CachedTokenStack
 from alice.auth.token_tools import get_token_from_response, is_valid_token
 from alice.onboarding.tools import print_intro, print_response, timeit
 
@@ -14,6 +15,13 @@ def get_response_timeout():
     response.json.return_value = {"message": "Request timed out"}
     response.text.return_value = "Request timed out"
     response.status_code = 408
+    return response
+
+
+def get_reponse_from(token: str) -> Response:
+    response = Mock(spec=Response)
+    response.json.return_value = {"token": token}
+    response.status_code = 200
     return response
 
 
@@ -29,7 +37,7 @@ class AuthClient:
         self._api_key = api_key
         self._cached_login_token: Union[str, None] = None
         self._cached_backend_token: Union[str, None] = None
-        self._cached_backend_with_user_tokens: Union[Dict[str, str], None] = None
+        self._cached_backend_with_user_token_stack = CachedTokenStack()
         self.session = session
         self.timeout = timeout
 
@@ -68,9 +76,9 @@ class AuthClient:
     def _create_backend_token(self, verbose: Optional[bool] = False) -> Response:
         print_intro("create_backend_token", verbose=verbose)
 
-        cached_backend_token = self._get_cached_backend_token()
-        if cached_backend_token:
-            return cached_backend_token
+        token = self._get_cached_backend_token()
+        if token:
+            return get_reponse_from(token)
 
         result = self._get_login_token()
         if result.is_failure:
@@ -90,19 +98,20 @@ class AuthClient:
 
         return response
 
-    def _get_cached_backend_token(self) -> Union[Response, None]:
+    def _get_cached_backend_token(self) -> Union[str, None]:
         if not is_valid_token(self._cached_backend_token):
             return None
-
-        response = Mock(spec=Response)
-        response.json.return_value = {"token": self._cached_backend_token}
-        response.status_code = 200
-        return response
+        return self._cached_backend_token
 
     def _create_backend_token_with_user_id(
         self, user_id: str, verbose: Optional[bool] = False
     ) -> Response:
         print_intro("create_backend_token (with user)", verbose=verbose)
+
+        token = self._cached_backend_with_user_token_stack.get(user_id)
+        if token:
+            return get_reponse_from(token)
+
         result = self._get_login_token()
         if result.is_failure:
             return result.value
@@ -112,6 +121,10 @@ class AuthClient:
         headers = {"Authorization": f"Bearer {login_token}"}
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
+            if response.status_code == 200:
+                self._cached_backend_with_user_token_stack.add(
+                    user_id, response.json().get("token")
+                )
         except requests.exceptions.Timeout:
             response = get_response_timeout()
 
