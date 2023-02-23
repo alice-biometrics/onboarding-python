@@ -22,6 +22,8 @@ class AuthClient:
         self._api_key = api_key
         self._login_token: Union[str, None] = None
         self.backend_token: Union[str, None] = None
+        self.user_tokens: dict[str, Union[str, None]] = {}
+        self.backend_user_tokens: dict[str, Union[str, None]] = {}
         self.session = session
         self.timeout = timeout
 
@@ -35,6 +37,8 @@ class AuthClient:
 
         if not user_id and self._is_valid_token(self.backend_token):
             return AuthClient._token_to_response(self.backend_token)
+        elif user_id and self._is_valid_backend_user_token(user_id):
+            return AuthClient._token_to_response(self.backend_user_tokens[user_id])
 
         if not self._is_valid_token(self._login_token):
             response = self._create_login_token()
@@ -61,6 +65,11 @@ class AuthClient:
         print_response(response=response, verbose=verbose)
         if not user_id:
             self.backend_token = AuthClient._get_token_from_response(response)
+        else:
+            self.delete_expired_backend_user_tokens()
+            self.backend_user_tokens[user_id] = AuthClient._get_token_from_response(
+                response
+            )
 
         return response
 
@@ -70,6 +79,9 @@ class AuthClient:
     ) -> Response:
 
         print_intro("create_user_token", verbose=verbose)
+
+        if self._is_valid_user_token(user_id):
+            return AuthClient._token_to_response(self.user_tokens[user_id])
 
         if not self._is_valid_token(self._login_token):
             response = self._create_login_token()
@@ -91,6 +103,8 @@ class AuthClient:
             response.status_code = 408
 
         print_response(response=response, verbose=verbose)
+        self.delete_expired_user_tokens()
+        self.user_tokens[user_id] = AuthClient._get_token_from_response(response)
 
         return response
 
@@ -128,3 +142,23 @@ class AuthClient:
         response.status_code = 200
         response._content = {"token": token}
         return response
+
+    def _is_valid_user_token(self, user_id: str) -> bool:
+        token = self.user_tokens.get(user_id, None)
+        return self._is_valid_token(token)
+
+    def delete_expired_user_tokens(self) -> None:
+        self.user_tokens = {
+            k: v for k, v in self.user_tokens.items() if not self._is_valid_token(v)
+        }
+
+    def _is_valid_backend_user_token(self, user_id: str) -> bool:
+        token = self.backend_user_tokens.get(user_id, None)
+        return self._is_valid_token(token)
+
+    def delete_expired_backend_user_tokens(self) -> None:
+        self.backend_user_tokens = {
+            k: v
+            for k, v in self.backend_user_tokens.items()
+            if not self._is_valid_token(v)
+        }
