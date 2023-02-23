@@ -5,6 +5,7 @@ from unittest.mock import Mock
 
 import jwt
 import requests
+from meiga import Failure, Result, Success
 from requests import Response, Session
 
 from alice.onboarding.tools import print_intro, print_response, timeit
@@ -20,7 +21,7 @@ class AuthClient:
     ):
         self.url = url
         self._api_key = api_key
-        self._login_token: Union[str, None] = None
+        self._cached_login_token: Union[str, None] = None
         self.session = session
         self.timeout = timeout
 
@@ -32,18 +33,16 @@ class AuthClient:
         suffix = " (with user)" if user_id else ""
         print_intro(f"create_backend_token{suffix}", verbose=verbose)
 
-        if not self._is_valid_token(self._login_token):
-            response = self._create_login_token()
-            if response.status_code == 200:
-                self._login_token = self._get_token_from_response(response)
-            else:
-                return response
+        result = self._get_login_token()
+        if result.is_failure:
+            return result.value
+        login_token = result.unwrap()
 
         final_url = f"{self.url}/backend_token"
         if user_id:
             final_url += f"/{user_id}"
 
-        headers = {"Authorization": f"Bearer {self._login_token}"}
+        headers = {"Authorization": f"Bearer {login_token}"}
         try:
             response = self.session.get(
                 final_url, headers=headers, timeout=self.timeout
@@ -65,15 +64,13 @@ class AuthClient:
 
         print_intro("create_user_token", verbose=verbose)
 
-        if not self._is_valid_token(self._login_token):
-            response = self._create_login_token()
-            if response.status_code == 200:
-                self._login_token = self._get_token_from_response(response)
-            else:
-                return response
+        result = self._get_login_token()
+        if result.is_failure:
+            return result.value
+        login_token = result.unwrap()
 
         final_url = f"{self.url}/user_token/{user_id}"
-        headers = {"Authorization": f"Bearer {self._login_token}"}
+        headers = {"Authorization": f"Bearer {login_token}"}
         try:
             response = self.session.get(
                 final_url, headers=headers, timeout=self.timeout
@@ -87,6 +84,15 @@ class AuthClient:
         print_response(response=response, verbose=verbose)
 
         return response
+
+    def _get_login_token(self) -> Result[str, Response]:
+        if not self._is_valid_token(self._cached_login_token):
+            response = self._create_login_token()
+            if response.status_code == 200:
+                self._cached_login_token = self._get_token_from_response(response)
+                return Success(self._cached_login_token)
+            else:
+                return Failure(response)
 
     def _create_login_token(self) -> Response:
         final_url = f"{self.url}/login_token"
