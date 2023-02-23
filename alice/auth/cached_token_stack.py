@@ -7,13 +7,13 @@ from alice.onboarding.tools import timeit
 
 
 class CachedTokenStack:
-    _data: OrderedDict
+    _data: OrderedDict[str, str]
 
     def __init__(self, max_size: int = 1000):
         self._data = OrderedDict()
         self._max_size = max_size
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         size = len(self._data)
         memory = sys.getsizeof(self._data)
         return f"CachedTokenStack: [size={size} tokens | memory = {memory} bytes]"
@@ -27,10 +27,10 @@ class CachedTokenStack:
         self._clear_if_max_size_has_been_exceeded()
         return token
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._data)
 
-    def show(self):
+    def show(self) -> None:
         print(self.__repr__())
         print(
             "-----------------------------------      CachedTokenStack     -----------------------------------------"
@@ -42,7 +42,7 @@ class CachedTokenStack:
         )
 
     @timeit
-    def _clear_expired_tokens(self):
+    def _clear_expired_tokens(self) -> None:
 
         num_data = len(self._data)
 
@@ -58,11 +58,11 @@ class CachedTokenStack:
                 exist_expired_tokens = True
 
                 while exist_expired_tokens:
-                    i, token = self._data.popitem(last=False)
+                    _, token = self._data.popitem(last=False)
                     if token == latest_expired_token:
                         exist_expired_tokens = False
 
-    def _clear_if_max_size_has_been_exceeded(self):
+    def _clear_if_max_size_has_been_exceeded(self) -> None:
         num_items = len(self._data)
 
         if num_items > self._max_size:

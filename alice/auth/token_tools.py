@@ -1,6 +1,6 @@
-import json
 import time
 from typing import Union
+from unittest.mock import Mock
 
 import jwt
 from requests import Response
@@ -14,6 +14,11 @@ def is_valid_token(token: Union[str, None], margin_seconds: int = 60) -> bool:
 
 
 def get_token_from_response(response: Response) -> str:
-    response_json = json.loads(response.content)
-    token: str = response_json["token"]
-    return token
+    return response.json().get("token")  # type: ignore
+
+
+def get_reponse_from_token(token: str) -> Response:
+    response = Mock(spec=Response)
+    response.json.return_value = {"token": token}
+    response.status_code = 200
+    return response

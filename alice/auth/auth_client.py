@@ -6,22 +6,19 @@ from meiga import Failure, Result, Success
 from requests import Response, Session
 
 from alice.auth.cached_token_stack import CachedTokenStack
-from alice.auth.token_tools import get_token_from_response, is_valid_token
+from alice.auth.token_tools import (
+    get_reponse_from_token,
+    get_token_from_response,
+    is_valid_token,
+)
 from alice.onboarding.tools import print_intro, print_response, timeit
 
 
-def get_response_timeout():
+def get_response_timeout() -> Response:
     response = Mock(spec=Response)
     response.json.return_value = {"message": "Request timed out"}
     response.text.return_value = "Request timed out"
     response.status_code = 408
-    return response
-
-
-def get_reponse_from(token: str) -> Response:
-    response = Mock(spec=Response)
-    response.json.return_value = {"token": token}
-    response.status_code = 200
     return response
 
 
@@ -38,8 +35,40 @@ class AuthClient:
         self._cached_login_token: Union[str, None] = None
         self._cached_backend_token: Union[str, None] = None
         self._cached_backend_token_stack = CachedTokenStack()
+        self._cached_user_token_stack = CachedTokenStack()
         self.session = session
         self.timeout = timeout
+
+    @timeit
+    def create_user_token(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Response:
+
+        print_intro("create_user_token", verbose=verbose)
+
+        token = self._cached_user_token_stack.get(user_id)
+        if token:
+            return get_reponse_from_token(token)
+
+        result = self._get_login_token()
+        if result.is_failure:
+            return result.value  # type: ignore
+        login_token = result.unwrap()
+
+        url = f"{self.url}/user_token/{user_id}"
+        headers = {"Authorization": f"Bearer {login_token}"}
+        try:
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+            if response.status_code == 200:
+                self._cached_user_token_stack.add(
+                    user_id, get_token_from_response(response)
+                )
+        except requests.exceptions.Timeout:
+            response = get_response_timeout()
+
+        print_response(response=response, verbose=verbose)
+
+        return response
 
     @timeit
     def create_backend_token(
@@ -50,39 +79,16 @@ class AuthClient:
         else:
             return self._create_backend_token(verbose)
 
-    @timeit
-    def create_user_token(
-        self, user_id: str, verbose: Optional[bool] = False
-    ) -> Response:
-
-        print_intro("create_user_token", verbose=verbose)
-
-        result = self._get_login_token()
-        if result.is_failure:
-            return result.value
-        login_token = result.unwrap()
-
-        url = f"{self.url}/user_token/{user_id}"
-        headers = {"Authorization": f"Bearer {login_token}"}
-        try:
-            response = self.session.get(url, headers=headers, timeout=self.timeout)
-        except requests.exceptions.Timeout:
-            response = get_response_timeout()
-
-        print_response(response=response, verbose=verbose)
-
-        return response
-
     def _create_backend_token(self, verbose: Optional[bool] = False) -> Response:
         print_intro("create_backend_token", verbose=verbose)
 
         token = self._get_cached_backend_token()
         if token:
-            return get_reponse_from(token)
+            return get_reponse_from_token(token)
 
         result = self._get_login_token()
         if result.is_failure:
-            return result.value
+            return result.value  # type: ignore
         login_token = result.unwrap()
 
         url = f"{self.url}/backend_token"
@@ -90,7 +96,7 @@ class AuthClient:
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
             if response.status_code == 200:
-                self._cached_backend_token = response.json().get("token")
+                self._cached_backend_token = get_token_from_response(response)
         except requests.exceptions.Timeout:
             response = get_response_timeout()
 
@@ -110,11 +116,11 @@ class AuthClient:
 
         token = self._cached_backend_token_stack.get(user_id)
         if token:
-            return get_reponse_from(token)
+            return get_reponse_from_token(token)
 
         result = self._get_login_token()
         if result.is_failure:
-            return result.value
+            return result.value  # type: ignore
         login_token = result.unwrap()
 
         url = f"{self.url}/backend_token/{user_id}"
@@ -123,7 +129,7 @@ class AuthClient:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
             if response.status_code == 200:
                 self._cached_backend_token_stack.add(
-                    user_id, response.json().get("token")
+                    user_id, get_token_from_response(response)
                 )
         except requests.exceptions.Timeout:
             response = get_response_timeout()
@@ -140,7 +146,7 @@ class AuthClient:
                 return Success(self._cached_login_token)
             else:
                 return Failure(response)
-        return Success(self._cached_login_token)
+        return Success(self._cached_login_token)  # type: ignore
 
     def _create_login_token(self) -> Response:
         final_url = f"{self.url}/login_token"
