@@ -16,7 +16,7 @@ class Config(BaseModel):
     api_key: Union[str, None] = Field(default=None)
     sandbox_token: Union[str, None] = Field(default=None)
     timeout: Union[float, None] = Field(
-        default=None, description="Timeout for every request in seconds", ge=1, le=100
+        default=None, description="Timeout for every request in seconds", ge=0, le=100
     )
     send_agent: bool = Field(default=True)
     verbose: bool = Field(default=False)

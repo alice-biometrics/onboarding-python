@@ -1,4 +1,3 @@
-import json
 from typing import Optional, Union
 
 import requests
@@ -109,6 +108,4 @@ class Auth:
 
     @staticmethod
     def __get_token_from_response(response: Response) -> str:
-        response_json = json.loads(response.content)
-        token: str = response_json["token"]
-        return token
+        return response.json().get("token")

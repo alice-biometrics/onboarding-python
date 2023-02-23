@@ -11,6 +11,14 @@ from requests import Response, Session
 from alice.onboarding.tools import print_intro, print_response, timeit
 
 
+def get_response_timeout():
+    response = Mock(spec=Response)
+    response.json.return_value = {"message": "Request timed out"}
+    response.text.return_value = "Request timed out"
+    response.status_code = 408
+    return response
+
+
 class AuthClient:
     def __init__(
         self,
@@ -22,6 +30,7 @@ class AuthClient:
         self.url = url
         self._api_key = api_key
         self._cached_login_token: Union[str, None] = None
+        self._cached_backend_token: Union[str, None] = None
         self.session = session
         self.timeout = timeout
 
@@ -29,33 +38,10 @@ class AuthClient:
     def create_backend_token(
         self, user_id: Union[str, None] = None, verbose: Optional[bool] = False
     ) -> Response:
-
-        suffix = " (with user)" if user_id else ""
-        print_intro(f"create_backend_token{suffix}", verbose=verbose)
-
-        result = self._get_login_token()
-        if result.is_failure:
-            return result.value
-        login_token = result.unwrap()
-
-        final_url = f"{self.url}/backend_token"
         if user_id:
-            final_url += f"/{user_id}"
-
-        headers = {"Authorization": f"Bearer {login_token}"}
-        try:
-            response = self.session.get(
-                final_url, headers=headers, timeout=self.timeout
-            )
-        except requests.exceptions.Timeout:
-            response = Mock(spec=Response)
-            response.json.return_value = {"message": "Request timed out"}
-            response.text.return_value = "Request timed out"
-            response.status_code = 408
-
-        print_response(response=response, verbose=verbose)
-
-        return response
+            return self._create_backend_token_with_user_id(user_id, verbose)
+        else:
+            return self._create_backend_token(verbose)
 
     @timeit
     def create_user_token(
@@ -69,17 +55,65 @@ class AuthClient:
             return result.value
         login_token = result.unwrap()
 
-        final_url = f"{self.url}/user_token/{user_id}"
+        url = f"{self.url}/user_token/{user_id}"
         headers = {"Authorization": f"Bearer {login_token}"}
         try:
-            response = self.session.get(
-                final_url, headers=headers, timeout=self.timeout
-            )
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
         except requests.exceptions.Timeout:
-            response = Mock(spec=Response)
-            response.json.return_value = {"message": "Request timed out"}
-            response.text.return_value = "Request timed out"
-            response.status_code = 408
+            response = get_response_timeout()
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    def _create_backend_token(self, verbose: Optional[bool] = False) -> Response:
+        print_intro("create_backend_token", verbose=verbose)
+
+        cached_backend_token = self._get_cached_backend_token()
+        if cached_backend_token:
+            return cached_backend_token
+
+        result = self._get_login_token()
+        if result.is_failure:
+            return result.value
+        login_token = result.unwrap()
+
+        url = f"{self.url}/backend_token"
+        headers = {"Authorization": f"Bearer {login_token}"}
+        try:
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+            self._cached_backend_token = response.json().get("token")
+        except requests.exceptions.Timeout:
+            response = get_response_timeout()
+
+        print_response(response=response, verbose=verbose)
+
+        return response
+
+    def _get_cached_backend_token(self) -> Union[Response, None]:
+        if not self._is_valid_token(self._cached_backend_token):
+            return None
+
+        response = Mock(spec=Response)
+        response.json.return_value = {"token": self._cached_backend_token}
+        response.status_code = 200
+        return response
+
+    def _create_backend_token_with_user_id(
+        self, user_id: str, verbose: Optional[bool] = False
+    ) -> Response:
+        print_intro("create_backend_token (with user)", verbose=verbose)
+        result = self._get_login_token()
+        if result.is_failure:
+            return result.value
+        login_token = result.unwrap()
+
+        url = f"{self.url}/backend_token/{user_id}"
+        headers = {"Authorization": f"Bearer {login_token}"}
+        try:
+            response = self.session.get(url, headers=headers, timeout=self.timeout)
+        except requests.exceptions.Timeout:
+            response = get_response_timeout()
 
         print_response(response=response, verbose=verbose)
 
@@ -93,6 +127,7 @@ class AuthClient:
                 return Success(self._cached_login_token)
             else:
                 return Failure(response)
+        return Success(self._cached_login_token)
 
     def _create_login_token(self) -> Response:
         final_url = f"{self.url}/login_token"
@@ -102,10 +137,7 @@ class AuthClient:
                 final_url, headers=headers, timeout=self.timeout
             )
         except requests.exceptions.Timeout:
-            response = Mock(spec=Response)
-            response.json.return_value = {"message": "Request timed out"}
-            response.text.return_value = "Request timed out"
-            response.status_code = 408
+            response = get_response_timeout()
 
         return response
 
