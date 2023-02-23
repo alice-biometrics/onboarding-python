@@ -31,6 +31,7 @@ class AuthClient:
         self._api_key = api_key
         self._cached_login_token: Union[str, None] = None
         self._cached_backend_token: Union[str, None] = None
+        # self._cached_user_tokens: Union[Dict[str, str], None] = None
         self.session = session
         self.timeout = timeout
 
@@ -82,7 +83,8 @@ class AuthClient:
         headers = {"Authorization": f"Bearer {login_token}"}
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
-            self._cached_backend_token = response.json().get("token")
+            if response.status_code == 200:
+                self._cached_backend_token = response.json().get("token")
         except requests.exceptions.Timeout:
             response = get_response_timeout()
 
