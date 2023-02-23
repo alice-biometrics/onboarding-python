@@ -21,6 +21,7 @@ class AuthClient:
         self.url = url
         self._api_key = api_key
         self._login_token: Union[str, None] = None
+        self.backend_token: Union[str, None] = None
         self.session = session
         self.timeout = timeout
 
@@ -31,6 +32,9 @@ class AuthClient:
 
         suffix = " (with user)" if user_id else ""
         print_intro(f"create_backend_token{suffix}", verbose=verbose)
+
+        if not user_id and self._is_valid_token(self.backend_token):
+            return AuthClient._token_to_response(self.backend_token)
 
         if not self._is_valid_token(self._login_token):
             response = self._create_login_token()
@@ -55,6 +59,8 @@ class AuthClient:
             response.status_code = 408
 
         print_response(response=response, verbose=verbose)
+        if not user_id:
+            self.backend_token = AuthClient._get_token_from_response(response)
 
         return response
 
@@ -115,3 +121,10 @@ class AuthClient:
         response_json = json.loads(response.content)
         token: str = response_json["token"]
         return token
+
+    @staticmethod
+    def _token_to_response(token: str) -> Response:
+        response = Response()
+        response.status_code = 200
+        response._content = {"token": token}
+        return response
