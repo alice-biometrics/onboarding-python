@@ -1,13 +1,11 @@
-import json
-import time
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 from unittest.mock import Mock
 
-import jwt
 import requests
 from meiga import Failure, Result, Success
 from requests import Response, Session
 
+from alice.auth.token_tools import get_token_from_response, is_valid_token
 from alice.onboarding.tools import print_intro, print_response, timeit
 
 
@@ -31,7 +29,7 @@ class AuthClient:
         self._api_key = api_key
         self._cached_login_token: Union[str, None] = None
         self._cached_backend_token: Union[str, None] = None
-        # self._cached_user_tokens: Union[Dict[str, str], None] = None
+        self._cached_backend_with_user_tokens: Union[Dict[str, str], None] = None
         self.session = session
         self.timeout = timeout
 
@@ -93,7 +91,7 @@ class AuthClient:
         return response
 
     def _get_cached_backend_token(self) -> Union[Response, None]:
-        if not self._is_valid_token(self._cached_backend_token):
+        if not is_valid_token(self._cached_backend_token):
             return None
 
         response = Mock(spec=Response)
@@ -122,10 +120,10 @@ class AuthClient:
         return response
 
     def _get_login_token(self) -> Result[str, Response]:
-        if not self._is_valid_token(self._cached_login_token):
+        if not is_valid_token(self._cached_login_token):
             response = self._create_login_token()
             if response.status_code == 200:
-                self._cached_login_token = self._get_token_from_response(response)
+                self._cached_login_token = get_token_from_response(response)
                 return Success(self._cached_login_token)
             else:
                 return Failure(response)
@@ -142,16 +140,3 @@ class AuthClient:
             response = get_response_timeout()
 
         return response
-
-    @staticmethod
-    def _is_valid_token(token: Union[str, None], margin_seconds: int = 60) -> bool:
-        if not token:
-            return False
-        decoded_token = jwt.decode(token, options={"verify_signature": False})
-        return bool(decoded_token["exp"] > time.time() - margin_seconds)
-
-    @staticmethod
-    def _get_token_from_response(response: Response) -> str:
-        response_json = json.loads(response.content)
-        token: str = response_json["token"]
-        return token
