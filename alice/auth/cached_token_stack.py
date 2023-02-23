@@ -7,7 +7,7 @@ from alice.onboarding.tools import timeit
 
 
 class CachedTokenStack:
-    _data: OrderedDict[str, str]
+    _data: OrderedDict  # type: ignore
 
     def __init__(self, max_size: int = 1000):
         self._data = OrderedDict()
