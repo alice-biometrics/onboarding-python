@@ -37,7 +37,7 @@ class AuthClient:
         self._api_key = api_key
         self._cached_login_token: Union[str, None] = None
         self._cached_backend_token: Union[str, None] = None
-        self._cached_backend_with_user_token_stack = CachedTokenStack()
+        self._cached_backend_token_stack = CachedTokenStack()
         self.session = session
         self.timeout = timeout
 
@@ -108,7 +108,7 @@ class AuthClient:
     ) -> Response:
         print_intro("create_backend_token (with user)", verbose=verbose)
 
-        token = self._cached_backend_with_user_token_stack.get(user_id)
+        token = self._cached_backend_token_stack.get(user_id)
         if token:
             return get_reponse_from(token)
 
@@ -122,7 +122,7 @@ class AuthClient:
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
             if response.status_code == 200:
-                self._cached_backend_with_user_token_stack.add(
+                self._cached_backend_token_stack.add(
                     user_id, response.json().get("token")
                 )
         except requests.exceptions.Timeout:
