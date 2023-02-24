@@ -9,7 +9,7 @@ from alice.onboarding.tools import timeit
 class CachedTokenStack:
     _data: OrderedDict  # type: ignore
 
-    def __init__(self, max_size: int = 1000):
+    def __init__(self, max_size: int = 5000):
         self._data = OrderedDict()
         self._max_size = max_size
 
@@ -19,12 +19,15 @@ class CachedTokenStack:
         return f"CachedTokenStack: [size={size} tokens | memory = {memory} bytes]"
 
     def add(self, user_id: str, token: str) -> None:
-        self._clear_expired_tokens()
         self._data[user_id] = token
 
     def get(self, user_id: str) -> Union[str, None]:
         token = self._data.get(user_id)
-        self._clear_if_max_size_has_been_exceeded()
+
+        if token:
+            # If token exists take advantage of the saved time and clear expired tokens and keep max size.
+            self._clear_expired_tokens()
+            self._clear_if_max_size_has_been_exceeded()
         return token
 
     def __len__(self) -> int:
@@ -36,7 +39,7 @@ class CachedTokenStack:
             "-----------------------------------      CachedTokenStack     -----------------------------------------"
         )
         for user_id, token in self._data.items():
-            print(f"{user_id}: {token} valid={is_valid_token(token)}")
+            print(f"{user_id} (valid={is_valid_token(token)}): {token} ")
         print(
             "-------------------------------------------------------------------------------------------------------"
         )

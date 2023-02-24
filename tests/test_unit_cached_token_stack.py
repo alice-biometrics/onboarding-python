@@ -43,7 +43,7 @@ class TestCachedTokenStack:
                 str(i), generate_dummy_token(payload_value=f"payload_value_{str(i)}")
             )
 
-        token = stack.get("1")  # this forces _clear_if_max_size_has_been_exceeded
+        token = stack.get("1")  # this forces clear
 
         assert len(stack) == 3
 
@@ -62,4 +62,10 @@ class TestCachedTokenStack:
                 str(i), generate_dummy_token(payload_value=f"payload_value_{str(i)}")
             )
 
+        token = stack.get(
+            "not_available_user_id"
+        )  # this will not forces clear since there is no cached token
+        assert len(stack) == 10
+
+        token = stack.get(str(i))  # this forces clear
         assert len(stack) == 6
