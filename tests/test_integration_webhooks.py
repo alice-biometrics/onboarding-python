@@ -77,6 +77,8 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     result = webhooks_client.get_webhooks()
     assert_success(result, value_is_instance_of=list)
 
+    sleep(2.0)
+
     # Retrieve las webhook result of an specific webhook
     result = webhooks_client.get_last_webhook_result(webhook_id)
     assert_success(result, value_is_instance_of=dict)
