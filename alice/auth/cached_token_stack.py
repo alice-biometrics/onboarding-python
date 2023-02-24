@@ -28,7 +28,7 @@ class CachedTokenStack:
             # If token exists take advantage of the saved time and clear expired tokens and keep max size.
             self._clear_expired_tokens()
             self._clear_if_max_size_has_been_exceeded()
-        return token
+        return token  # type: ignore
 
     def __len__(self) -> int:
         return len(self._data)
