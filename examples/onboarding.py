@@ -61,7 +61,7 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False):
 
     # Authorize an user
     # Based on report results and your business logic, you can authorize an user
-    onboarding.authorize_user(user_id=user_id)
+    onboarding.enable_authentication(user_id=user_id)
 
     # Authenticate an user (only available if a user is already authorized)
     onboarding.authenticate_user(user_id=user_id, media_data=selfie_media_data)

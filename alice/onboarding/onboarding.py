@@ -1230,11 +1230,12 @@ class Onboarding:
             )
 
     @early_return
-    def authorize_user(
+    def enable_authentication(
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, Union[OnboardingError, AuthError]]:
         """
-        Authorizes a user. Now it can be icated.
+        It enables the authentication for a user.
+
         Parameters
         ----------
         user_id
@@ -1247,7 +1248,7 @@ class Onboarding:
             Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
-        response = self.onboarding_client.authorize_user(
+        response = self.onboarding_client.enable_authentication(
             user_id=user_id, verbose=verbose
         ).unwrap_or_return()
 
@@ -1256,16 +1257,16 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="authorize_user", response=response
+                    operation="enable_authentication", response=response
                 )
             )
 
     @early_return
-    def deauthorize_user(
+    def disable_authentication(
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, Union[OnboardingError, AuthError]]:
         """
-        Deauthorizes a user. Now it cannot be authenticated.
+        It disables the authentication for a user.
 
         Parameters
         ----------
@@ -1281,7 +1282,7 @@ class Onboarding:
             Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
-        response = self.onboarding_client.deauthorize_user(
+        response = self.onboarding_client.disable_authentication(
             user_id=user_id, verbose=verbose
         ).unwrap_or_return()
 
@@ -1290,7 +1291,7 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="deauthorize_user", response=response
+                    operation="disable_authentication", response=response
                 )
             )
 

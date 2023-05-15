@@ -1408,11 +1408,11 @@ class OnboardingClient:
 
     @early_return
     @timeit
-    def authorize_user(
+    def enable_authentication(
         self, user_id: str, verbose: bool = False
     ) -> Result[Response, Error]:
         """
-        Authorizes a user. Now it can be authenticate.
+        It enables the authentication for a user.
 
         Parameters
         ----------
@@ -1426,7 +1426,7 @@ class OnboardingClient:
         -------
             A Result object with Response object [requests library] if Success
         """
-        print_intro("authorize_user", verbose=verbose)
+        print_intro("enable_authentication", verbose=verbose)
 
         backend_user_token = self.auth.create_backend_token(
             user_id=user_id
@@ -1436,21 +1436,23 @@ class OnboardingClient:
         headers = self._auth_headers(backend_user_token)
         try:
             response = self.session.post(
-                f"{self.url}/user/authorize", headers=headers, timeout=self.timeout
+                f"{self.url}/user/authentication/enable",
+                headers=headers,
+                timeout=self.timeout,
             )
         except requests.exceptions.Timeout:
-            return Failure(OnboardingError.timeout(operation="authorize_user"))
+            return Failure(OnboardingError.timeout(operation="enable_authentication"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
 
     @early_return
     @timeit
-    def deauthorize_user(
+    def disable_authentication(
         self, user_id: str, verbose: bool = False
     ) -> Result[Response, Error]:
         """
-        Deauthorizes a user. Now it cannot be authenticate.
+        It disables the authentication for a user.
 
         Parameters
         ----------
@@ -1464,7 +1466,7 @@ class OnboardingClient:
         -------
             A Result object with Response object [requests library] if Success
         """
-        print_intro("deauthorize_user", verbose=verbose)
+        print_intro("disable_authentication", verbose=verbose)
 
         backend_user_token = self.auth.create_backend_token(
             user_id=user_id
@@ -1474,10 +1476,12 @@ class OnboardingClient:
         headers = self._auth_headers(backend_user_token)
         try:
             response = self.session.post(
-                f"{self.url}/user/deauthorize", headers=headers, timeout=self.timeout
+                f"{self.url}/user/authentication/disable",
+                headers=headers,
+                timeout=self.timeout,
             )
         except requests.exceptions.Timeout:
-            return Failure(OnboardingError.timeout(operation="deauthorize_user"))
+            return Failure(OnboardingError.timeout(operation="disable_authentication"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
