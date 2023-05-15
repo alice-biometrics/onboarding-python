@@ -67,11 +67,11 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False):
     ).unwrap_or_throw()
     assert isinstance(media, bytes)
 
-    # Authorize an user
-    # Based on report results and your business logic, you can authorize an user
-    onboarding.authorize_user(user_id=user_id)
+    # Enable authentication for a user
+    # Based on report results and your business logic, you can enable the authentication for a user
+    onboarding.enable_authentication(user_id=user_id)
 
-    # Authenticate an user (only available if a user is already authorized)
+    # Authenticate a user
     onboarding.authenticate_user(user_id=user_id, media_data=selfie_media_data)
 
     return isSuccess
