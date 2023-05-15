@@ -13,6 +13,7 @@ from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
+from alice.onboarding.enums.match_case import MatchCase
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
@@ -1230,6 +1231,44 @@ class Onboarding:
             )
 
     @early_return
+    def user_matching(
+        self,
+        user_id: str,
+        match_case: MatchCase,
+        verbose: bool = False,
+    ) -> Result[bool, Union[OnboardingError, AuthError]]:
+        """
+        It performs face matching between all the user selfies or documents. This call requires a BACKEND_TOKEN_WITH_USER_ID..
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        match_case
+            Evidence (selfies or docs) on which to perform the matching
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a list of face matchings.
+            Otherwise, it returns an OnboardingError or AuthError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.user_matching(
+            user_id=user_id,
+            match_case=match_case,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="user_matching", response=response
+                )
+            )
+
     def enable_authentication(
         self, user_id: str, verbose: bool = False
     ) -> Result[bool, Union[OnboardingError, AuthError]]:
