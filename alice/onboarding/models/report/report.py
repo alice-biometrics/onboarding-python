@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Literal
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -27,7 +27,7 @@ class Report(BaseModel):
         min_length=16,
         max_length=36,
     )
-    version: int = Field(default=Literal[1], description="Report version")
+    version: int = Field(default=1, description="Report version")
     created_at: datetime = Field(description="Report creation time in ISO 8601 format")
     summary: ReportSummary = Field(description="User summary")
     selfies: List[SelfieReport] = Field(description="It collects all user selfies")
