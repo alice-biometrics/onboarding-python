@@ -1,7 +1,6 @@
 from typing import Dict, Optional
 
-from pydantic import Field
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 from alice.onboarding.models.report.shared.bounding_box import BoundingBox
 

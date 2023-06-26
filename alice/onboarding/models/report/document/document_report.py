@@ -2,8 +2,7 @@ from datetime import datetime
 from typing import List, Union
 
 from meiga import Error, Result, Success, isFailure
-from pydantic import Field
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 from alice.onboarding.models.report.checks.check import Check
 from alice.onboarding.models.report.document.document_field import ReportV1Field
@@ -16,9 +15,9 @@ from alice.onboarding.models.report.document.document_side_report import (
 
 
 class DocumentSidesDetailReport(BaseModel):
-    front: Union[DocumentSideReport, None] = None
-    back: Union[DocumentSideReport, None] = None
-    internal: Union[DocumentSideReport, None] = None
+    front: Union[DocumentSideReport, None] = Field(default=None)
+    back: Union[DocumentSideReport, None] = Field(default=None)
+    internal: Union[DocumentSideReport, None] = Field(default=None)
 
     def get_completed_sides(self) -> int:
         completed_sides = 0

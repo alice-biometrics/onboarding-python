@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 
 from alice.onboarding.models.report.compliance.device_out import DeviceOut
 from alice.onboarding.models.report.compliance.user_event_out import UserEventOut

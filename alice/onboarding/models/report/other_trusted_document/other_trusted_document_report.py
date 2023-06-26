@@ -11,7 +11,7 @@ from alice.onboarding.models.report.shared.href import Href
 
 class OtherTrustedDocumentReport(BaseModel):
     """
-    A other trusted document report_v1 collects all the information extracted for a document during the onboarding process
+    The other trusted document report_v1 collects all the information extracted for a document during the onboarding process
     """
 
     id: str = Field(

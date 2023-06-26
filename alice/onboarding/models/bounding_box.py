@@ -1,5 +1,4 @@
-from pydantic import Field
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 
 class BoundingBox(BaseModel):

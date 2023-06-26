@@ -2,8 +2,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 
 from meiga import Error, Result, Success, isFailure
-from pydantic import Field
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 from alice.onboarding.models.report.checks.check import Check
 from alice.onboarding.models.report.shared.href import Href
