@@ -1954,7 +1954,7 @@ class OnboardingClient:
         user_id: str,
         user_state: UserState,
         operator: str = "auto",
-        state_update_reasons: list[dict[str, str]] | None = None,
+        state_update_reasons: Optional[List[Dict[str, str]]] = None,
         verbose: bool = False,
     ) -> Result[Response, Error]:
         """
