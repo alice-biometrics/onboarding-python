@@ -6,6 +6,7 @@ from alice.auth.auth_errors import AuthError
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
+from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.report.report import Report
 
@@ -94,6 +95,16 @@ def test_should_do_complete_onboarding_process(
         ).unwrap_or_return()
 
         _ = onboarding.retrieve_certificates(user_id=user_id).unwrap_or_return()
+
+        _ = onboarding.update_user_state(
+            user_id=user_id, user_state=UserState.TO_REVIEW
+        ).unwrap_or_return()
+        _ = onboarding.update_user_state(
+            user_id=user_id, user_state=UserState.ACCEPTED
+        ).unwrap_or_return()
+        _ = onboarding.update_user_state(
+            user_id=user_id, user_state=UserState.REJECTED
+        ).unwrap_or_return()
 
         onboarding.delete_user(user_id).unwrap_or_return()
 
