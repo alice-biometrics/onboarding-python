@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Dict
 
 from meiga import Error
 from requests import Response
@@ -9,7 +10,7 @@ from requests import Response
 class AuthError(Error):
     operation: str
     code: int
-    message: Dict[str, str]
+    message: dict[str, str] | None  # type: ignore
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -18,7 +19,7 @@ class AuthError(Error):
         return f"[AuthError: [operation: {self.operation} | code: {self.code} | message: {self.message}]]"
 
     @staticmethod
-    def from_response(operation: str, response: Response) -> "AuthError":
+    def from_response(operation: str, response: Response) -> AuthError:
         code = response.status_code
         try:
             message = response.json()

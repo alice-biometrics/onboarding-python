@@ -267,13 +267,15 @@ class Onboarding:
         self,
         verbose: Optional[bool] = False,
         page: int = 1,
-        page_size: int = 0,
+        page_size: int = 10,
         descending: bool = True,
         authorized: bool = False,
         sort_by: Union[str, None] = None,
         filter_field: Union[str, None] = None,
         filter_value: Union[str, None] = None,
-    ) -> Result[List[Dict[str, str]], Union[OnboardingError, AuthError]]:
+    ) -> Result[
+        Dict[str, Union[List[Dict[str, str]], int]], Union[OnboardingError, AuthError]
+    ]:
         """
 
         Returns every UserStatus available for all the Users in the onboarding platform ordered by creation date.
@@ -300,7 +302,7 @@ class Onboarding:
 
         Returns
         -------
-            A Result where if the operation is successful it returns list of dict which represent the status of each user.
+            A Result where if the operation is successful it returns a dict which represent the status of each user.
             Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose

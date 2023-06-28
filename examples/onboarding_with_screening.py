@@ -1,9 +1,6 @@
 import os
 from typing import Optional
 
-from meiga import isSuccess
-from meiga.decorators import meiga
-
 from alice import Config, Onboarding, UserInfo
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_type import DocumentType
@@ -11,9 +8,7 @@ from alice.onboarding.enums.document_type import DocumentType
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
-@meiga
-def screening_onboarding(api_key: str, verbose: Optional[bool] = False):
-
+def screening_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
@@ -56,11 +51,10 @@ def screening_onboarding(api_key: str, verbose: Optional[bool] = False):
         user_id=user_id, verbose=verbose
     ).unwrap_or_throw()
 
-    return isSuccess
 
-
-def given_any_document_back_media_data():
-    return open(f"{RESOURCES_PATH}/idcard_esp_back_example.png", "rb").read()
+def given_any_document_back_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/idcard_esp_back_example.png", "rb") as f:
+        return f.read()
 
 
 if __name__ == "__main__":

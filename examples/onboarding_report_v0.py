@@ -1,9 +1,6 @@
 import os
 from typing import Optional
 
-from meiga import isSuccess
-from meiga.decorators import meiga
-
 from alice import Config, Onboarding
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_type import DocumentType
@@ -12,8 +9,7 @@ from alice.onboarding.enums.version import Version
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
-@meiga
-def onboarding_example(api_key: str, verbose: Optional[bool] = False):
+def onboarding_example(api_key: str, verbose: Optional[bool] = False) -> None:
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
@@ -69,24 +65,27 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False):
 
     # Enable authentication for a user
     # Based on report results and your business logic, you can enable the authentication for a user
-    onboarding.enable_authentication(user_id=user_id)
+    onboarding.enable_authentication(user_id=user_id).unwrap_or_throw()
 
     # Authenticate a user
-    onboarding.authenticate_user(user_id=user_id, media_data=selfie_media_data)
-
-    return isSuccess
-
-
-def given_any_selfie_image_media_data():
-    return open(f"{RESOURCES_PATH}/selfie.png", "rb").read()
+    onboarding.authenticate_user(
+        user_id=user_id, media_data=selfie_media_data
+    ).unwrap_or_throw()
 
 
-def given_any_document_front_media_data():
-    return open(f"{RESOURCES_PATH}/idcard_esp_front_example.png", "rb").read()
+def given_any_selfie_image_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/selfie.png", "rb") as f:
+        return f.read()
 
 
-def given_any_document_back_media_data():
-    return open(f"{RESOURCES_PATH}/idcard_esp_back_example.png", "rb").read()
+def given_any_document_front_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/idcard_esp_front_example.png", "rb") as f:
+        return f.read()
+
+
+def given_any_document_back_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/idcard_esp_back_example.png", "rb") as f:
+        return f.read()
 
 
 if __name__ == "__main__":

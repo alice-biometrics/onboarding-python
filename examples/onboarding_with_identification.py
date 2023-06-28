@@ -1,16 +1,12 @@
 import os
 from typing import Optional
 
-from meiga import isSuccess
-from meiga.decorators import meiga
-
 from alice import Config, Onboarding
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
-@meiga
-def identification_onboarding(api_key: str, verbose: Optional[bool] = False):
+def identification_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
 
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
@@ -36,19 +32,20 @@ def identification_onboarding(api_key: str, verbose: Optional[bool] = False):
     )
     assert isinstance(identifications.unwrap(), dict)
 
-    return isSuccess
+
+def given_any_selfie_image_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/selfie.png", "rb") as f:
+        return f.read()
 
 
-def given_any_selfie_image_media_data():
-    return open(f"{RESOURCES_PATH}/selfie.png", "rb").read()
+def given_any_document_front_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/idcard_esp_front_example.png", "rb") as f:
+        return f.read()
 
 
-def given_any_document_front_media_data():
-    return open(f"{RESOURCES_PATH}/idcard_esp_front_example.png", "rb").read()
-
-
-def given_any_document_back_media_data():
-    return open(f"{RESOURCES_PATH}/idcard_esp_back_example.png", "rb").read()
+def given_any_document_back_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/idcard_esp_back_example.png", "rb") as f:
+        return f.read()
 
 
 if __name__ == "__main__":

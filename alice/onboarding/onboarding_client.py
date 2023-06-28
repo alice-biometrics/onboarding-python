@@ -281,7 +281,7 @@ class OnboardingClient:
         self,
         verbose: Optional[bool] = False,
         page: int = 1,
-        page_size: int = 0,
+        page_size: int = 10,
         descending: bool = True,
         authorized: bool = False,
         sort_by: Union[str, None] = None,

@@ -9,7 +9,7 @@ from requests import Response
 class OnboardingError(Error):
     operation: str
     code: int
-    message: Optional[Dict[str, Any]] = None
+    message: Optional[Dict[str, Any]] = None  # type: ignore
 
     def __init__(
         self, operation: str, code: int, message: Optional[Dict[str, Any]] = None

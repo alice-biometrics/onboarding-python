@@ -2,17 +2,14 @@ import os
 import secrets
 from typing import Optional
 
-from meiga import isSuccess
 from meiga.assertions import assert_success
-from meiga.decorators import meiga
 
 from alice import Config, Webhook, Webhooks
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
-@meiga
-def configure_webhooks(api_key: str, verbose: Optional[bool] = False):
+def configure_webhooks(api_key: str, verbose: Optional[bool] = False) -> None:
     config = Config(api_key=api_key, verbose=verbose)
     webhooks_client = Webhooks.from_config(config)
 
@@ -64,13 +61,11 @@ def configure_webhooks(api_key: str, verbose: Optional[bool] = False):
     result = webhooks_client.delete_webhook(webhook_id)
     assert_success(result)
 
-    # Retrieve all webhook results of an specific webhook
+    # Retrieve all webhook results of a specific webhook
     webhook_results = webhooks_client.get_webhook_results(webhook_id).unwrap()
 
-    # Retrieve las webhook result of an specific webhook
+    # Retrieve las webhook result of a specific webhook
     last_webhook_result = webhooks_client.get_last_webhook_result(webhook_id).unwrap()
-
-    return isSuccess
 
 
 if __name__ == "__main__":

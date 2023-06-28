@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from meiga import Error, Result, Success, isFailure
 from pydantic import BaseModel, Field
@@ -25,8 +25,8 @@ class DocumentSideReport(BaseModel):
         description="Document side media resources"
     )
     meta: DocumentSideReportMeta
-    created_at: Optional[datetime]
-    forensics_scores: Optional[Dict[str, Any]]
+    created_at: Union[datetime, None] = Field(default=None)
+    forensics_scores: Union[Dict[str, Any], None] = Field(default=None)
 
     def get_field(self, field_name: str) -> Result[ReportV1Field, Error]:
         for side_field in self.fields:
