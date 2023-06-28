@@ -16,18 +16,18 @@ def onboarding_with_user_matching(
 
     selfie_media_data = given_any_selfie_image_media_data()
 
-    user_id = onboarding.create_user().unwrap_or_throw()
+    user_id = onboarding.create_user().unwrap_or_raise()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
-    onboarding.void_selfie(user_id=user_id).unwrap_or_throw()
+    onboarding.void_selfie(user_id=user_id).unwrap_or_raise()
 
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     matches = onboarding.user_matching(user_id=user_id, match_case=MatchCase.SELFIE)
     assert isinstance(matches.unwrap(), list)

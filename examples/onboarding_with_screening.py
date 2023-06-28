@@ -16,40 +16,40 @@ def screening_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
 
     user_id = onboarding.create_user(
         user_info=UserInfo(first_name="Carmen", last_name="Espanola")
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     # # Create and upload front and back side from a document
     document_id = onboarding.create_document(
         user_id=user_id, type=DocumentType.ID_CARD, issuing_country="ESP"
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
         media_data=document_back_media_data,
         side=DocumentSide.BACK,
         manual=True,
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     # Screening
-    screening = onboarding.screening(user_id=user_id).unwrap_or_throw()
+    screening = onboarding.screening(user_id=user_id).unwrap_or_raise()
 
     assert isinstance(screening, dict)
 
     # Screening (with detail)
     detailed_screening = onboarding.screening(
         user_id=user_id, detail=True
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
     assert isinstance(detailed_screening, dict)
 
     # Add user to monitoring list
-    onboarding.screening_monitor_add(user_id=user_id).unwrap_or_throw()
+    onboarding.screening_monitor_add(user_id=user_id).unwrap_or_raise()
 
-    open_alerts = onboarding.screening_monitor_open_alerts().unwrap_or_throw()
+    open_alerts = onboarding.screening_monitor_open_alerts().unwrap_or_raise()
     assert isinstance(open_alerts, dict)
 
     onboarding.screening_monitor_delete(
         user_id=user_id, verbose=verbose
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
 
 def given_any_document_back_media_data() -> bytes:

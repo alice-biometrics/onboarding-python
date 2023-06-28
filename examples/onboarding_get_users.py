@@ -10,8 +10,8 @@ def onboarding_get_users_status_example(
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
-    onboarding.get_users().unwrap_or_throw()
-    onboarding.get_users_status().unwrap_or_throw()
+    onboarding.get_users().unwrap_or_raise()
+    onboarding.get_users_status().unwrap_or_raise()
 
 
 if __name__ == "__main__":

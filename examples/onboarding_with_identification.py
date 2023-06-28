@@ -14,18 +14,18 @@ def identification_onboarding(api_key: str, verbose: Optional[bool] = False) -> 
     selfie_media_data = given_any_selfie_image_media_data()
     document_front_media_data = given_any_document_front_media_data()
 
-    user_id_target = onboarding.create_user().unwrap_or_throw()
+    user_id_target = onboarding.create_user().unwrap_or_raise()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
         user_id=user_id_target, media_data=selfie_media_data
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
-    user_id_probe = onboarding.create_user().unwrap_or_throw()
+    user_id_probe = onboarding.create_user().unwrap_or_raise()
 
     onboarding.add_selfie(
         user_id=user_id_probe, media_data=document_front_media_data
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     identifications = onboarding.identify_user(
         target_user_id=user_id_target, probe_user_ids=[user_id_probe, user_id_target]

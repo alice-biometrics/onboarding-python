@@ -20,17 +20,17 @@ def certified_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
     document_front_media_data = given_any_document_front_media_data()
     document_back_media_data = given_any_document_back_media_data()
 
-    user_id = onboarding.create_user().unwrap_or_throw()
+    user_id = onboarding.create_user().unwrap_or_raise()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     # Create and upload front and back side from a document
     document_id = onboarding.create_document(
         user_id=user_id, type=DocumentType.ID_CARD, issuing_country="ESP"
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
@@ -38,7 +38,7 @@ def certified_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
         side=DocumentSide.FRONT,
         manual=True,
         source=DocumentSource.camera,
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
     onboarding.add_document(
         user_id=user_id,
         document_id=document_id,
@@ -46,21 +46,21 @@ def certified_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
         side=DocumentSide.BACK,
         manual=True,
         source=DocumentSource.camera,
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     # Create Certificate
-    certificate_id = onboarding.create_certificate(user_id=user_id).unwrap_or_throw()
+    certificate_id = onboarding.create_certificate(user_id=user_id).unwrap_or_raise()
 
     # Retrieved Certificate from certificate_id
     certificate = onboarding.retrieve_certificate(
         user_id=user_id, certificate_id=certificate_id
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     # Save PdfReport data to a file
     with open(f"certificate_{certificate_id}.pdf", "wb") as outfile:
         outfile.write(certificate)
 
-    certificates = onboarding.retrieve_certificates(user_id=user_id).unwrap_or_throw()
+    certificates = onboarding.retrieve_certificates(user_id=user_id).unwrap_or_raise()
 
     assert len(certificates) >= 1
 
