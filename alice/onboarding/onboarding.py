@@ -14,6 +14,7 @@ from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.match_case import MatchCase
+from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
@@ -1694,13 +1695,19 @@ class Onboarding:
                 )
             )
 
-    def accept_user(
-        self, user_id: str, operator: str = "auto", verbose: bool = False
+    def update_user_state(
+        self,
+        user_id: str,
+        user_state: UserState,
+        operator: str = "auto",
+        verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
-        Mark a user state as ACCEPTED
+        Update the state of a user
         Parameters
         ----------
+        user_state
+            New State of the user
         user_id
             User identifier
         operator
@@ -1713,8 +1720,8 @@ class Onboarding:
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
-        response = self.onboarding_client.accept_user(
-            user_id=user_id, operator=operator, verbose=verbose
+        response = self.onboarding_client.update_user_state(
+            user_id=user_id, user_state=user_state, operator=operator, verbose=verbose
         ).unwrap_or_return()
 
         if response.status_code == 200:
@@ -1722,47 +1729,6 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="accept_user", response=response
-                )
-            )
-
-    def reject_user(
-        self,
-        user_id: str,
-        rejection_reasons: Optional[List[Dict[str, str]]] = None,
-        operator: str = "auto",
-        verbose: bool = False,
-    ) -> Result[bool, OnboardingError]:
-        """
-        Mark a user state as REJECTED
-        Parameters
-        ----------
-        user_id
-            User identifier
-        rejection_reasons
-            List of rejection reasons
-        operator
-            Who is rejecting the user
-        verbose
-            Used for print service response as well as the time elapsed
-        Returns
-        -------
-            A Result where if the operation is successful it returns True.
-            Otherwise, it returns an OnboardingError.
-        """
-        verbose = self.verbose or verbose
-        response = self.onboarding_client.reject_user(
-            user_id=user_id,
-            rejection_reasons=rejection_reasons,
-            operator=operator,
-            verbose=verbose,
-        ).unwrap_or_return()
-
-        if response.status_code == 200:
-            return isSuccess
-        else:
-            return Failure(
-                OnboardingError.from_response(
-                    operation="accept_user", response=response
+                    operation="update_user_state", response=response
                 )
             )

@@ -16,6 +16,7 @@ from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.match_case import MatchCase
+from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
@@ -1948,14 +1949,20 @@ class OnboardingClient:
         return Success(response)
 
     @timeit
-    def accept_user(
-        self, user_id: str, operator: str = "auto", verbose: bool = False
+    def update_user_state(
+        self,
+        user_id: str,
+        user_state: UserState,
+        operator: str = "auto",
+        verbose: bool = False,
     ) -> Result[Response, Error]:
         """
-        Mark a user state as ACCEPTED
+        Update the state of a user
 
         Parameters
         ----------
+        user_state
+            New State of the user
         user_id
             User identifier
         operator
@@ -1968,7 +1975,7 @@ class OnboardingClient:
         -------
             A Response object [requests library]
         """
-        print_intro("accept_user", verbose=verbose)
+        print_intro("update_user_state", verbose=verbose)
 
         backend_user_token = self.auth.create_backend_token(
             user_id=user_id
@@ -1977,65 +1984,17 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
         try:
-            response = requests.post(
-                f"{self.url}/user/state/accept",
+            response = requests.patch(
+                f"{self.url}/user/state",
                 headers=headers,
                 json={
+                    "state": user_state.value,
                     "operator": operator,
                 },
                 timeout=self.timeout,
             )
         except requests.exceptions.Timeout:
-            return Failure(OnboardingError.timeout(operation="accept_user"))
-
-        print_response(response=response, verbose=verbose)
-
-        return Success(response)
-
-    @timeit
-    def reject_user(
-        self,
-        user_id: str,
-        rejection_reasons: Optional[List[Dict[str, str]]] = None,
-        operator: str = "auto",
-        verbose: bool = False,
-    ) -> Result[Response, Error]:
-        """
-        Mark a user state as REJECTED
-
-        Parameters
-        ----------
-        user_id
-            User identifier
-        rejection_reasons
-            List of rejection reasons
-        operator
-            Who is rejecting the user
-        verbose
-            Used for print service response as well as the time elapsed
-
-
-        Returns
-        -------
-            A Response object [requests library]
-        """
-        print_intro("accept_user", verbose=verbose)
-
-        backend_user_token = self.auth.create_backend_token(
-            user_id=user_id
-        ).unwrap_or_return()
-        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
-
-        headers = self._auth_headers(backend_user_token)
-        try:
-            response = requests.post(
-                f"{self.url}/user/state/reject",
-                headers=headers,
-                json={"operator": operator, "rejection_reasons": rejection_reasons},
-                timeout=self.timeout,
-            )
-        except requests.exceptions.Timeout:
-            return Failure(OnboardingError.timeout(operation="accept_user"))
+            return Failure(OnboardingError.timeout(operation="update_user_state"))
 
         print_response(response=response, verbose=verbose)
 
