@@ -1702,6 +1702,7 @@ class Onboarding:
         user_id: str,
         user_state: UserState,
         operator: str = "auto",
+        state_update_reasons: Optional[List[Dict[str, str]]] = None,
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
@@ -1714,6 +1715,8 @@ class Onboarding:
             User identifier
         operator
             Who is accepting the user
+        state_update_reasons
+            List of reasons for status update
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -1723,7 +1726,11 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.update_user_state(
-            user_id=user_id, user_state=user_state, operator=operator, verbose=verbose
+            user_id=user_id,
+            user_state=user_state,
+            operator=operator,
+            state_update_reasons=state_update_reasons,
+            verbose=verbose,
         ).unwrap_or_return()
 
         if response.status_code == 200:
