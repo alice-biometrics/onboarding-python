@@ -1954,7 +1954,7 @@ class OnboardingClient:
         user_id: str,
         user_state: UserState,
         operator: str = "auto",
-        state_update_reasons: Optional[List[Dict[str, str]]] = None,
+        update_reasons: Optional[List[Dict[str, str]]] = None,
         verbose: bool = False,
     ) -> Result[Response, Error]:
         """
@@ -1968,7 +1968,7 @@ class OnboardingClient:
             User identifier
         operator
             Who is accepting the user
-        state_update_reasons
+        update_reasons
             List of reasons for status update
         verbose
             Used for print service response as well as the time elapsed
@@ -1992,7 +1992,7 @@ class OnboardingClient:
                 headers=headers,
                 json={
                     "state": user_state.value,
-                    "state_update_reasons": state_update_reasons,
+                    "update_reasons": update_reasons,
                     "operator": operator,
                 },
                 timeout=self.timeout,
