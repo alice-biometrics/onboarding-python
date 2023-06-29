@@ -1315,48 +1315,6 @@ class OnboardingClient:
 
     @early_return
     @timeit
-    def screening_monitor_open_alerts(
-        self, start_index: int = 0, size: int = 100, verbose: bool = False
-    ) -> Result[Response, Error]:
-        """
-        Retrieves from the monitoring list the users with open alerts
-
-        Parameters
-        ----------
-        start_index
-            DB index to start (0-2147483647)
-        size
-            Numbers of alerts to return (1-100).
-        verbose
-            Used for print service response as well as the time elapsed
-
-
-        Returns
-        -------
-              A Result object with Response object [requests library] if Success
-        """
-        print_intro("screening_monitor_open_alerts", verbose=verbose)
-
-        backend_token = self.auth.create_backend_token().unwrap_or_return()
-        print_token("backend_token", backend_token, verbose=verbose)
-        headers = self._auth_headers(backend_token)
-
-        try:
-            response = self.session.get(
-                f"{self.url}/users/screening/monitor/alerts?start_index={start_index}&size={size}",
-                headers=headers,
-                timeout=self.timeout,
-            )
-        except requests.exceptions.Timeout:
-            return Failure(
-                OnboardingError.timeout(operation="screening_monitor_open_alerts")
-            )
-        print_response(response=response, verbose=verbose)
-
-        return Success(response)
-
-    @early_return
-    @timeit
     def identify_user(
         self,
         target_user_id: str,

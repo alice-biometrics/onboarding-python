@@ -1156,41 +1156,6 @@ class Onboarding:
             )
 
     @early_return
-    def screening_monitor_open_alerts(
-        self, start_index: int = 0, size: int = 100, verbose: bool = False
-    ) -> Result[bool, Union[OnboardingError, AuthError]]:
-        """
-        Retrieves from the monitoring list the users with open alerts
-
-        Parameters
-        ----------
-        start_index
-            DB index to start (0-2147483647)
-        size
-            Numbers of alerts to return (1-100).
-        verbose
-            Used for print service response as well as the time elapsed
-
-        Returns
-        -------
-            A Result where if the operation is successful it returns a dictionary.
-            Otherwise, it returns an OnboardingError or AuthError.
-        """
-        verbose = self.verbose or verbose
-        response = self.onboarding_client.screening_monitor_open_alerts(
-            start_index=start_index, size=size, verbose=verbose
-        ).unwrap_or_return()
-
-        if response.status_code == 200:
-            return Success(response.json())
-        else:
-            return Failure(
-                OnboardingError.from_response(
-                    operation="screening_monitor_open_alerts", response=response
-                )
-            )
-
-    @early_return
     def identify_user(
         self,
         target_user_id: str,

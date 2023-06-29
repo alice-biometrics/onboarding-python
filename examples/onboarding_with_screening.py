@@ -48,12 +48,9 @@ def screening_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
         user_id=user_id, detail=True
     ).unwrap_or_raise()
     assert isinstance(detailed_screening, dict)
-    #
+
     # Add user to monitoring list
     onboarding.screening_monitor_add(user_id=user_id).unwrap_or_raise()
-
-    open_alerts = onboarding.screening_monitor_open_alerts().unwrap_or_raise()
-    assert isinstance(open_alerts, dict)
 
     onboarding.screening_monitor_delete(
         user_id=user_id, verbose=verbose
