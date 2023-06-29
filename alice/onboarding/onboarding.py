@@ -1193,6 +1193,7 @@ class Onboarding:
         self,
         target_user_id: str,
         probe_user_ids: List[str],
+        version: Version = Version.DEFAULT,
         verbose: bool = False,
     ) -> Result[bool, Union[OnboardingError, AuthError]]:
         """
@@ -1204,6 +1205,8 @@ class Onboarding:
             User identifier (Target)
         probe_user_ids
             List of user identifier to match against (N Probes)
+        version
+            Set Identify version
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -1215,6 +1218,7 @@ class Onboarding:
         response = self.onboarding_client.identify_user(
             target_user_id=target_user_id,
             probe_user_ids=probe_user_ids,
+            version=version,
             verbose=verbose,
         ).unwrap_or_return()
 
@@ -1410,6 +1414,7 @@ class Onboarding:
         page: int = 1,
         page_size: int = 0,
         descending: bool = True,
+        version: Version = Version.DEFAULT,
         verbose: bool = False,
     ) -> Result[List[Dict[str, Any]], Union[OnboardingError, AuthError]]:
         """
@@ -1428,6 +1433,8 @@ class Onboarding:
             Numbers of authentications per page that will be returned. To return all the authentications select 0.
         descending
             Order of the authentications according to their creation date.
+        version
+            Set Authentication Version
         verbose
             Used for print service response as well as the time elapsed
 
@@ -1443,6 +1450,7 @@ class Onboarding:
             page_size=page_size,
             page=page,
             descending=descending,
+            version=version,
             verbose=verbose,
         ).unwrap_or_return()
 
@@ -1460,6 +1468,7 @@ class Onboarding:
         self,
         user_id: str,
         authentication_id: str,
+        version: Version = Version.DEFAULT,
         verbose: bool = False,
     ) -> Result[Dict[str, Any], Union[OnboardingError, AuthError]]:
         """
@@ -1472,6 +1481,8 @@ class Onboarding:
             User identifier
         authentication_id
             Authentication identifier
+        version
+            Set Authentication Version
         verbose
             Used for print service response as well as the time elapsed
 
@@ -1485,6 +1496,7 @@ class Onboarding:
         response = self.onboarding_client.get_authentication(
             user_id=user_id,
             authentication_id=authentication_id,
+            version=version,
             verbose=verbose,
         ).unwrap_or_return()
 
@@ -1688,7 +1700,7 @@ class Onboarding:
         user_id: str,
         user_state: UserState,
         operator: str = "auto",
-        update_reasons: Optional[List[Dict[str, str]]] = None,
+        state_update_reasons: Optional[List[Dict[str, str]]] = None,
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
@@ -1701,7 +1713,7 @@ class Onboarding:
             User identifier
         operator
             Who is accepting the user
-        update_reasons
+        state_update_reasons
             List of reasons for status update
         verbose
             Used for print service response as well as the time elapsed
@@ -1715,7 +1727,7 @@ class Onboarding:
             user_id=user_id,
             user_state=user_state,
             operator=operator,
-            update_reasons=update_reasons,
+            state_update_reasons=state_update_reasons,
             verbose=verbose,
         ).unwrap_or_return()
 
