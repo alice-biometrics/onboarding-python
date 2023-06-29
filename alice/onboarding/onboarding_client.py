@@ -410,7 +410,11 @@ class OnboardingClient:
     @early_return
     @timeit
     def add_selfie(
-        self, user_id: str, media_data: bytes, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        media_data: bytes,
+        wait_for_completion: Optional[bool] = True,
+        verbose: Optional[bool] = False,
     ) -> Result[Response, Error]:
         """
 
@@ -423,6 +427,8 @@ class OnboardingClient:
             User identifier
         media_data
             Binary media data.
+        wait_for_completion
+            This setting specifies whether or not the request should return immediately or wait for the operation to complete before returning.
         verbose
             Used for print service response as well as the time elapsed
 
@@ -444,6 +450,7 @@ class OnboardingClient:
             response = self.session.post(
                 f"{self.url}/user/selfie",
                 files=files,
+                data={"wait_for_completion": wait_for_completion},
                 headers=headers,
                 timeout=self.timeout,
             )
