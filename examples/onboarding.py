@@ -19,6 +19,8 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False) -> None:
 
     user_id = onboarding.create_user().unwrap_or_raise()
 
+    onboarding.get_user_status(user_id).unwrap_or_raise()
+
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data
