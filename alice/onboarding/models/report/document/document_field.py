@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from meiga import Error, Result, Success, isFailure
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 from alice.onboarding.models.report.checks.check import Check
 
@@ -14,7 +14,7 @@ class ReportV1Field(BaseModel):
     name: str
     value: Optional[str]
     score: Optional[int]
-    checks: List[Check] = []
+    checks: List[Check] = Field(default=[])
 
     def get_check(self, check_key: str) -> Result[Check, Error]:
         for doc_check in self.checks:

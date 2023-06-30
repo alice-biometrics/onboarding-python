@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from pydantic import Field
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 from alice.onboarding.models.report.document.document_side import DocumentSide
 

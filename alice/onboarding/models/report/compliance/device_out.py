@@ -1,7 +1,6 @@
-from typing import Optional
+from typing import Union
 
-from pydantic import Field
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DeviceOut(BaseModel):
@@ -14,7 +13,7 @@ class DeviceOut(BaseModel):
     platform: str
     platform_version: str
     model: str
-    ip: Optional[str] = None
+    ip: Union[str, None] = Field(default=None)
 
     def __hash__(self) -> int:
         return hash((type(self),) + tuple(self.__dict__.values()))

@@ -14,7 +14,7 @@ class TestAuth:
 
     def _get_user_id(self, config: Config) -> str:
         onboarding = Onboarding.from_config(config)
-        return onboarding.create_user().unwrap_or_throw()
+        return onboarding.create_user().unwrap_or_raise()
 
     def should_return_an_error_when_the_api_key_is_not_configured(self):
         config = Config()
@@ -53,7 +53,7 @@ class TestAuth:
         auth = Auth.from_config(config)
 
         onboarding = Onboarding.from_config(config)
-        user_id = onboarding.create_user().unwrap_or_throw()
+        user_id = onboarding.create_user().unwrap_or_raise()
 
         result = auth.create_user_token(user_id=self._get_user_id(config))
         result.assert_success(value_is_instance_of=str)

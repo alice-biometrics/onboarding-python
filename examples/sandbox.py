@@ -14,10 +14,10 @@ def sandbox_example(sandbox_token: str, email: str, verbose: Optional[bool] = Fa
     config = Config(sandbox_token=sandbox_token, verbose=verbose)
     sandbox = Sandbox.from_config(config)
 
-    user_id = sandbox.create_user(user_info=UserInfo(email=email)).unwrap_or_throw()
-    user_token = sandbox.get_user_token(email=email).unwrap_or_throw()
-    user = sandbox.get_user(email=email).unwrap_or_throw()
-    sandbox.delete_user(email=email).unwrap_or_throw()
+    user_id = sandbox.create_user(user_info=UserInfo(email=email)).unwrap_or_raise()
+    user_token = sandbox.get_user_token(email=email).unwrap_or_raise()
+    user = sandbox.get_user(email=email).unwrap_or_raise()
+    sandbox.delete_user(email=email).unwrap_or_raise()
 
     if verbose:
         print(f"user_id: {user_id}")

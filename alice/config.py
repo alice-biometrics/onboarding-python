@@ -1,7 +1,6 @@
 from typing import Union
 
-from pydantic.fields import Field
-from pydantic.main import BaseModel
+from pydantic import BaseModel, Field
 from requests import Session
 
 
@@ -20,4 +19,4 @@ class Config(BaseModel):
     )
     send_agent: bool = Field(default=True)
     verbose: bool = Field(default=False)
-    session: Union[Session, None] = None
+    session: Union[Session, None] = Field(default=None)

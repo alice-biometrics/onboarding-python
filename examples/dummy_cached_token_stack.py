@@ -1,7 +1,24 @@
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
+import jwt
+
 from alice.auth.cached_token_stack import CachedTokenStack
-from tests.test_unit_cached_token_stack import generate_dummy_token
+
+
+def generate_dummy_token(
+    expired: bool = False, payload_value: str = "payload_value"
+) -> str:
+    if expired:
+        exp = (datetime.now(timezone.utc) - timedelta(minutes=60)).timestamp()
+    else:
+        exp = (datetime.now(timezone.utc) + timedelta(minutes=60)).timestamp()
+
+    encoded_jwt = jwt.encode(
+        {"id": payload_value, "exp": exp}, "secret", algorithm="HS256"
+    )
+    return encoded_jwt
+
 
 stack = CachedTokenStack(max_size=100)
 

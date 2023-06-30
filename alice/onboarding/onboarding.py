@@ -268,13 +268,15 @@ class Onboarding:
         self,
         verbose: Optional[bool] = False,
         page: int = 1,
-        page_size: int = 0,
+        page_size: int = 10,
         descending: bool = True,
         authorized: bool = False,
         sort_by: Union[str, None] = None,
         filter_field: Union[str, None] = None,
         filter_value: Union[str, None] = None,
-    ) -> Result[List[Dict[str, str]], Union[OnboardingError, AuthError]]:
+    ) -> Result[
+        Dict[str, Union[List[Dict[str, str]], int]], Union[OnboardingError, AuthError]
+    ]:
         """
 
         Returns every UserStatus available for all the Users in the onboarding platform ordered by creation date.
@@ -301,7 +303,7 @@ class Onboarding:
 
         Returns
         -------
-            A Result where if the operation is successful it returns list of dict which represent the status of each user.
+            A Result where if the operation is successful it returns a dict which represent the status of each user.
             Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
@@ -381,7 +383,11 @@ class Onboarding:
 
     @early_return
     def add_selfie(
-        self, user_id: str, media_data: bytes, verbose: Optional[bool] = False
+        self,
+        user_id: str,
+        media_data: bytes,
+        wait_for_completion: Optional[bool] = True,
+        verbose: Optional[bool] = False,
     ) -> Result[bool, Union[OnboardingError, AuthError]]:
         """
 
@@ -394,6 +400,8 @@ class Onboarding:
             User identifier
         media_data
             Binary media data.
+        wait_for_completion
+            This setting specifies whether or not the request should return immediately or wait for the operation to complete before returning.
         verbose
             Used for print service response as well as the time elapsed
 
@@ -405,10 +413,13 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.add_selfie(
-            user_id=user_id, media_data=media_data, verbose=verbose
+            user_id=user_id,
+            media_data=media_data,
+            wait_for_completion=wait_for_completion,
+            verbose=verbose,
         ).unwrap_or_return()
 
-        if response.status_code == 200:
+        if response.status_code in [200, 201]:
             return isSuccess
         else:
             return Failure(
@@ -1150,41 +1161,6 @@ class Onboarding:
             return Failure(
                 OnboardingError.from_response(
                     operation="screening_monitor_delete", response=response
-                )
-            )
-
-    @early_return
-    def screening_monitor_open_alerts(
-        self, start_index: int = 0, size: int = 100, verbose: bool = False
-    ) -> Result[bool, Union[OnboardingError, AuthError]]:
-        """
-        Retrieves from the monitoring list the users with open alerts
-
-        Parameters
-        ----------
-        start_index
-            DB index to start (0-2147483647)
-        size
-            Numbers of alerts to return (1-100).
-        verbose
-            Used for print service response as well as the time elapsed
-
-        Returns
-        -------
-            A Result where if the operation is successful it returns a dictionary.
-            Otherwise, it returns an OnboardingError or AuthError.
-        """
-        verbose = self.verbose or verbose
-        response = self.onboarding_client.screening_monitor_open_alerts(
-            start_index=start_index, size=size, verbose=verbose
-        ).unwrap_or_return()
-
-        if response.status_code == 200:
-            return Success(response.json())
-        else:
-            return Failure(
-                OnboardingError.from_response(
-                    operation="screening_monitor_open_alerts", response=response
                 )
             )
 

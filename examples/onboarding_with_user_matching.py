@@ -1,44 +1,41 @@
 import os
 from typing import Optional
 
-from meiga import isSuccess
-from meiga.decorators import meiga
-
 from alice import Config, Onboarding
 from alice.onboarding.enums.match_case import MatchCase
 
 RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
-@meiga
-def onboarding_with_user_matching(api_key: str, verbose: Optional[bool] = False):
+def onboarding_with_user_matching(
+    api_key: str, verbose: Optional[bool] = False
+) -> None:
 
     config = Config(api_key=api_key, verbose=verbose)
     onboarding = Onboarding.from_config(config)
 
     selfie_media_data = given_any_selfie_image_media_data()
 
-    user_id = onboarding.create_user().unwrap_or_throw()
+    user_id = onboarding.create_user().unwrap_or_raise()
 
     # Upload a selfie (Recommended 1-second video)
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
-    onboarding.void_selfie(user_id=user_id).unwrap_or_throw()
+    onboarding.void_selfie(user_id=user_id).unwrap_or_raise()
 
     onboarding.add_selfie(
         user_id=user_id, media_data=selfie_media_data
-    ).unwrap_or_throw()
+    ).unwrap_or_raise()
 
     matches = onboarding.user_matching(user_id=user_id, match_case=MatchCase.SELFIE)
     assert isinstance(matches.unwrap(), list)
 
-    return isSuccess
 
-
-def given_any_selfie_image_media_data():
-    return open(f"{RESOURCES_PATH}/selfie.png", "rb").read()
+def given_any_selfie_image_media_data() -> bytes:
+    with open(f"{RESOURCES_PATH}/selfie.png", "rb") as f:
+        return f.read()
 
 
 if __name__ == "__main__":
