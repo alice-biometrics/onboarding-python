@@ -60,7 +60,7 @@ class WebhooksClient:
         backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
         headers = self._auth_headers(backend_token)
-        response = self.session.get(self.url + "/events", headers=headers)
+        response = self.session.get(self.url + "/webhook/events", headers=headers)
 
         print_response(response=response, verbose=verbose)
 
