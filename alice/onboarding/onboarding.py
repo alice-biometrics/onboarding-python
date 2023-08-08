@@ -1902,3 +1902,41 @@ class Onboarding:
                     operation="delete_flow", response=response
                 )
             )
+
+    @early_return
+    def update_user_flow(
+        self,
+        flow_id: str,
+        user_id: str,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+        Update user flow
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a bool result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.update_user_flow(
+            flow_id=flow_id,
+            user_id=user_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="update_user_flow", response=response
+                )
+            )

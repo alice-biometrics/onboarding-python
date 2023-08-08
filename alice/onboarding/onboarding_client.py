@@ -2191,3 +2191,46 @@ class OnboardingClient:
         print_response(response=response, verbose=verbose)
 
         return Success(response)
+
+    @early_return
+    @timeit
+    def update_user_flow(
+        self,
+        flow_id: str,
+        user_id: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+
+        Update user flow
+
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("update_user_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        try:
+            response = requests.patch(
+                f"{self.url}/user/flow/{flow_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="update_user_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
