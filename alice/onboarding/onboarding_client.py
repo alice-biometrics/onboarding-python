@@ -2006,3 +2006,37 @@ class OnboardingClient:
         print_response(response=response, verbose=verbose)
 
         return Success(response)
+
+    @early_return
+    @timeit
+    def retrieve_flows(self, verbose: bool = False) -> Result[Response, Error]:
+        """
+
+        Retrieve flows from the onboarding platform
+
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("retrieve_flows", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        try:
+            response = requests.get(
+                f"{self.url}/flows",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="retrieve_flows"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)

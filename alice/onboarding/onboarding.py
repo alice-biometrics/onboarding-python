@@ -1723,7 +1723,7 @@ class Onboarding:
         verbose: bool = False,
     ) -> Result[List[Dict[str, Any]], OnboardingError]:
         """
-        Update the state of a user
+        Retrieve a flow
         Parameters
         ----------
         flow_id
@@ -1747,5 +1747,35 @@ class Onboarding:
             return Failure(
                 OnboardingError.from_response(
                     operation="retrieve_flow", response=response
+                )
+            )
+
+    @early_return
+    def retrieve_flows(
+        self,
+        verbose: bool = False,
+    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+        """
+        Retrieve flows
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns the flows result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.retrieve_flows(
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="retrieve_flows", response=response
                 )
             )
