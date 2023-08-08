@@ -1822,3 +1822,49 @@ class Onboarding:
                     operation="retrieve_flows", response=response
                 )
             )
+
+    @early_return
+    def update_flow(
+        self,
+        flow_id: str,
+        steps: list[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+        """
+        Update flow
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        steps
+            List of tests that include the flow
+        default
+            Mark the Flow as the default flow to the users of the client
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns the flows result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.update_flow(
+            flow_id=flow_id,
+            steps=steps,
+            default=default,
+            name=name,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="retrieve_flows", response=response
+                )
+            )

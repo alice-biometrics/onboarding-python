@@ -2094,3 +2094,60 @@ class OnboardingClient:
         print_response(response=response, verbose=verbose)
 
         return Success(response)
+
+    @early_return
+    @timeit
+    def update_flow(
+        self,
+        flow_id: str,
+        steps: list[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+
+        Update flow
+
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        steps
+            List of tests that include the flow
+        default
+            Mark the Flow as the default flow to the users of the client
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("update_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        data = {
+            "flow_id": flow_id,
+            "default": default,
+            "name": name,
+            "steps": [step.value for step in steps],
+        }
+
+        try:
+            response = requests.patch(
+                f"{self.url}/flow",
+                headers=headers,
+                json=data,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="update_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
