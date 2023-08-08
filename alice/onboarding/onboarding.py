@@ -1868,3 +1868,37 @@ class Onboarding:
                     operation="retrieve_flows", response=response
                 )
             )
+
+    @early_return
+    def delete_flow(
+        self,
+        flow_id: str,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+        Delete flow
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a bool result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.delete_flow(
+            flow_id=flow_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="retrieve_flows", response=response
+                )
+            )
