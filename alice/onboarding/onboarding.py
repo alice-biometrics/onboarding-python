@@ -1788,7 +1788,7 @@ class Onboarding:
         default: bool,
         name: str,
         verbose: bool = False,
-    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+    ) -> Result[bool, OnboardingError]:
         """
         Create flow
         Parameters
@@ -1803,7 +1803,7 @@ class Onboarding:
             Used for print service response as well as the time elapsed
         Returns
         -------
-            A Result where if the operation is successful it returns the flows result.
+            A Result where if the operation is successful it returns a bool result.
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
@@ -1819,7 +1819,7 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="retrieve_flows", response=response
+                    operation="create_flow", response=response
                 )
             )
 
@@ -1831,7 +1831,7 @@ class Onboarding:
         default: bool,
         name: str,
         verbose: bool = False,
-    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+    ) -> Result[bool, OnboardingError]:
         """
         Update flow
         Parameters
@@ -1848,7 +1848,7 @@ class Onboarding:
             Used for print service response as well as the time elapsed
         Returns
         -------
-            A Result where if the operation is successful it returns the flows result.
+            A Result where if the operation is successful it returns a bool result.
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
@@ -1865,7 +1865,7 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="retrieve_flows", response=response
+                    operation="update_flow", response=response
                 )
             )
 
@@ -1899,6 +1899,6 @@ class Onboarding:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="retrieve_flows", response=response
+                    operation="delete_flow", response=response
                 )
             )
