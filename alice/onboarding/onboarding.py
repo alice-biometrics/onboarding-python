@@ -14,6 +14,7 @@ from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.match_case import MatchCase
+from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
@@ -1768,6 +1769,48 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.retrieve_flows(
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="retrieve_flows", response=response
+                )
+            )
+
+    @early_return
+    def create_flow(
+        self,
+        steps: list[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+        """
+        Create flow
+        Parameters
+        ----------
+        steps
+            List of tests that include the flow
+        default
+            Mark the Flow as the default flow to the users of the client
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns the flows result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.create_flow(
+            steps=steps,
+            default=default,
+            name=name,
             verbose=verbose,
         ).unwrap_or_return()
 

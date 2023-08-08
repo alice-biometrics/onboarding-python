@@ -16,6 +16,7 @@ from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.match_case import MatchCase
+from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
@@ -2037,6 +2038,59 @@ class OnboardingClient:
             )
         except requests.exceptions.Timeout:
             return Failure(OnboardingError.timeout(operation="retrieve_flows"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def create_flow(
+        self,
+        steps: list[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+
+        Create flow
+
+        Parameters
+        ----------
+        steps
+            List of tests that include the flow
+        default
+            Mark the Flow as the default flow to the users of the client
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("create_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        data = {
+            "default": default,
+            "name": name,
+            "steps": [step.value for step in steps],
+        }
+
+        try:
+            response = requests.post(
+                f"{self.url}/flow",
+                headers=headers,
+                json=data,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="create_flow"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
