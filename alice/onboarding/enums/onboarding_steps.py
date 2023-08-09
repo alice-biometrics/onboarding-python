@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class OnboardingSteps(StrEnum):
+class OnboardingSteps(Enum):
     SELFIE = "selfie"
     IDCARD = "idcard"
     DRIVER_LICENSE = "driverlicense"

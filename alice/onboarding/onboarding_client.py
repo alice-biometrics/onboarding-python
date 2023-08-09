@@ -2046,7 +2046,7 @@ class OnboardingClient:
     @timeit
     def create_flow(
         self,
-        steps: list[OnboardingSteps],
+        steps: List[OnboardingSteps],
         default: bool,
         name: str,
         verbose: bool = False,
@@ -2100,7 +2100,7 @@ class OnboardingClient:
     def update_flow(
         self,
         flow_id: str,
-        steps: list[OnboardingSteps],
+        steps: List[OnboardingSteps],
         default: bool,
         name: str,
         verbose: bool = False,
