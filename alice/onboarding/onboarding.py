@@ -14,6 +14,7 @@ from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.match_case import MatchCase
+from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
@@ -1713,5 +1714,229 @@ class Onboarding:
             return Failure(
                 OnboardingError.from_response(
                     operation="update_user_state", response=response
+                )
+            )
+
+    @early_return
+    def retrieve_flow(
+        self,
+        flow_id: str,
+        verbose: bool = False,
+    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+        """
+        Retrieves a flow
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns the flow result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.retrieve_flow(
+            flow_id=flow_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.content)
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="retrieve_flow", response=response
+                )
+            )
+
+    @early_return
+    def retrieve_flows(
+        self,
+        verbose: bool = False,
+    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+        """
+        Retrieves flows
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns the flows result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.retrieve_flows(
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.content)
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="retrieve_flows", response=response
+                )
+            )
+
+    @early_return
+    def create_flow(
+        self,
+        steps: List[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[str, OnboardingError]:
+        """
+        Create flow
+        Parameters
+        ----------
+        steps
+            List of tests that include the flow
+        default
+            Mark the Flow as the default flow to the users of the client
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a str result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.create_flow(
+            steps=steps,
+            default=default,
+            name=name,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="create_flow", response=response
+                )
+            )
+
+    @early_return
+    def update_flow(
+        self,
+        flow_id: str,
+        steps: List[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+        Updates a flow
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        steps
+            List of onboarding steps
+        default
+            Set the flow as default for all new client users
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a bool result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.update_flow(
+            flow_id=flow_id,
+            steps=steps,
+            default=default,
+            name=name,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="update_flow", response=response
+                )
+            )
+
+    @early_return
+    def delete_flow(
+        self,
+        flow_id: str,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+        Deletes flow
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a bool result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.delete_flow(
+            flow_id=flow_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="delete_flow", response=response
+                )
+            )
+
+    @early_return
+    def update_user_flow(
+        self,
+        flow_id: str,
+        user_id: str,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        """
+        Updates user flow
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a bool result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.update_user_flow(
+            flow_id=flow_id,
+            user_id=user_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return isSuccess
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="update_user_flow", response=response
                 )
             )

@@ -16,6 +16,7 @@ from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.match_case import MatchCase
+from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
@@ -1965,6 +1966,271 @@ class OnboardingClient:
         except requests.exceptions.Timeout:
             return Failure(OnboardingError.timeout(operation="update_user_state"))
 
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def retrieve_flow(
+        self, flow_id: str, verbose: bool = False
+    ) -> Result[Response, Error]:
+        """
+
+        Retrieves flow from the onboarding platform
+
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("retrieve_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        try:
+            response = requests.get(
+                f"{self.url}/flow?flow_id={flow_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="retrieve_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def retrieve_flows(self, verbose: bool = False) -> Result[Response, Error]:
+        """
+
+        Retrieve flows from the onboarding platform
+
+        Parameters
+        ----------
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("retrieve_flows", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        try:
+            response = requests.get(
+                f"{self.url}/flows",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="retrieve_flows"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def create_flow(
+        self,
+        steps: List[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+
+        Creates flow
+
+        Parameters
+        ----------
+        steps
+            List of tests that include the flow
+        default
+            Set the flow as default for all new client users
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("create_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        data = {
+            "default": default,
+            "name": name,
+            "steps": [step.value for step in steps],
+        }
+
+        try:
+            response = requests.post(
+                f"{self.url}/flow",
+                headers=headers,
+                json=data,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="create_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def update_flow(
+        self,
+        flow_id: str,
+        steps: List[OnboardingSteps],
+        default: bool,
+        name: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+
+        Updates flow
+
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        steps
+            List of tests that include the flow
+        default
+            Set the flow as default for all new client users
+        name
+            The name of the flow
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("update_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        data = {
+            "id": flow_id,
+            "default": default,
+            "name": name,
+            "steps": [step.value for step in steps],
+        }
+
+        try:
+            response = requests.patch(
+                f"{self.url}/flow",
+                headers=headers,
+                json=data,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="update_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def delete_flow(
+        self,
+        flow_id: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+
+        Deletes flow
+
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("delete_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token().unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        try:
+            response = requests.delete(
+                f"{self.url}/flow?flow_id={flow_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="delete_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def update_user_flow(
+        self,
+        flow_id: str,
+        user_id: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+
+        Updates the user flow
+
+        Parameters
+        ----------
+        flow_id
+            Flow identifier
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("update_user_flow", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token(user_id).unwrap_or_return()
+        print_token("backend_token", backend_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_token)
+
+        try:
+            response = requests.patch(
+                f"{self.url}/user/flow/{flow_id}",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="update_user_flow"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
