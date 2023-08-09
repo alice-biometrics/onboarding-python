@@ -1724,7 +1724,7 @@ class Onboarding:
         verbose: bool = False,
     ) -> Result[List[Dict[str, Any]], OnboardingError]:
         """
-        Retrieve a flow
+        Retrieves a flow
         Parameters
         ----------
         flow_id
@@ -1757,7 +1757,7 @@ class Onboarding:
         verbose: bool = False,
     ) -> Result[List[Dict[str, Any]], OnboardingError]:
         """
-        Retrieve flows
+        Retrieves flows
         Parameters
         ----------
         verbose
@@ -1833,15 +1833,15 @@ class Onboarding:
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
-        Update flow
+        Updates a flow
         Parameters
         ----------
         flow_id
             Flow identifier
         steps
-            List of tests that include the flow
+            List of onboarding steps
         default
-            Mark the Flow as the default flow to the users of the client
+            Set the flow as default for all new client users
         name
             The name of the flow
         verbose
@@ -1876,7 +1876,7 @@ class Onboarding:
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
-        Delete flow
+        Deletes flow
         Parameters
         ----------
         flow_id
@@ -1911,7 +1911,7 @@ class Onboarding:
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
         """
-        Update user flow
+        Updates user flow
         Parameters
         ----------
         flow_id

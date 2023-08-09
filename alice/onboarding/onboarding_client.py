@@ -1977,7 +1977,7 @@ class OnboardingClient:
     ) -> Result[Response, Error]:
         """
 
-        Retrieve flow from the onboarding platform
+        Retrieves flow from the onboarding platform
 
         Parameters
         ----------
@@ -2053,14 +2053,14 @@ class OnboardingClient:
     ) -> Result[Response, Error]:
         """
 
-        Create flow
+        Creates flow
 
         Parameters
         ----------
         steps
             List of tests that include the flow
         default
-            Mark the Flow as the default flow to the users of the client
+            Set the flow as default for all new client users
         name
             The name of the flow
         verbose
@@ -2107,7 +2107,7 @@ class OnboardingClient:
     ) -> Result[Response, Error]:
         """
 
-        Update flow
+        Updates flow
 
         Parameters
         ----------
@@ -2116,7 +2116,7 @@ class OnboardingClient:
         steps
             List of tests that include the flow
         default
-            Mark the Flow as the default flow to the users of the client
+            Set the flow as default for all new client users
         name
             The name of the flow
         verbose
@@ -2161,7 +2161,7 @@ class OnboardingClient:
     ) -> Result[Response, Error]:
         """
 
-        Delete flow
+        Deletes flow
 
         Parameters
         ----------
@@ -2202,7 +2202,7 @@ class OnboardingClient:
     ) -> Result[Response, Error]:
         """
 
-        Update user flow
+        Updates the user flow
 
         Parameters
         ----------
