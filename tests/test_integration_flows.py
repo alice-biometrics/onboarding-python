@@ -36,9 +36,7 @@ def test_should_timeout_when_time_exceeded(given_valid_api_key):
 
 
 @pytest.mark.unit
-def test_should_do_complete_flow_process(
-    given_valid_api_key="JyaKPLV_ve1Lsopr425KTslUT0Loo4fh",
-):
+def test_should_do_complete_flow_process(given_valid_api_key):
     @early_return
     def do_complete_flow() -> Result[bool, Error]:
         config = Config(api_key=given_valid_api_key)
@@ -53,7 +51,6 @@ def test_should_do_complete_flow_process(
             default=True,
             name="alice-flow-test-onboarding-python",
         ).unwrap_or_return()
-        flows = onboarding.retrieve_flows().unwrap_or_return()
 
         _ = onboarding.retrieve_flow(flow_id=flow_id).unwrap_or_return()
         _ = onboarding.update_flow(
@@ -62,6 +59,7 @@ def test_should_do_complete_flow_process(
             default=True,
             name="alice-flow-test-onboarding-python-updated",
         ).unwrap_or_return()
+        _ = onboarding.retrieve_flows().unwrap_or_return()
 
         _ = onboarding.update_user_flow(
             flow_id=flow_id,

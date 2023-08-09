@@ -1743,7 +1743,7 @@ class Onboarding:
         ).unwrap_or_return()
 
         if response.status_code == 200:
-            return isSuccess
+            return Success(response.content)
         else:
             return Failure(
                 OnboardingError.from_response(
@@ -1773,7 +1773,7 @@ class Onboarding:
         ).unwrap_or_return()
 
         if response.status_code == 200:
-            return isSuccess
+            return Success(response.content)
         else:
             return Failure(
                 OnboardingError.from_response(
@@ -1788,7 +1788,7 @@ class Onboarding:
         default: bool,
         name: str,
         verbose: bool = False,
-    ) -> Result[bool, OnboardingError]:
+    ) -> Result[str, OnboardingError]:
         """
         Create flow
         Parameters
@@ -1803,7 +1803,7 @@ class Onboarding:
             Used for print service response as well as the time elapsed
         Returns
         -------
-            A Result where if the operation is successful it returns a bool result.
+            A Result where if the operation is successful it returns a str result.
             Otherwise, it returns an OnboardingError.
         """
         verbose = self.verbose or verbose
@@ -1815,7 +1815,7 @@ class Onboarding:
         ).unwrap_or_return()
 
         if response.status_code == 200:
-            return isSuccess
+            return Success(response.json())
         else:
             return Failure(
                 OnboardingError.from_response(

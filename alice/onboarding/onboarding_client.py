@@ -2133,7 +2133,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_token)
 
         data = {
-            "flow_id": flow_id,
+            "id": flow_id,
             "default": default,
             "name": name,
             "steps": [step.value for step in steps],
