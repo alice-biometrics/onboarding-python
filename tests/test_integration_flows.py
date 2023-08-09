@@ -66,8 +66,8 @@ def test_should_do_complete_flow_process(given_valid_api_key):
             user_id=user_id,
         ).unwrap_or_return()
 
-        onboarding.delete_user(user_id).unwrap_or_return()
         onboarding.delete_flow(flow_id).unwrap_or_return()
+        onboarding.delete_user(user_id).unwrap_or_return()
 
         return isSuccess
 
