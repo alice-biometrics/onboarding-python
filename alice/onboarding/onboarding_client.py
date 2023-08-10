@@ -1044,9 +1044,6 @@ class OnboardingClient:
             response = self.session.get(
                 f"{self.url}/user/report", headers=headers, timeout=self.timeout
             )
-            import pdb
-
-            pdb.set_trace()
         except requests.exceptions.Timeout:
             return Failure(OnboardingError.timeout(operation="create_report"))
 
