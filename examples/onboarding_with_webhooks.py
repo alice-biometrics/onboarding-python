@@ -11,6 +11,7 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 def configure_webhooks(api_key: str, verbose: Optional[bool] = False) -> None:
     config = Config(api_key=api_key, verbose=verbose)
+    config.onboarding_url = "https://apis.staging.alicebiometrics.com/onboarding"
     webhooks_client = Webhooks.from_config(config)
 
     # Check Available events
@@ -47,7 +48,7 @@ def configure_webhooks(api_key: str, verbose: Optional[bool] = False) -> None:
     assert retrieved_webhook.active
 
     # Send a ping using configured webhook
-    result = webhooks_client.ping_webhook(webhook_id)
+    webhooks_client.ping_webhook(webhook_id).unwrap_or_raise()
 
     # Retrieve an existent Webhook
     retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap_or_raise()
@@ -56,7 +57,7 @@ def configure_webhooks(api_key: str, verbose: Optional[bool] = False) -> None:
     assert retrieved_webhook.post_url == "http://alicebiometrics.com"
 
     # Retrieve all configured webhooks
-    retrieved_webhooks = webhooks_client.get_webhooks().unwrap()
+    retrieved_webhooks = webhooks_client.get_webhooks().unwrap_or_raise()
 
     # Delete a configured webhook
     result = webhooks_client.delete_webhook(webhook_id)

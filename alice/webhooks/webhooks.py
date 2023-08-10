@@ -61,7 +61,7 @@ class Webhooks:
             Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
-        response = self.webhooks_client.get_available_events(
+        response = self.webhooks_client.get_subscriptable_events(
             verbose=verbose
         ).unwrap_or_return()
 
