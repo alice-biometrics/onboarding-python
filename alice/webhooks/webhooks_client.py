@@ -73,7 +73,7 @@ class WebhooksClient:
     def get_available_events(
         self, verbose: Optional[bool] = False
     ) -> Result[Response, AuthError]:
-        return self.get_subscriptable_events(verbose)
+        return self.get_available_events(verbose)  # type: ignore
 
     @early_return
     @timeit
