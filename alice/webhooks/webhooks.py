@@ -61,7 +61,7 @@ class Webhooks:
             Otherwise, it returns an OnboardingError or AuthError.
         """
         verbose = self.verbose or verbose
-        response = self.webhooks_client.get_available_events(
+        response = self.webhooks_client.get_subscriptable_events(
             verbose=verbose
         ).unwrap_or_return()
 
@@ -73,12 +73,6 @@ class Webhooks:
                     operation="get_available_events", response=response
                 )
             )
-
-    @early_return
-    def get_available_events(
-        self, verbose: Optional[bool] = False
-    ) -> Result[bool, Union[OnboardingError, AuthError]]:
-        return self.get_subscriptable_events(verbose)
 
     @early_return
     def create_webhook(
