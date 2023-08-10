@@ -43,11 +43,11 @@ class Webhooks:
         self.verbose = verbose
 
     @early_return
-    def get_available_events(
+    def get_subscriptable_events(
         self, verbose: Optional[bool] = False
     ) -> Result[bool, Union[OnboardingError, AuthError]]:
         """
-        Get public available events.
+        Get public subscriptable events.
 
         Parameters
         ----------
@@ -73,6 +73,12 @@ class Webhooks:
                     operation="get_available_events", response=response
                 )
             )
+
+    @early_return
+    def get_available_events(
+        self, verbose: Optional[bool] = False
+    ) -> Result[bool, Union[OnboardingError, AuthError]]:
+        return self.get_subscriptable_events(verbose)
 
     @early_return
     def create_webhook(
