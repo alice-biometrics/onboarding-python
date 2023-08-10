@@ -12,7 +12,6 @@ def onboarding_example(api_key: str, verbose: Optional[bool] = False) -> None:
     config = Config(
         api_key=api_key,
         verbose=verbose,
-        onboarding_url="https://apis.staging.alicebiometrics.com/onboarding",
     )
     onboarding = Onboarding.from_config(config)
 

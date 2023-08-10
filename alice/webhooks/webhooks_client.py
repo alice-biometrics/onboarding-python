@@ -38,12 +38,12 @@ class WebhooksClient:
 
     @early_return
     @timeit
-    def get_available_events(
+    def get_subscriptable_events(
         self, verbose: Optional[bool] = False
     ) -> Result[Response, AuthError]:
         """
 
-        Get public available events.
+        Get public subscriptable events.
 
         Parameters
         ----------
@@ -55,16 +55,25 @@ class WebhooksClient:
         -------
             A Response object [requests library] if success
         """
-        print_intro("get_available_events", verbose=verbose)
+        print_intro("get_subscriptable_events", verbose=verbose)
 
         backend_token = self.auth.create_backend_token().unwrap_or_return()
         print_token("backend_token_with_user", backend_token, verbose=verbose)
         headers = self._auth_headers(backend_token)
-        response = self.session.get(self.url + "/webhook/events", headers=headers)
+        response = self.session.get(
+            self.url + "/webhook/subscriptable/events", headers=headers
+        )
 
         print_response(response=response, verbose=verbose)
 
         return Success(response)
+
+    @early_return
+    @timeit
+    def get_available_events(
+        self, verbose: Optional[bool] = False
+    ) -> Result[Response, AuthError]:
+        return self.get_available_events(verbose)  # type: ignore
 
     @early_return
     @timeit

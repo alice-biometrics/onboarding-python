@@ -29,6 +29,8 @@ class OnboardingError(Error):
         code = response.status_code
         try:
             message = response.json()
+            # old {'error': {'message': 'Method Not Allowed: to unlock it please open a ticket with the support team', 'type': 'EntryPointNotAvailableHttpError'}}
+            # new {'detail': 'Webhook Result not found'}
         except Exception:
             message = {"message": "no content"}
         return OnboardingError(operation=operation, code=code, message=message)
