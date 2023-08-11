@@ -70,15 +70,9 @@ class Webhooks:
         else:
             return Failure(
                 OnboardingError.from_response(
-                    operation="get_available_events", response=response
+                    operation="get_subscriptable_events", response=response
                 )
             )
-
-    @early_return
-    def get_available_events(
-        self, verbose: Optional[bool] = False
-    ) -> Result[bool, Union[OnboardingError, AuthError]]:
-        return self.get_subscriptable_events(verbose)
 
     @early_return
     def create_webhook(

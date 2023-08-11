@@ -70,13 +70,6 @@ class WebhooksClient:
 
     @early_return
     @timeit
-    def get_available_events(
-        self, verbose: Optional[bool] = False
-    ) -> Result[Response, AuthError]:
-        return self.get_available_events(verbose)  # type: ignore
-
-    @early_return
-    @timeit
     def create_webhook(
         self, webhook: Union[Webhook, None] = None, verbose: Optional[bool] = False
     ) -> Result[Response, AuthError]:
