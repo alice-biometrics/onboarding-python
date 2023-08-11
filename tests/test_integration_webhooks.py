@@ -25,7 +25,7 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     webhooks_client = Webhooks.from_config(config)
 
     # Check Available events
-    result = webhooks_client.get_available_events()
+    result = webhooks_client.get_subscriptable_events()
     assert_success(result, value_is_instance_of=list)
     selected_event = result.value[0]
 

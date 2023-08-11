@@ -1743,7 +1743,7 @@ class Onboarding:
         ).unwrap_or_return()
 
         if response.status_code == 200:
-            return Success(response.content)
+            return Success(response.json())
         else:
             return Failure(
                 OnboardingError.from_response(
@@ -1773,7 +1773,7 @@ class Onboarding:
         ).unwrap_or_return()
 
         if response.status_code == 200:
-            return Success(response.content)
+            return Success(response.json())
         else:
             return Failure(
                 OnboardingError.from_response(
