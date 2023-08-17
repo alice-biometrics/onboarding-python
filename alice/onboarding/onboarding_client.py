@@ -1973,7 +1973,7 @@ class OnboardingClient:
     @early_return
     @timeit
     def retrieve_flow(
-        self, flow_id: str, verbose: bool = False
+        self, flow_id: Union[str, None] = None, verbose: bool = False
     ) -> Result[Response, Error]:
         """
 
@@ -1982,7 +1982,7 @@ class OnboardingClient:
         Parameters
         ----------
         flow_id
-            Flow identifier
+            Flow identifier (if none return default flow)
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -1996,9 +1996,13 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_token)
 
+        url = f"{self.url}/flow"
+        if flow_id:
+            url = f"{self.url}/flow?flow_id={flow_id}"
+
         try:
             response = requests.get(
-                f"{self.url}/flow?flow_id={flow_id}",
+                url,
                 headers=headers,
                 timeout=self.timeout,
             )
