@@ -46,11 +46,14 @@ def test_should_do_complete_flow_process(given_valid_api_key):
             user_info=UserInfo(first_name="Alice", last_name="Biometrics"),
             device_info=DeviceInfo(device_platform="Android"),
         ).unwrap_or_return()
+
         flow_id = onboarding.create_flow(
             steps=[OnboardingSteps.SELFIE],
             default=True,
             name="alice-flow-test-onboarding-python",
         ).unwrap_or_return()
+
+        _ = onboarding.retrieve_flow().unwrap_or_return()
 
         _ = onboarding.retrieve_flow(flow_id=flow_id).unwrap_or_return()
         _ = onboarding.update_flow(

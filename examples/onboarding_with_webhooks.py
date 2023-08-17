@@ -11,7 +11,6 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 def configure_webhooks(api_key: str, verbose: Optional[bool] = False) -> None:
     config = Config(api_key=api_key, verbose=verbose)
-    config.onboarding_url = "https://apis.staging.alicebiometrics.com/onboarding"
     webhooks_client = Webhooks.from_config(config)
 
     # Check Available events
@@ -35,9 +34,9 @@ def configure_webhooks(api_key: str, verbose: Optional[bool] = False) -> None:
         active=False,
         post_url="http://alicebiometrics.com",
         api_key="b0b905d6-228f-44bf-a130-c85d7aecd765",
-        event_name="user.created",
+        event_name="user_created",
         event_version="1",
-        algorithm="sha512",
+        algorithm="sha256",
         secret=str(secrets.token_hex(20)),
     )
     webhooks_client.update_webhook(webhook_to_update).unwrap_or_raise()
@@ -53,7 +52,6 @@ def configure_webhooks(api_key: str, verbose: Optional[bool] = False) -> None:
     # Retrieve an existent Webhook
     retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap_or_raise()
     assert retrieved_webhook.active
-    breakpoint()
     assert retrieved_webhook.post_url == "http://alicebiometrics.com"
 
     # Retrieve all configured webhooks

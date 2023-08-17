@@ -1720,7 +1720,7 @@ class Onboarding:
     @early_return
     def retrieve_flow(
         self,
-        flow_id: str,
+        flow_id: Union[str, None] = None,
         verbose: bool = False,
     ) -> Result[List[Dict[str, Any]], OnboardingError]:
         """
@@ -1728,7 +1728,7 @@ class Onboarding:
         Parameters
         ----------
         flow_id
-            Flow identifier
+            Flow identifier (if none return default flow)
         verbose
             Used for print service response as well as the time elapsed
         Returns
