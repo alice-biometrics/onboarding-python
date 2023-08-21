@@ -64,12 +64,12 @@ def test_should_do_complete_flow_process(given_valid_api_key):
         ).unwrap_or_return()
         _ = onboarding.retrieve_flows().unwrap_or_return()
 
-        _ = onboarding.get_user_flow(
+        _ = onboarding.update_user_flow(
+            flow_id=flow_id,
             user_id=user_id,
         ).unwrap_or_return()
 
-        _ = onboarding.update_user_flow(
-            flow_id=flow_id,
+        _ = onboarding.get_user_flow(
             user_id=user_id,
         ).unwrap_or_return()
 
