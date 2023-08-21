@@ -1728,7 +1728,7 @@ class Onboarding:
         self,
         flow_id: Union[str, None] = None,
         verbose: bool = False,
-    ) -> Result[List[Dict[str, Any]], OnboardingError]:
+    ) -> Result[Dict[str, Any], OnboardingError]:
         """
         Retrieves a flow
         Parameters
@@ -1906,6 +1906,40 @@ class Onboarding:
             return Failure(
                 OnboardingError.from_response(
                     operation="delete_flow", response=response
+                )
+            )
+
+    @early_return
+    def get_user_flow(
+        self,
+        user_id: str,
+        verbose: bool = False,
+    ) -> Result[Dict[str, Any], OnboardingError]:
+        """
+        Gets the user flow
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns a bool result.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_user_flow(
+            user_id=user_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="get_user_flow", response=response
                 )
             )
 
