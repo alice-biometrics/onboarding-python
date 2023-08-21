@@ -95,6 +95,7 @@ class Onboarding:
         self,
         user_info: Union[UserInfo, None] = None,
         device_info: Union[DeviceInfo, None] = None,
+        flow_id: Union[str, None] = None,
         verbose: Optional[bool] = False,
     ) -> Result[str, Union[OnboardingError, AuthError]]:
         """
@@ -109,6 +110,8 @@ class Onboarding:
             Object with optional values with info about the User.
         device_info
             Object with optional values with info about the User's Device.
+        flow_id
+            Optional identifier of the onboarding flow
         verbose
             Used for print service response as well as the time elapsed
 
@@ -120,7 +123,10 @@ class Onboarding:
         """
         verbose = self.verbose or verbose
         response = self.onboarding_client.create_user(
-            user_info=user_info, device_info=device_info, verbose=verbose
+            user_info=user_info,
+            device_info=device_info,
+            flow_id=flow_id,
+            verbose=verbose,
         ).unwrap_or_return()
 
         if response.status_code == 200:
