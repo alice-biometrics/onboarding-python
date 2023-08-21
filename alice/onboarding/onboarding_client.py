@@ -85,6 +85,7 @@ class OnboardingClient:
         self,
         user_info: Union[UserInfo, None] = None,
         device_info: Union[DeviceInfo, None] = None,
+        flow_id: Union[str, None] = None,
         verbose: Optional[bool] = False,
     ) -> Result[Response, Error]:
         """
@@ -99,6 +100,8 @@ class OnboardingClient:
             Object with optional values with info about the User.
         device_info
             Object with optional values with info about the User's Device.
+        flow_id
+            Optional identifier of the onboarding flow
         verbose
             Used for print service response as well as the time elapsed
 
@@ -122,6 +125,9 @@ class OnboardingClient:
         if device_info:
             data = data if data is not None else {}
             data.update(device_info.dict())
+        if flow_id:
+            data = data if data is not None else {}
+            data.update({"flow_id": flow_id})
         try:
             response = self.session.post(
                 f"{self.url}/user", headers=headers, data=data, timeout=self.timeout
