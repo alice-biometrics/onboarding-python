@@ -1793,6 +1793,7 @@ class Onboarding:
         steps: List[OnboardingSteps],
         default: bool,
         name: str,
+        id_: Union[str, None] = None,
         verbose: bool = False,
     ) -> Result[str, OnboardingError]:
         """
@@ -1805,6 +1806,8 @@ class Onboarding:
             Mark the Flow as the default flow to the users of the client
         name
             The name of the flow
+        id_
+            UUID for the flow [Optional]
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -1817,6 +1820,7 @@ class Onboarding:
             steps=steps,
             default=default,
             name=name,
+            id_=id_,
             verbose=verbose,
         ).unwrap_or_return()
 

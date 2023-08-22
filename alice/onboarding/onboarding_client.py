@@ -2059,6 +2059,7 @@ class OnboardingClient:
         steps: List[OnboardingSteps],
         default: bool,
         name: str,
+        id_: Union[str, None] = None,
         verbose: bool = False,
     ) -> Result[Response, Error]:
         """
@@ -2073,6 +2074,8 @@ class OnboardingClient:
             Set the flow as default for all new client users
         name
             The name of the flow
+        id_
+            UUID for the flow [Optional]
         verbose
             Used for print service response as well as the time elapsed
         Returns
@@ -2091,6 +2094,9 @@ class OnboardingClient:
             "name": name,
             "steps": [step.value for step in steps],
         }
+
+        if id_:
+            data.update({"id": id_})
 
         try:
             response = requests.post(
