@@ -90,21 +90,24 @@ def test_should_do_complete_onboarding_process(
             user_id=user_id
         ).unwrap_or_return()
 
-        _ = onboarding.retrieve_certificate(
+        onboarding.retrieve_certificate(
             user_id=user_id, certificate_id=certificate_id
         ).unwrap_or_return()
 
-        _ = onboarding.retrieve_certificates(user_id=user_id).unwrap_or_return()
+        onboarding.retrieve_certificates(user_id=user_id).unwrap_or_return()
 
-        _ = onboarding.update_user_state(
+        onboarding.update_user_state(
             user_id=user_id, user_state=UserState.TO_REVIEW
         ).unwrap_or_return()
-        _ = onboarding.update_user_state(
+        onboarding.update_user_state(
             user_id=user_id, user_state=UserState.ACCEPTED
         ).unwrap_or_return()
-        _ = onboarding.update_user_state(
+        onboarding.update_user_state(
             user_id=user_id, user_state=UserState.REJECTED
         ).unwrap_or_return()
+
+        user_state = onboarding.get_user_state(user_id=user_id).unwrap_or_return()
+        assert user_state == UserState.REJECTED
 
         onboarding.delete_user(user_id).unwrap_or_return()
 

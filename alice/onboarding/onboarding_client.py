@@ -1921,6 +1921,48 @@ class OnboardingClient:
         return Success(response)
 
     @timeit
+    def get_user_state(
+        self,
+        user_id: str,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+        """
+        Retrieves the state of a user
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+            A Response object [requests library]
+        """
+        print_intro("get_user_state", verbose=verbose)
+
+        backend_user_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
+        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
+
+        headers = self._auth_headers(backend_user_token)
+        try:
+            response = requests.get(
+                f"{self.url}/user/state",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_user_state"))
+
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @timeit
     def update_user_state(
         self,
         user_id: str,
