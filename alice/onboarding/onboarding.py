@@ -1678,6 +1678,40 @@ class Onboarding:
                 )
             )
 
+    def get_user_state(
+        self,
+        user_id: str,
+        verbose: bool = False,
+    ) -> Result[UserState, OnboardingError]:
+        """
+        Retrieves the state of a user
+        Parameters
+        ----------
+        user_id
+            User identifier
+
+        verbose
+            Used for print service response as well as the time elapsed
+        Returns
+        -------
+            A Result where if the operation is successful it returns the user state.
+            Otherwise, it returns an OnboardingError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_user_state(
+            user_id=user_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(UserState(response.json()))
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="get_user_state", response=response
+                )
+            )
+
     def update_user_state(
         self,
         user_id: str,
