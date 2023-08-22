@@ -49,7 +49,7 @@ def test_should_do_complete_flow_process(given_valid_api_key):
 
         flow_id = onboarding.create_flow(
             steps=[OnboardingSteps.SELFIE],
-            default=True,
+            default=False,
             name="alice-flow-test-onboarding-python",
         ).unwrap_or_return()
 
