@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from meiga import Failure, Result, Success, early_return, isSuccess
-from requests import Session
+from requests import Response, Session
 
 from alice.auth.auth import Auth
 from alice.auth.auth_errors import AuthError
@@ -17,6 +17,7 @@ from alice.onboarding.enums.match_case import MatchCase
 from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
+from alice.onboarding.models.ad_hoc_executor import AdHocExecutor
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
 from alice.onboarding.models.report.report import Report
@@ -2017,4 +2018,24 @@ class Onboarding:
                 OnboardingError.from_response(
                     operation="update_user_flow", response=response
                 )
+            )
+
+    @early_return
+    def ad_hoc(
+        self,
+        func: Callable[[AdHocExecutor], Response],
+        user_id: Union[str, None] = None,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+        response = self.onboarding_client.ad_hoc(
+            func=func,
+            user_id=user_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code in range(200, 300):
+            return Success(response)
+        else:
+            return Failure(
+                OnboardingError.from_response(operation="ad_hoc", response=response)
             )

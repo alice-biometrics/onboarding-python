@@ -1,7 +1,7 @@
 import json
 import platform
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import requests
 from meiga import Error, Failure, Result, Success, early_return
@@ -19,6 +19,7 @@ from alice.onboarding.enums.match_case import MatchCase
 from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
+from alice.onboarding.models.ad_hoc_executor import AdHocExecutor
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
 from alice.onboarding.models.user_info import UserInfo
@@ -2329,6 +2330,38 @@ class OnboardingClient:
             )
         except requests.exceptions.Timeout:
             return Failure(OnboardingError.timeout(operation="update_user_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def ad_hoc(
+        self,
+        func: Callable[[AdHocExecutor], Response],
+        user_id: Union[str, None] = None,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+
+        print_intro("ad_hoc", verbose=verbose)
+
+        token = self.auth.create_backend_token(user_id).unwrap_or_return()
+        print_token("backend_token", token, verbose=verbose)
+
+        headers = self._auth_headers(token)
+
+        try:
+            response = func(
+                AdHocExecutor(
+                    session=self.session,
+                    headers=headers,
+                    base_url=self.url,
+                    timeout=self.timeout,
+                )
+            )
+
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="ad_hoc"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
