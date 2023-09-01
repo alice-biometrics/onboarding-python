@@ -9,7 +9,7 @@ class AdHocExecutor:
     session: Session
     headers: dict[str, Any]
     base_url: str
-    timeout: float
+    timeout: float | None = None
 
     def get_with(self, url_path: str) -> Response:
         return self.session.get(
