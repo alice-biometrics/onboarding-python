@@ -1830,7 +1830,7 @@ class OnboardingClient:
             "resource_type": resource_type.value,
         }
         try:
-            response = requests.post(
+            response = self.session.post(
                 f"{self.url}/duplicates/search",
                 data=data,
                 headers=headers,
@@ -1874,7 +1874,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_token)
 
         try:
-            response = requests.get(
+            response = self.session.get(
                 f"{self.url}/duplicates/search/{search_id}",
                 headers=headers,
                 timeout=self.timeout,
@@ -1911,7 +1911,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_token)
 
         try:
-            response = requests.get(
+            response = self.session.get(
                 f"{self.url}/duplicates/searches", headers=headers, timeout=self.timeout
             )
         except requests.exceptions.Timeout:
@@ -1950,7 +1950,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
         try:
-            response = requests.get(
+            response = self.session.get(
                 f"{self.url}/user/state",
                 headers=headers,
                 timeout=self.timeout,
@@ -2001,7 +2001,7 @@ class OnboardingClient:
 
         headers = self._auth_headers(backend_user_token)
         try:
-            response = requests.patch(
+            response = self.session.patch(
                 f"{self.url}/user/state",
                 headers=headers,
                 json={
@@ -2049,7 +2049,7 @@ class OnboardingClient:
             url = f"{self.url}/flow?flow_id={flow_id}"
 
         try:
-            response = requests.get(
+            response = self.session.get(
                 url,
                 headers=headers,
                 timeout=self.timeout,
@@ -2083,7 +2083,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_token)
 
         try:
-            response = requests.get(
+            response = self.session.get(
                 f"{self.url}/flows",
                 headers=headers,
                 timeout=self.timeout,
@@ -2141,7 +2141,7 @@ class OnboardingClient:
             data.update({"id": id_})
 
         try:
-            response = requests.post(
+            response = self.session.post(
                 f"{self.url}/flow",
                 headers=headers,
                 json=data,
@@ -2198,7 +2198,7 @@ class OnboardingClient:
         }
 
         try:
-            response = requests.patch(
+            response = self.session.patch(
                 f"{self.url}/flow",
                 headers=headers,
                 json=data,
@@ -2239,7 +2239,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_token)
 
         try:
-            response = requests.delete(
+            response = self.session.delete(
                 f"{self.url}/flow?flow_id={flow_id}",
                 headers=headers,
                 timeout=self.timeout,
@@ -2279,7 +2279,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_token)
 
         try:
-            response = requests.get(
+            response = self.session.get(
                 f"{self.url}/user/flow",
                 headers=headers,
                 timeout=self.timeout,
@@ -2322,7 +2322,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_token)
 
         try:
-            response = requests.patch(
+            response = self.session.patch(
                 f"{self.url}/user/flow/{flow_id}",
                 headers=headers,
                 timeout=self.timeout,
