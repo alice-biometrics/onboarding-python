@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Union
+from typing import Any, Dict, Union
 
 from requests import Response, Session
 
@@ -7,9 +7,9 @@ from requests import Response, Session
 @dataclass
 class AdHocExecutor:
     session: Session
-    headers: dict[str, Any]
+    headers: Dict[str, Any]
     base_url: str
-    timeout: float | None = None
+    timeout: Union[float, None] = None
 
     def get_with(self, url_path: str) -> Response:
         return self.session.get(
