@@ -17,7 +17,7 @@ def onboarding_request(api_key: str, verbose: Optional[bool] = False) -> None:
 
     response = onboarding.request(create_user).unwrap_or_raise()
     user_id = response.json().get("user_id")
-    print(f"{user_id=}")
+    print(f"user_id: {user_id}")
 
     # Get User State (Backend with user_id)
     def get_user_state(runner: RequestRunner) -> Response:
@@ -25,7 +25,7 @@ def onboarding_request(api_key: str, verbose: Optional[bool] = False) -> None:
 
     response = onboarding.request(get_user_state, user_id=user_id).unwrap_or_raise()
     state = response.json()
-    print(f"{state=}")
+    print(f"state: {state}")
 
 
 if __name__ == "__main__":
