@@ -34,8 +34,6 @@ from alice.onboarding.models.user_info import UserInfo
 # Classes
 from alice.onboarding.onboarding import Onboarding
 from alice.onboarding.onboarding_client import OnboardingClient
-from alice.sandbox.sandbox import Sandbox
-from alice.sandbox.sandbox_client import SandboxClient
 
 classes = [
     "Onboarding",
@@ -44,8 +42,6 @@ classes = [
     "DeviceInfo",
     "Auth",
     "AuthClient",
-    "Sandbox",
-    "SandboxClient",
     "Config",
     "Webhooks",
     "WebhooksClient",
@@ -66,8 +62,7 @@ classes = [
 
 # Errors
 from alice.onboarding.onboarding_errors import OnboardingError
-from alice.sandbox.sandbox_errors import SandboxError
 
-errors = ["OnboardingError", "SandboxError"]
+errors = ["OnboardingError"]
 
 __all__ = modules + classes + errors
