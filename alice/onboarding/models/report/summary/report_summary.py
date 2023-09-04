@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -14,7 +14,7 @@ class ReportSummary(BaseModel):
     It summarizes the main user information of the onboarding process
     """
 
-    face_liveness: float = Field(
+    face_liveness: Union[float, None] = Field(
         default=None,
         ge=0,
         le=100,
