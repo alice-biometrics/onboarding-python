@@ -5,7 +5,7 @@ from requests import Response, Session
 
 
 @dataclass
-class AdHocExecutor:
+class RequestRunner:
     session: Session
     headers: Dict[str, Any]
     base_url: str

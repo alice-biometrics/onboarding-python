@@ -17,10 +17,10 @@ from alice.onboarding.enums.match_case import MatchCase
 from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
-from alice.onboarding.models.ad_hoc_executor import AdHocExecutor
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
 from alice.onboarding.models.report.report import Report
+from alice.onboarding.models.request_runner import RequestRunner
 from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.onboarding_errors import OnboardingError
@@ -2021,13 +2021,14 @@ class Onboarding:
             )
 
     @early_return
-    def ad_hoc(
+    def request(
         self,
-        func: Callable[[AdHocExecutor], Response],
+        func: Callable[[RequestRunner], Response],
         user_id: Union[str, None] = None,
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
-        response = self.onboarding_client.ad_hoc(
+
+        response = self.onboarding_client.request(
             func=func,
             user_id=user_id,
             verbose=verbose,
@@ -2037,5 +2038,5 @@ class Onboarding:
             return Success(response)
         else:
             return Failure(
-                OnboardingError.from_response(operation="ad_hoc", response=response)
+                OnboardingError.from_response(operation="request", response=response)
             )
