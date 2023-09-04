@@ -6,11 +6,10 @@ from requests import Session
 
 from alice.config import Config
 
+from ..onboarding.enums.environment import Environment
 from .auth_client import AuthClient
 from .auth_errors import AuthError
 from .token_tools import get_token_from_response
-
-DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
 
 class Auth:
@@ -23,7 +22,7 @@ class Auth:
         return Auth(
             api_key=config.api_key,  # type: ignore
             session=session,
-            url=config.onboarding_url,
+            environment=config.environment,
             timeout=config.timeout,
             verbose=config.verbose,
         )
@@ -32,14 +31,14 @@ class Auth:
         self,
         api_key: str,
         session: Session,
-        url: str = DEFAULT_URL,
+        environment: Environment,
         timeout: Union[float, None] = None,
         verbose: Optional[bool] = False,
     ):
         self._auth_client = AuthClient(
-            url=url, api_key=api_key, session=session, timeout=timeout
+            url=environment.get_url(), api_key=api_key, session=session, timeout=timeout
         )
-        self.url = url
+        self.url = environment.get_url()
         self.verbose = verbose
 
     def create_user_token(

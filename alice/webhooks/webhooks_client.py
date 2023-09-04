@@ -10,15 +10,13 @@ from alice.auth.auth_errors import AuthError
 from alice.onboarding.tools import print_intro, print_response, print_token, timeit
 from alice.webhooks.webhook import Webhook
 
-DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
-
 
 class WebhooksClient:
     def __init__(
         self,
         auth: Auth,
         session: Session,
-        url: str = DEFAULT_URL,
+        url: str,
         send_agent: bool = True,
     ):
         self.auth = auth

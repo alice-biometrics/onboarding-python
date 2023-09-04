@@ -1,9 +1,15 @@
 from enum import Enum
 
 
-class DocumentType(Enum):
-    ID_CARD = "idcard"
-    DRIVER_LICENSE = "driverlicense"
-    RESIDENCE_PERMIT = "residencepermit"
-    PASSPORT = "passport"
-    HEALTH_INSURANCE_CARD = "healthinsurancecard"
+class Environment(Enum):
+    SANDBOX = "sandbox"
+    PRODUCTION = "production"
+    STAGING = "staging"
+
+    def get_url(self) -> str:
+        if self is Environment.SANDBOX:
+            return "https://apis.sandbox.alicebiometrics.com/onboarding"
+        elif self is Environment.PRODUCTION:
+            return "https://apis.alicebiometrics.com/onboarding"
+        else:
+            return "https://apis.staging.alicebiometrics.com/onboarding"

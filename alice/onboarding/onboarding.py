@@ -13,6 +13,7 @@ from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
+from alice.onboarding.enums.environment import Environment
 from alice.onboarding.enums.match_case import MatchCase
 from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
@@ -24,8 +25,6 @@ from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.onboarding_errors import OnboardingError
 
-DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
-
 
 class Onboarding:
     @staticmethod
@@ -36,7 +35,7 @@ class Onboarding:
             session = Session()
         return Onboarding(
             auth=Auth.from_config(config),
-            url=config.onboarding_url,
+            environment=config.environment,
             timeout=config.timeout,
             send_agent=config.send_agent,
             verbose=config.verbose,
@@ -47,15 +46,19 @@ class Onboarding:
         self,
         auth: Auth,
         session: Session,
-        url: str = DEFAULT_URL,
+        environment: Environment = Environment.SANDBOX,
         timeout: Union[float, None] = None,
         send_agent: bool = True,
         verbose: bool = False,
     ):
         self.onboarding_client = OnboardingClient(
-            auth=auth, url=url, timeout=timeout, send_agent=send_agent, session=session
+            auth=auth,
+            url=environment.get_url(),
+            timeout=timeout,
+            send_agent=send_agent,
+            session=session,
         )
-        self.url = url
+        self.url = environment.get_url()
         self.verbose = verbose
 
     @early_return

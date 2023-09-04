@@ -6,11 +6,10 @@ from requests import Session
 from alice.auth.auth import Auth
 from alice.auth.auth_errors import AuthError
 from alice.config import Config
+from alice.onboarding.enums.environment import Environment
 from alice.onboarding.onboarding_errors import OnboardingError
 from alice.webhooks.webhook import Webhook
 from alice.webhooks.webhooks_client import WebhooksClient
-
-DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
 
 
 class Webhooks:
@@ -22,7 +21,7 @@ class Webhooks:
             session = Session()
         return Webhooks(
             auth=Auth.from_config(config),
-            url=config.onboarding_url,
+            environment=config.environment,
             send_agent=config.send_agent,
             verbose=config.verbose,
             session=session,
@@ -32,14 +31,14 @@ class Webhooks:
         self,
         auth: Auth,
         session: Session,
-        url: str = DEFAULT_URL,
+        environment: Environment,
         send_agent: bool = True,
         verbose: Optional[bool] = False,
     ):
         self.webhooks_client = WebhooksClient(
-            auth=auth, url=url, send_agent=send_agent, session=session
+            auth=auth, url=environment.get_url(), send_agent=send_agent, session=session
         )
-        self.url = url
+        self.url = environment.get_url()
         self.verbose = verbose
 
     @early_return

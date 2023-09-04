@@ -25,15 +25,13 @@ from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_errors import OnboardingError
 from alice.onboarding.tools import print_intro, print_response, print_token, timeit
 
-DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding"
-
 
 class OnboardingClient:
     def __init__(
         self,
         auth: Auth,
         session: Session,
-        url: str = DEFAULT_URL,
+        url: str,
         timeout: Union[float, None] = None,
         send_agent: bool = True,
     ):
