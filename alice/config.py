@@ -13,7 +13,7 @@ class Config(BaseModel):
         default="https://apis.alicebiometrics.com/onboarding/sandbox"
     )
     api_key: Union[str, None] = Field(default=None)
-    sandbox_token: Union[str, None] = Field(default=None)
+    trial_token: Union[str, None] = Field(default=None)
     timeout: Union[float, None] = Field(
         default=None, description="Timeout for every request in seconds", ge=0, le=100
     )

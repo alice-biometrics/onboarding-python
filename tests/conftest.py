@@ -16,13 +16,13 @@ def given_valid_api_key():
 
 
 @pytest.fixture
-def given_valid_sandbox_token():
-    sandbox_token = os.environ.get("ONBOARDING_SANDBOX_TOKEN")
-    if sandbox_token is None:
+def given_valid_trial_token():
+    trial_token = os.environ.get("ONBOARDING_SANDBOX_TOKEN")
+    if trial_token is None:
         raise AssertionError(
             "Please configure your ONBOARDING_SANDBOX_TOKEN to run the tests"
         )
-    return sandbox_token
+    return trial_token
 
 
 @pytest.fixture

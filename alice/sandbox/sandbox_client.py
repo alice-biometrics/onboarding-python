@@ -10,8 +10,8 @@ DEFAULT_URL = "https://apis.alicebiometrics.com/onboarding/sandbox"
 
 
 class SandboxClient:
-    def __init__(self, sandbox_token: str, url: str = DEFAULT_URL):
-        self.sandbox_token = sandbox_token
+    def __init__(self, trial_token: str, url: str = DEFAULT_URL):
+        self.trial_token = trial_token
         self.url = url
 
     def _auth_headers(self, token: str) -> Dict[str, Any]:
@@ -69,7 +69,7 @@ class SandboxClient:
         """
         print_intro("create_user", verbose=verbose)
 
-        headers = self._auth_headers(self.sandbox_token)
+        headers = self._auth_headers(self.trial_token)
 
         data = None
         if user_info:
@@ -105,7 +105,7 @@ class SandboxClient:
         """
         print_intro("delete_user", verbose=verbose)
 
-        headers = self._auth_headers(self.sandbox_token)
+        headers = self._auth_headers(self.trial_token)
         response = request("DELETE", self.url + f"/user/{email}", headers=headers)
 
         print_response(response=response, verbose=verbose)
@@ -132,7 +132,7 @@ class SandboxClient:
         """
         print_intro("get_user", verbose=verbose)
 
-        headers = self._auth_headers(self.sandbox_token)
+        headers = self._auth_headers(self.trial_token)
 
         response = request("GET", self.url + f"/user/{email}", headers=headers)
 
@@ -160,7 +160,7 @@ class SandboxClient:
         """
         print_intro("get_user_token", verbose=verbose)
 
-        headers = self._auth_headers(self.sandbox_token)
+        headers = self._auth_headers(self.trial_token)
 
         response = request("GET", self.url + f"/user/token/{email}", headers=headers)
 

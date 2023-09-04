@@ -17,18 +17,18 @@ class Sandbox:
     @staticmethod
     def from_config(config: Config) -> "Sandbox":
         return Sandbox(
-            sandbox_token=config.sandbox_token,  # type: ignore
+            trial_token=config.trial_token,  # type: ignore
             url=config.sandbox_url,
             verbose=config.verbose,
         )
 
     def __init__(
         self,
-        sandbox_token: str,
+        trial_token: str,
         url: str = DEFAULT_URL,
         verbose: Optional[bool] = False,
     ) -> None:
-        self.sandbox_client = SandboxClient(sandbox_token=sandbox_token, url=url)
+        self.sandbox_client = SandboxClient(trial_token=trial_token, url=url)
         self.url = url
         self.verbose = verbose
 

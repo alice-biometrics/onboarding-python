@@ -10,8 +10,8 @@ from alice import Config, Sandbox, UserInfo
 
 
 @meiga
-def sandbox_example(sandbox_token: str, email: str, verbose: Optional[bool] = False):
-    config = Config(sandbox_token=sandbox_token, verbose=verbose)
+def sandbox_example(trial_token: str, email: str, verbose: Optional[bool] = False):
+    config = Config(trial_token=trial_token, verbose=verbose)
     sandbox = Sandbox.from_config(config)
 
     user_id = sandbox.create_user(user_info=UserInfo(email=email)).unwrap_or_raise()
@@ -33,10 +33,10 @@ def random_mail():
 
 
 if __name__ == "__main__":
-    sandbox_token = os.environ.get("ONBOARDING_SANDBOX_TOKEN")
-    if sandbox_token is None:
+    trial_token = os.environ.get("ONBOARDING_SANDBOX_TOKEN")
+    if trial_token is None:
         raise AssertionError(
             "Please configure your ONBOARDING_SANDBOX_TOKEN to run the example"
         )
     print("Running sandbox example...")
-    sandbox_example(sandbox_token=sandbox_token, email=random_mail(), verbose=False)
+    sandbox_example(trial_token=trial_token, email=random_mail(), verbose=False)
