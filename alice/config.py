@@ -10,7 +10,7 @@ class Config(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    environment: Environment = Field(default=Environment.SANDBOX)
+    environment: Environment = Field(default=Environment.PRODUCTION)
     api_key: Union[str, None] = Field(default=None)
     trial_token: Union[str, None] = Field(default=None)
     timeout: Union[float, None] = Field(
