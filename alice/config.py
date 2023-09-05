@@ -1,15 +1,14 @@
 from typing import Union
 
 from pydantic import Field, model_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from requests import Session
 
 from alice.onboarding.enums.environment import Environment
 
 
 class Config(BaseSettings):
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = SettingsConfigDict(arbitrary_types_allowed=True)
 
     api_key: Union[str, None] = Field(default=None)
     environment: Union[Environment, None] = Field(
@@ -33,30 +32,29 @@ class Config(BaseSettings):
     )
 
     @model_validator(mode="after")
-    def validate_urls(cls, model: "Config") -> "Config":
-        if model.environment is None:
-            if "sandbox" in model.onboarding_url:
-                model.environment = Environment.SANDBOX
-            elif "staging" in model.onboarding_url:
-                model.environment = Environment.STAGING
+    def validate_urls(self) -> "Config":
+        if self.environment is None:
+            if isinstance(self.onboarding_url, str):
+                if "sandbox" in self.onboarding_url:
+                    self.environment = Environment.SANDBOX
+                elif "staging" in self.onboarding_url:
+                    self.environment = Environment.STAGING
         else:
-            if model.environment == Environment.PRODUCTION:
-                model.onboarding_url = "https://apis.alicebiometrics.com/onboarding"
-                model.sandbox_url = (
-                    "https://apis.alicebiometrics.com/onboarding/sandbox"
-                )
-            elif model.environment == Environment.SANDBOX:
-                model.onboarding_url = (
+            if self.environment == Environment.PRODUCTION:
+                self.onboarding_url = "https://apis.alicebiometrics.com/onboarding"
+                self.sandbox_url = "https://apis.alicebiometrics.com/onboarding/sandbox"
+            elif self.environment == Environment.SANDBOX:
+                self.onboarding_url = (
                     "https://apis.sandbox.alicebiometrics.com/onboarding"
                 )
-                model.sandbox_url = (
+                self.sandbox_url = (
                     "https://apis.sandbox.alicebiometrics.com/onboarding/sandbox"
                 )
-            elif model.environment == Environment.STAGING:
-                model.onboarding_url = (
+            elif self.environment == Environment.STAGING:
+                self.onboarding_url = (
                     "https://apis.staging.alicebiometrics.com/onboarding"
                 )
-                model.sandbox_url = (
+                self.sandbox_url = (
                     "https://apis.staging.alicebiometrics.com/onboarding/sandbox"
                 )
-        return model
+        return self

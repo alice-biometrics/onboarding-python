@@ -2342,7 +2342,6 @@ class OnboardingClient:
         user_id: Union[str, None] = None,
         verbose: bool = False,
     ) -> Result[Response, Error]:
-
         print_intro("request", verbose=verbose)
 
         token = self.auth.create_backend_token(user_id).unwrap_or_return()

@@ -18,7 +18,7 @@ class Sandbox:
     def from_config(config: Config) -> "Sandbox":
         return Sandbox(
             sandbox_token=config.sandbox_token,  # type: ignore
-            url=config.sandbox_url,
+            url=config.sandbox_url,  # type: ignore
             verbose=config.verbose,
         )
 

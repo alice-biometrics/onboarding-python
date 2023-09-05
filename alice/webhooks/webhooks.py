@@ -22,7 +22,7 @@ class Webhooks:
             session = Session()
         return Webhooks(
             auth=Auth.from_config(config),
-            url=config.onboarding_url,
+            url=config.onboarding_url,  # type: ignore
             send_agent=config.send_agent,
             verbose=config.verbose,
             session=session,

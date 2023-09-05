@@ -13,7 +13,6 @@ from alice.onboarding.models.report.report import Report
 
 @pytest.mark.unit
 def test_should_return_an_error_when_the_api_key_is_not_configured():
-
     config = Config()
     onboarding = Onboarding.from_config(config)
 

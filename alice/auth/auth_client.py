@@ -43,7 +43,6 @@ class AuthClient:
     def create_user_token(
         self, user_id: str, verbose: Optional[bool] = False
     ) -> Response:
-
         print_intro("create_user_token", verbose=verbose)
 
         token = self._cached_user_token_stack.get(user_id)
