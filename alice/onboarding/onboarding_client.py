@@ -1,7 +1,7 @@
 import json
 import platform
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import requests
 from meiga import Error, Failure, Result, Success, early_return
@@ -21,6 +21,7 @@ from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
+from alice.onboarding.models.request_runner import RequestRunner
 from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_errors import OnboardingError
 from alice.onboarding.tools import print_intro, print_response, print_token, timeit
@@ -2329,6 +2330,38 @@ class OnboardingClient:
             )
         except requests.exceptions.Timeout:
             return Failure(OnboardingError.timeout(operation="update_user_flow"))
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def request(
+        self,
+        func: Callable[[RequestRunner], Response],
+        user_id: Union[str, None] = None,
+        verbose: bool = False,
+    ) -> Result[Response, Error]:
+
+        print_intro("request", verbose=verbose)
+
+        token = self.auth.create_backend_token(user_id).unwrap_or_return()
+        print_token("backend_token", token, verbose=verbose)
+
+        headers = self._auth_headers(token)
+
+        try:
+            response = func(
+                RequestRunner(
+                    session=self.session,
+                    headers=headers,
+                    base_url=self.url,
+                    timeout=self.timeout,
+                )
+            )
+
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="request"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)

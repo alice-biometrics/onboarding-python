@@ -59,3 +59,5 @@ jobs:
         run: python examples/auth.py
       - name: Example [Sandbox]
         run: python examples/sandbox.py
+      - name: Example [Request]
+        run: python examples/onboarding_request.py

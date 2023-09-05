@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from meiga import Failure, Result, Success, early_return, isSuccess
-from requests import Session
+from requests import Response, Session
 
 from alice.auth.auth import Auth
 from alice.auth.auth_errors import AuthError
@@ -20,6 +20,7 @@ from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
 from alice.onboarding.models.device_info import DeviceInfo
 from alice.onboarding.models.report.report import Report
+from alice.onboarding.models.request_runner import RequestRunner
 from alice.onboarding.models.user_info import UserInfo
 from alice.onboarding.onboarding_client import OnboardingClient
 from alice.onboarding.onboarding_errors import OnboardingError
@@ -2017,4 +2018,25 @@ class Onboarding:
                 OnboardingError.from_response(
                     operation="update_user_flow", response=response
                 )
+            )
+
+    @early_return
+    def request(
+        self,
+        func: Callable[[RequestRunner], Response],
+        user_id: Union[str, None] = None,
+        verbose: bool = False,
+    ) -> Result[bool, OnboardingError]:
+
+        response = self.onboarding_client.request(
+            func=func,
+            user_id=user_id,
+            verbose=verbose,
+        ).unwrap_or_return()
+
+        if response.status_code in range(200, 300):
+            return Success(response)
+        else:
+            return Failure(
+                OnboardingError.from_response(operation="request", response=response)
             )
