@@ -19,7 +19,7 @@ steps:
       - pyupgrade --py36-plus `find alice tests -name "*.py" -type f`
       - isort --check alice tests
   check-requirements:
-    run: safety check -r requirements/requirements.txt
+    run: pip-audit -v -r requirements/requirements.txt
   static-analysis:
     run: mypy --install-types --namespace-packages alice
   test:
