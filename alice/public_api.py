@@ -3,6 +3,8 @@
 """Public API of Alice Onboarding Python SDK"""
 from typing import List
 
+from alice.onboarding.enums.environment import Environment
+
 # Modules
 from alice.webhooks.webhook import Webhook
 from alice.webhooks.webhooks import Webhooks
@@ -61,6 +63,7 @@ classes = [
     "DocumentReport",
     "SelfieReport",
     "OtherTrustedDocumentReport",
+    "Environment",
 ]
 
 
