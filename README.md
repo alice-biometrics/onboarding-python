@@ -11,7 +11,7 @@ If you want more information about how to integrate with Alice technology, pleas
 
 ## Requirements
 
-Python 3.7+ 
+Python 3.8+ 
 
 ## Installation :computer:
 
