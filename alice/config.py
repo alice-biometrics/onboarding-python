@@ -33,7 +33,7 @@ class Config(BaseSettings):
 
     @model_validator(mode="after")
     def validate_urls(self) -> "Config":
-        if self.environment is None:
+        if self.environment is None or self.environment == Environment.PRODUCTION:
             if isinstance(self.onboarding_url, str):
                 if "sandbox" in self.onboarding_url:
                     self.environment = Environment.SANDBOX
