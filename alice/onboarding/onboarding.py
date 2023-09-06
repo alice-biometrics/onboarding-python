@@ -37,7 +37,7 @@ class Onboarding:
             session = Session()
         return Onboarding(
             auth=Auth.from_config(config),
-            url=config.onboarding_url,
+            url=config.onboarding_url,  # type: ignore
             timeout=config.timeout,
             send_agent=config.send_agent,
             verbose=config.verbose,
@@ -2027,7 +2027,6 @@ class Onboarding:
         user_id: Union[str, None] = None,
         verbose: bool = False,
     ) -> Result[bool, OnboardingError]:
-
         response = self.onboarding_client.request(
             func=func,
             user_id=user_id,

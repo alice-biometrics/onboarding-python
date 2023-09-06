@@ -10,7 +10,6 @@ from alice import Config, Webhook, Webhooks
 
 @pytest.mark.unit
 def test_should_return_an_error_when_the_api_key_is_not_configured():
-
     config = Config()
     webhooks_client = Webhooks.from_config(config)
 

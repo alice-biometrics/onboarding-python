@@ -46,11 +46,9 @@ class CachedTokenStack:
 
     @timeit
     def _clear_expired_tokens(self) -> None:
-
         num_data = len(self._data)
 
         if num_data > 0:
-
             latest_expired_token = None
             for i, token in enumerate(reversed(list(self._data.values()))):
                 if not is_valid_token(token):

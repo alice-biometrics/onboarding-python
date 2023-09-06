@@ -24,7 +24,6 @@ class TestAuth:
         result.assert_failure(value_is_instance_of=AuthError)
 
     def should_create_a_valid_backend_token(self, given_valid_api_key):
-
         config = Config(api_key=given_valid_api_key)
         auth = Auth.from_config(config)
 
@@ -32,7 +31,6 @@ class TestAuth:
         result.assert_success(value_is_instance_of=str)
 
     def should_create_a_valid_backend_token_with_timeout(self, given_valid_api_key):
-
         config = Config(api_key=given_valid_api_key, timeout=5)
         auth = Auth.from_config(config)
 
@@ -40,7 +38,6 @@ class TestAuth:
         result.assert_success(value_is_instance_of=str)
 
     def should_create_a_valid_backend_token_with_user(self, given_valid_api_key):
-
         config = Config(api_key=given_valid_api_key)
         auth = Auth.from_config(config)
 
@@ -48,7 +45,6 @@ class TestAuth:
         result.assert_success(value_is_instance_of=str)
 
     def should_create_a_valid_user_token(self, given_valid_api_key):
-
         config = Config(api_key=given_valid_api_key)
         auth = Auth.from_config(config)
 

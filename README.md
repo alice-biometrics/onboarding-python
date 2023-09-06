@@ -25,12 +25,25 @@ pip install alice-onboarding
 
 Configure your credentials with *Config* class
 
-```
+```python
 from alice import Config
 
-config = Config(api_key=given_valid_api_key)
+config = Config(api_key="<YOUR-API-KEY>")
 ```
 
+By default, this configure the `production` environment, if you
+want to use the `sandbox` environment, you have two options:
+
+* Add `environment` parameter on `Config`
+    ```python
+    from alice import Config, Environment
+    
+    config = Config(api_key="<YOUR-API-KEY>", environment=Environment.SANDBOX)
+    ```
+* Or, just export the `ALICE_ENVIRONMENT` environment variable
+    ```console
+    export ALICE_ENVIRONMENT=sandbox
+    ```
 
 #### Onboarding
 
