@@ -33,17 +33,14 @@ class Config(BaseSettings):
 
     @model_validator(mode="after")
     def validate_urls(self) -> "Config":
-        if self.environment is None:
+        if self.environment is None or self.environment == Environment.PRODUCTION:
             if isinstance(self.onboarding_url, str):
                 if "sandbox" in self.onboarding_url:
                     self.environment = Environment.SANDBOX
                 elif "staging" in self.onboarding_url:
                     self.environment = Environment.STAGING
         else:
-            if self.environment == Environment.PRODUCTION:
-                self.onboarding_url = "https://apis.alicebiometrics.com/onboarding"
-                self.sandbox_url = "https://apis.alicebiometrics.com/onboarding/sandbox"
-            elif self.environment == Environment.SANDBOX:
+            if self.environment == Environment.SANDBOX:
                 self.onboarding_url = (
                     "https://apis.sandbox.alicebiometrics.com/onboarding"
                 )
