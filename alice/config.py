@@ -40,10 +40,7 @@ class Config(BaseSettings):
                 elif "staging" in self.onboarding_url:
                     self.environment = Environment.STAGING
         else:
-            if self.environment == Environment.PRODUCTION:
-                self.onboarding_url = "https://apis.alicebiometrics.com/onboarding"
-                self.sandbox_url = "https://apis.alicebiometrics.com/onboarding/sandbox"
-            elif self.environment == Environment.SANDBOX:
+            if self.environment == Environment.SANDBOX:
                 self.onboarding_url = (
                     "https://apis.sandbox.alicebiometrics.com/onboarding"
                 )
