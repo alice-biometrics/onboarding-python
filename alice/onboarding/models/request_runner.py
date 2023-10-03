@@ -19,7 +19,7 @@ class RequestRunner:
     def post_with(
         self,
         url_path: str,
-        json: Union[Dict[str, Any], None],
+        json: Union[Dict[str, Any], None] = None,
         data: Union[Dict[str, Any], None] = None,
     ) -> Response:
         return self.session.post(
