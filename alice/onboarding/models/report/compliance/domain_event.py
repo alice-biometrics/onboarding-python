@@ -7,9 +7,9 @@ from pydantic import BaseModel, Field
 from alice.onboarding.models.report.compliance.device_out import DeviceOut
 
 
-class UserEventOut(BaseModel):
+class DomainEvent(BaseModel):
     """
-    It collects events info
+    Domain Event Information
     """
 
     type: str = Field(description="Event type")

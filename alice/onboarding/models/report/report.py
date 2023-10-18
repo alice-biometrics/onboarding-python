@@ -3,7 +3,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from alice.onboarding.models.report.compliance.user_event_out import UserEventOut
+from alice.onboarding.models.report.compliance.domain_event import DomainEvent
 from alice.onboarding.models.report.document.document_report import DocumentReport
 from alice.onboarding.models.report.other_trusted_document.other_trusted_document_report import (
     OtherTrustedDocumentReport,
@@ -38,4 +38,4 @@ class Report(BaseModel):
         description="It collects all user other trusted documents (bank receipts, proof of address...)",
         default=[],
     )
-    events: List[UserEventOut] = Field(description="It collects all user events")
+    events: List[DomainEvent] = Field(description="It collects all user events")
