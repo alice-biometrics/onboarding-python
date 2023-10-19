@@ -29,6 +29,7 @@ class AuthClient:
         api_key: str,
         session: Session,
         timeout: Union[float, None] = None,
+        use_cache: bool = False,
     ):
         self.url = url
         self._api_key = api_key
@@ -38,6 +39,7 @@ class AuthClient:
         self._cached_user_token_stack = CachedTokenStack()
         self.session = session
         self.timeout = timeout
+        self.use_cache = use_cache
 
     @timeit
     def create_user_token(
@@ -56,6 +58,8 @@ class AuthClient:
 
         url = f"{self.url}/user_token/{user_id}"
         headers = {"Authorization": f"Bearer {login_token}"}
+        if self.use_cache:
+            headers["Cache-Control"] = "use-cache"
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
             if response.status_code == 200:
@@ -92,6 +96,8 @@ class AuthClient:
 
         url = f"{self.url}/backend_token"
         headers = {"Authorization": f"Bearer {login_token}"}
+        if self.use_cache:
+            headers["Cache-Control"] = "use-cache"
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
             if response.status_code == 200:
@@ -124,6 +130,8 @@ class AuthClient:
 
         url = f"{self.url}/backend_token/{user_id}"
         headers = {"Authorization": f"Bearer {login_token}"}
+        if self.use_cache:
+            headers["Cache-Control"] = "use-cache"
         try:
             response = self.session.get(url, headers=headers, timeout=self.timeout)
             if response.status_code == 200:
@@ -150,6 +158,8 @@ class AuthClient:
     def _create_login_token(self) -> Response:
         final_url = f"{self.url}/login_token"
         headers = {"apikey": self._api_key}
+        if self.use_cache:
+            headers["Cache-Control"] = "use-cache"
         try:
             response = self.session.get(
                 final_url, headers=headers, timeout=self.timeout

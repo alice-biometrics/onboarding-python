@@ -26,6 +26,7 @@ class Auth:
             url=config.onboarding_url,  # type: ignore
             timeout=config.timeout,
             verbose=config.verbose,
+            use_cache=config.use_cache,
         )
 
     def __init__(
@@ -34,10 +35,15 @@ class Auth:
         session: Session,
         url: str = DEFAULT_URL,
         timeout: Union[float, None] = None,
-        verbose: Optional[bool] = False,
+        verbose: bool = False,
+        use_cache: bool = False,
     ):
         self._auth_client = AuthClient(
-            url=url, api_key=api_key, session=session, timeout=timeout
+            url=url,
+            api_key=api_key,
+            session=session,
+            timeout=timeout,
+            use_cache=use_cache,
         )
         self.url = url
         self.verbose = verbose
