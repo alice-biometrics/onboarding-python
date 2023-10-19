@@ -40,7 +40,7 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     webhook_id = webhooks_client.create_webhook(webhook=webhook).unwrap_or_return()
 
     # Update an existent Webhook
-    new_post_url = "http://alicebiometrics.com"
+    new_post_url = "http://alicebiometrics.com/"
     webhook_to_update = Webhook(
         webhook_id=webhook_id,  # Needed if we want to update
         active=False,
@@ -70,7 +70,7 @@ def test_should_execute_all_webhook_lifecycle(given_valid_api_key):
     # Retrieve an existent Webhook
     retrieved_webhook = webhooks_client.get_webhook(webhook_id).unwrap()
     assert retrieved_webhook.active
-    assert retrieved_webhook.post_url == "http://alicebiometrics.com"
+    assert retrieved_webhook.post_url == new_post_url
 
     # Retrieve all configured webhooks
     result = webhooks_client.get_webhooks()
