@@ -62,6 +62,7 @@ def test_should_do_complete_flow_process(given_valid_api_key):
         _ = onboarding.update_flow(
             flow_id=flow_id,
             steps=[OnboardingSteps.SELFIE, OnboardingSteps.IDCARD],
+            default=False,
             name="alice-flow-test-onboarding-python-updated",
         ).unwrap_or_return()
 
