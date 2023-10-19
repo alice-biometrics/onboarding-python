@@ -41,36 +41,31 @@ def test_should_do_complete_flow_process(given_valid_api_key):
         config = Config(api_key=given_valid_api_key)
         onboarding = Onboarding.from_config(config)
 
-        user_id = onboarding.create_user(
-            user_info=UserInfo(first_name="Alice", last_name="Biometrics"),
-            device_info=DeviceInfo(device_platform="Android"),
-        ).unwrap_or_return()
-
         flow_id = onboarding.create_flow(
             steps=[OnboardingSteps.SELFIE],
             default=False,
             name="alice-flow-test-onboarding-python",
         ).unwrap_or_return()
 
-        _ = onboarding.retrieve_flow().unwrap_or_return()
-
         _ = onboarding.retrieve_flow(flow_id=flow_id).unwrap_or_return()
-        _ = onboarding.update_flow(
-            flow_id=flow_id,
-            steps=[OnboardingSteps.SELFIE, OnboardingSteps.IDCARD],
-            default=True,
-            name="alice-flow-test-onboarding-python-updated",
-        ).unwrap_or_return()
-        _ = onboarding.retrieve_flows().unwrap_or_return()
 
-        _ = onboarding.update_user_flow(
+        user_id = onboarding.create_user(
+            user_info=UserInfo(first_name="Alice", last_name="Biometrics"),
             flow_id=flow_id,
-            user_id=user_id,
+            device_info=DeviceInfo(device_platform="Android"),
         ).unwrap_or_return()
 
         _ = onboarding.get_user_flow(
             user_id=user_id,
         ).unwrap_or_return()
+
+        _ = onboarding.update_flow(
+            flow_id=flow_id,
+            steps=[OnboardingSteps.SELFIE, OnboardingSteps.IDCARD],
+            name="alice-flow-test-onboarding-python-updated",
+        ).unwrap_or_return()
+
+        _ = onboarding.retrieve_flows().unwrap_or_return()
 
         onboarding.delete_flow(flow_id).unwrap_or_return()
         onboarding.delete_user(user_id).unwrap_or_return()
