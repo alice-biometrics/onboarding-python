@@ -17,11 +17,15 @@ class RequestRunner:
         )
 
     def post_with(
-        self, url_path: str, json: Union[Dict[str, Any], None] = None
+        self,
+        url_path: str,
+        json: Union[Dict[str, Any], None] = None,
+        data: Union[Dict[str, Any], None] = None,
     ) -> Response:
         return self.session.post(
             f"{self.base_url}/{url_path}",
             json=json,
+            data=data,
             headers=self.headers,
             timeout=self.timeout,
         )

@@ -30,6 +30,10 @@ class Config(BaseSettings):
     sandbox_token: Union[str, None] = Field(
         default=None, description="This token is only used for trials"
     )
+    use_cache: bool = Field(
+        default=True,
+        description="This optional feature allows users to configure specific caches during service invocation, optimizing the performance of the application.",
+    )
 
     @model_validator(mode="after")
     def validate_urls(self) -> "Config":
