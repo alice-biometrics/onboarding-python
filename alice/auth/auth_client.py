@@ -93,7 +93,6 @@ class AuthClient:
         if result.is_failure:
             return result.value  # type: ignore
         login_token = result.unwrap()
-
         url = f"{self.url}/backend_token"
         headers = {"Authorization": f"Bearer {login_token}"}
         if self.use_cache:

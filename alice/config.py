@@ -8,7 +8,7 @@ from alice.onboarding.enums.environment import Environment
 
 
 class Config(BaseSettings):
-    model_config = SettingsConfigDict(arbitrary_types_allowed=True)
+    model_config = SettingsConfigDict(arbitrary_types_allowed=True, extra="allow")
 
     api_key: Union[str, None] = Field(default=None)
     environment: Union[Environment, None] = Field(

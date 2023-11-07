@@ -3,3 +3,4 @@ pydantic>=1.8.2,<3
 pydantic-settings<3
 requests>=2.26.0,<3
 meiga>=1.9.1,<2
+strenum
