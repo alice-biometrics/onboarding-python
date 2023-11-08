@@ -3,6 +3,7 @@ from enum import Enum
 
 class OnboardingSteps(Enum):
     SELFIE = "selfie"
+    SELFIE_WITH_CHALLENGE = "selfie_with_challenge"
     IDCARD = "idcard"
     DRIVER_LICENSE = "driverlicense"
     RESIDENCE_PERMIT = "residencepermit"
