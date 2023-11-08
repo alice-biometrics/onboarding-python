@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Environment(Enum):
+class Environment(str, Enum):
     SANDBOX = "sandbox"
     PRODUCTION = "production"
     STAGING = "staging"

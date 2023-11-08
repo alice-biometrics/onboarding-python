@@ -15,7 +15,6 @@ from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
-from alice.onboarding.enums.match_case import MatchCase
 from alice.onboarding.enums.onboarding_steps import OnboardingSteps
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
@@ -1377,51 +1376,6 @@ class OnboardingClient:
             )
         except requests.exceptions.Timeout:
             return Failure(OnboardingError.timeout(operation="identify_user"))
-        print_response(response=response, verbose=verbose)
-
-        return Success(response)
-
-    @early_return
-    def user_matching(
-        self,
-        user_id: str,
-        match_case: MatchCase,
-        verbose: bool = False,
-    ) -> Result[Response, Error]:
-        """
-        It performs face matching between all the user selfies or documents. This call requires a BACKEND_TOKEN_WITH_USER_ID..
-
-        Parameters
-        ----------
-        user_id
-            User identifier
-        match_case
-            Evidence (selfies or docs) on which to perform the matching
-        verbose
-            Used for print service response as well as the time elapsed
-
-
-        Returns
-        -------
-            A Result object with Response object [requests library] if Success
-        """
-        print_intro("user_matching", verbose=verbose)
-
-        backend_user_token = self.auth.create_backend_token(
-            user_id=user_id
-        ).unwrap_or_return()
-        print_token("backend_token_with_user", backend_user_token, verbose=verbose)
-
-        headers = self._auth_headers(backend_user_token)
-
-        try:
-            response = self.session.get(
-                f"{self.url}/user/match?match_case={match_case.value}",
-                headers=headers,
-                timeout=self.timeout,
-            )
-        except requests.exceptions.Timeout:
-            return Failure(OnboardingError.timeout(operation="user_matching"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)

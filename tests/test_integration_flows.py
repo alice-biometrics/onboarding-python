@@ -22,7 +22,7 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
 
 @pytest.mark.unit
 def test_should_timeout_when_time_exceeded(given_valid_api_key):
-    config = Config(api_key=given_valid_api_key, timeout=0.1)
+    config = Config(api_key=given_valid_api_key, timeout=0.01)
     onboarding = Onboarding.from_config(config)
 
     result = onboarding.create_flow(
