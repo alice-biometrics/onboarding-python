@@ -40,10 +40,6 @@ want to use the `sandbox` environment, you have two options:
     
     config = Config(api_key="<YOUR-API-KEY>", environment=Environment.SANDBOX)
     ```
-* Or, just export the `ALICE_ENVIRONMENT` environment variable
-    ```console
-    export ALICE_ENVIRONMENT=sandbox
-    ```
 
 #### Onboarding
 

@@ -12,7 +12,7 @@ class Config(BaseSettings):
 
     api_key: Union[str, None] = Field(default=None)
     environment: Union[Environment, None] = Field(
-        default=Environment.PRODUCTION, alias="ALICE_ENVIRONMENT"
+        default=Environment.PRODUCTION,
     )
     verbose: bool = Field(default=False)
     session: Union[Session, None] = Field(default=None)
@@ -44,18 +44,9 @@ class Config(BaseSettings):
                 elif "staging" in self.onboarding_url:
                     self.environment = Environment.STAGING
         else:
-            if self.environment == Environment.SANDBOX:
-                self.onboarding_url = (
-                    "https://apis.sandbox.alicebiometrics.com/onboarding"
-                )
-                self.sandbox_url = (
-                    "https://apis.sandbox.alicebiometrics.com/onboarding/sandbox"
-                )
-            elif self.environment == Environment.STAGING:
-                self.onboarding_url = (
-                    "https://apis.staging.alicebiometrics.com/onboarding"
-                )
-                self.sandbox_url = (
-                    "https://apis.staging.alicebiometrics.com/onboarding/sandbox"
-                )
+            self.onboarding_url = (
+                f"https://apis.{self.environment.value}.alicebiometrics.com/onboarding"
+            )
+            self.sandbox_url = f"https://apis.{self.environment.value}.alicebiometrics.com/onboarding/sandbox"
+
         return self
