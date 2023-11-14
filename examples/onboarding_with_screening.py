@@ -52,7 +52,7 @@ def screening_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
     # Add user to monitoring list
     onboarding.screening_monitor_add(user_id=user_id).unwrap_or_raise()
 
-    open_alerts = onboarding.get_monitoring_alerts().unwrap_or_raise()
+    open_alerts = onboarding.get_monitoring_alerts(user_id=user_id).unwrap_or_raise()
     assert isinstance(open_alerts, dict)
 
     onboarding.screening_monitor_delete(
