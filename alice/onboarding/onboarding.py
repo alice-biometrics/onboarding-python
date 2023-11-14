@@ -1172,6 +1172,39 @@ class Onboarding:
             )
 
     @early_return
+    def get_monitoring_alerts(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[bool, Union[OnboardingError, AuthError]]:
+        """
+        Retrieves from the monitoring list the users with open alerts
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+        Returns
+        -------
+            A Result where if the operation is successful it returns a dictionary.
+            Otherwise, it returns an OnboardingError or AuthError.
+        """
+        verbose = self.verbose or verbose
+        response = self.onboarding_client.get_monitoring_alerts(
+            user_id=user_id, verbose=verbose
+        ).unwrap_or_return()
+
+        if response.status_code == 200:
+            return Success(response.json())
+        else:
+            return Failure(
+                OnboardingError.from_response(
+                    operation="get_monitoring_alerts", response=response
+                )
+            )
+
+    @early_return
     def identify_user(
         self,
         target_user_id: str,

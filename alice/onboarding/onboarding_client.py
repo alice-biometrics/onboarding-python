@@ -1271,7 +1271,7 @@ class OnboardingClient:
         headers = self._auth_headers(backend_user_token)
 
         try:
-            response = self.session.get(
+            response = self.session.post(
                 f"{self.url}/user/screening/monitor",
                 headers=headers,
                 timeout=self.timeout,
@@ -1323,6 +1323,46 @@ class OnboardingClient:
                 OnboardingError.timeout(operation="screening_monitor_delete")
             )
 
+        print_response(response=response, verbose=verbose)
+
+        return Success(response)
+
+    @early_return
+    @timeit
+    def get_monitoring_alerts(
+        self, user_id: str, verbose: bool = False
+    ) -> Result[Response, Error]:
+        """
+        Retrieves from the monitoring list the users with open alerts
+
+        Parameters
+        ----------
+        user_id
+            User identifier
+        verbose
+            Used for print service response as well as the time elapsed
+
+
+        Returns
+        -------
+              A Result object with Response object [requests library] if Success
+        """
+        print_intro("get_monitoring_alerts", verbose=verbose)
+
+        backend_token = self.auth.create_backend_token(
+            user_id=user_id
+        ).unwrap_or_return()
+        print_token("backend_token_with_user", backend_token, verbose=verbose)
+        headers = self._auth_headers(backend_token)
+
+        try:
+            response = self.session.get(
+                f"{self.url}/user/screening/monitor/",
+                headers=headers,
+                timeout=self.timeout,
+            )
+        except requests.exceptions.Timeout:
+            return Failure(OnboardingError.timeout(operation="get_monitoring_alerts"))
         print_response(response=response, verbose=verbose)
 
         return Success(response)
