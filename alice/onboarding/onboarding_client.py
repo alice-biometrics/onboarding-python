@@ -1357,7 +1357,7 @@ class OnboardingClient:
 
         try:
             response = self.session.get(
-                f"{self.url}/user/screening/monitor/",
+                f"{self.url}/user/screening/monitor",
                 headers=headers,
                 timeout=self.timeout,
             )
