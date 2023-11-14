@@ -50,11 +50,14 @@ def screening_onboarding(api_key: str, verbose: Optional[bool] = False) -> None:
     assert isinstance(detailed_screening, dict)
 
     # Add user to monitoring list
-    # onboarding.screening_monitor_add(user_id=user_id).unwrap_or_raise()
-    #
-    # onboarding.screening_monitor_delete(
-    #     user_id=user_id, verbose=verbose
-    # ).unwrap_or_raise()
+    onboarding.screening_monitor_add(user_id=user_id).unwrap_or_raise()
+
+    open_alerts = onboarding.get_monitoring_alerts(user_id=user_id).unwrap_or_raise()
+    assert isinstance(open_alerts, dict)
+
+    onboarding.screening_monitor_delete(
+        user_id=user_id, verbose=verbose
+    ).unwrap_or_raise()
 
 
 def given_any_document_front_media_data() -> bytes:
