@@ -12,7 +12,7 @@ class Config(BaseSettings):
 
     api_key: Union[str, None] = Field(default=None)
     environment: Union[Environment, None] = Field(
-        default=Environment.PRODUCTION,
+        default=Environment.PRODUCTION, validation_alias="ALICE_ENVIRONMENT"
     )
     verbose: bool = Field(default=False)
     session: Union[Session, None] = Field(default=None)
@@ -23,6 +23,7 @@ class Config(BaseSettings):
     onboarding_url: Union[str, None] = Field(
         default="https://apis.alicebiometrics.com/onboarding"
     )
+    face_url: Union[str, None] = Field(default="https://apis.alicebiometrics.com/face")
     sandbox_url: Union[str, None] = Field(
         default="https://apis.alicebiometrics.com/onboarding/sandbox",
         description="This path is only used for trials",
@@ -46,6 +47,9 @@ class Config(BaseSettings):
         else:
             self.onboarding_url = (
                 f"https://apis.{self.environment.value}.alicebiometrics.com/onboarding"
+            )
+            self.face_url = (
+                f"https://apis.{self.environment.value}.alicebiometrics.com/face"
             )
             self.sandbox_url = f"https://apis.{self.environment.value}.alicebiometrics.com/onboarding/sandbox"
 
