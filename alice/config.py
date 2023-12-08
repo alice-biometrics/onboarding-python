@@ -12,7 +12,7 @@ class Config(BaseSettings):
 
     api_key: Union[str, None] = Field(default=None)
     environment: Union[Environment, None] = Field(
-        default=Environment.PRODUCTION, validation_alias="ALICE_ENVIRONMENT"
+        default=Environment.PRODUCTION  # , validation_alias="ALICE_ENVIRONMENT"
     )
     verbose: bool = Field(default=False)
     session: Union[Session, None] = Field(default=None)
