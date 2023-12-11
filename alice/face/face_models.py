@@ -1,4 +1,5 @@
 import json
+from typing import Any, Dict, Union
 
 from meiga import Error
 from pydantic import BaseModel, Field
@@ -7,22 +8,22 @@ from requests_toolbelt import MultipartDecoder
 
 
 class BoundingBox(BaseModel):
-    x: int | float = Field(ge=0)
-    y: int | float = Field(ge=0)
-    width: int | float = Field(gt=0)
-    height: int | float = Field(gt=0)
-    aspect_ratio: float | None = None
-    rotation_angle: float | None = None
+    x: Union[int, float] = Field(ge=0)
+    y: Union[int, float] = Field(ge=0)
+    width: Union[int, float] = Field(gt=0)
+    height: Union[int, float] = Field(gt=0)
+    aspect_ratio: Union[float, None] = None
+    rotation_angle: Union[float, None] = None
 
 
-def pad_response(response_encoded: bytes) -> float | None:
+def pad_response(response_encoded: bytes) -> Union[float, None]:
     if response_encoded == b"":
         return None
     pad_score = float(response_encoded.decode())
-    return pad_score  # 1 - pad_response["passive"]["score"] # TODO Review
+    return pad_score
 
 
-def bytes_response(response_encoded: bytes) -> bytes | None:
+def bytes_response(response_encoded: bytes) -> Union[bytes, None]:
     if response_encoded == b"":
         return None
     return response_encoded
@@ -53,7 +54,7 @@ response_factory = {
 }
 
 
-def decode_multipart_response(response: Response) -> dict:
+def decode_multipart_response(response: Response) -> Dict[str, Any]:
     decoder = MultipartDecoder.from_response(response)
     response_dict = {}
     for part in decoder.parts:
@@ -97,7 +98,7 @@ class SelfieResult(BaseModel):
             number_of_faces=number_of_faces,
         )
 
-    def save_face_profile(self, filename: str):
+    def save_face_profile(self, filename: str) -> None:
         if self.face_profile is None:
             raise FileNotFoundError("Retrieved face profile is none")
         with open(filename, "wb") as file:
@@ -118,7 +119,7 @@ class DocumentResult(BaseModel):
         # face_bounding_box = multipart_response_dict.get("face_bounding_box") # TODO REVIEW
         return DocumentResult(face_profile=face_profile)
 
-    def save_face_profile(self, filename: str):
+    def save_face_profile(self, filename: str) -> None:
         if self.face_profile is None:
             raise FileNotFoundError("Retrieved face profile is none")
         with open(filename, "wb") as file:
