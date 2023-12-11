@@ -69,19 +69,19 @@ def decode_multipart_response(response: Response) -> Dict[str, Any]:
 
 
 class SelfieResult(BaseModel):
-    face_profile: bytes | None = Field(
+    face_profile: Union[bytes, None] = Field(
         None,
         description="Binary with the face profile extracted from given media.",
         examples=[b"binary data"],
     )
-    pad_score: float | None = Field(
+    pad_score: Union[float, None] = Field(
         None,
         description="Presentation Attack Detection score to determine the input as a genuine attempt (>0.5) or attack (<0.5).",
         ge=0.0,
         le=1.0,
         examples=[0.9],
     )
-    number_of_faces: int | None = Field(
+    number_of_faces: Union[int, None] = Field(
         None, description="Number of faces detected.", examples=[1]
     )
 
@@ -106,7 +106,7 @@ class SelfieResult(BaseModel):
 
 
 class DocumentResult(BaseModel):
-    face_profile: bytes | None = Field(
+    face_profile: Union[bytes, None] = Field(
         None,
         description="Binary with the face profile extracted from given image.",
         examples=[b"binary data"],
@@ -127,7 +127,7 @@ class DocumentResult(BaseModel):
 
 
 class MatchResult(BaseModel):
-    score: float | None = Field(
+    score: Union[float, None] = Field(
         None,
         description="Matching score to determine the input as a genuine attempt (>0.5) or attack (<0.5).",
         ge=0.0,

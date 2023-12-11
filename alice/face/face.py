@@ -15,7 +15,7 @@ class Face:
         else:
             session = Session()
         return Face(
-            api_key=config.api_key,
+            api_key=config.api_key,  # type: ignore
             url=config.face_url,  # type: ignore
             timeout=config.timeout,
             send_agent=config.send_agent,
