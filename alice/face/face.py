@@ -72,10 +72,14 @@ class Face:
     def document(
         self,
         image: bytes,
+        headers: Union[Dict[str, str], None] = None,
     ) -> Result[DocumentResult, FaceError]:
+        if headers is None:
+            headers = {}
+
         response = self.session.post(
             url=f"{self.url}/document",
-            headers={"apikey": self.api_key},
+            headers={"apikey": self.api_key} | headers,
             files={"image": image},
         )
 
@@ -88,7 +92,6 @@ class Face:
         self,
         face_profile_probe: bytes,
         face_profile_target: bytes,
-        # match_case: str = "document",
     ) -> Result[MatchResult, FaceError]:
         response = self.session.post(
             url=f"{self.url}/match/profiles",
@@ -97,7 +100,6 @@ class Face:
                 "face_profile_probe": face_profile_probe,
                 "face_profile_target": face_profile_target,
             },
-            # data={"match_case": match_case}, TO BE DEPRECATED
         )
         if response.status_code == 200:
             return Success(MatchResult(score=response.json().get("match_score")))
