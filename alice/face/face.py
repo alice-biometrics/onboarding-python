@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Dict, Union
 
 from meiga import Failure, Result, Success
 from requests import Response, Session
@@ -50,10 +50,14 @@ class Face:
         media: bytes,
         extract_face_pad: bool = True,
         extract_face_profile: bool = True,
+        headers: Union[Dict[str, str], None] = None,
     ) -> Result[SelfieResult, FaceError]:
+        if headers is None:
+            headers = {}
+
         response = self.session.post(
             url=f"{self.url}/selfie",
-            headers={"apikey": self.api_key},
+            headers={"apikey": self.api_key} | headers,
             files={"media": media},
             data={
                 "extract_face_pad": extract_face_pad,

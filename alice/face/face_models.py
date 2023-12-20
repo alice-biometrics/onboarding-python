@@ -137,16 +137,20 @@ class MatchResult(BaseModel):
 
 
 class FaceError(Error):
-    def __init__(self, message: str, status_code: int):
+    def __init__(self, message: str, status_code: int, url: str):
         self.message = message
         self.status_code = status_code
+        self.url = url
 
     @staticmethod
     def from_response(response: Response) -> "FaceError":
         return FaceError(
             message=str(response.content),
             status_code=response.status_code,
+            url=response.url,
         )
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}: {self.status_code} {self.message}"
+        return (
+            f"{self.__class__.__name__}: {self.status_code} {self.message} | {self.url}"
+        )
