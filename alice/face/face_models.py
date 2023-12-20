@@ -84,6 +84,9 @@ class SelfieResult(BaseModel):
     number_of_faces: Union[int, None] = Field(
         None, description="Number of faces detected.", examples=[1]
     )
+    metadata: Union[Dict[str, Any], None] = Field(
+        None, description="Dictionary with some optional metadata"
+    )
 
     @staticmethod
     def from_response(response: Response) -> "SelfieResult":
@@ -91,11 +94,13 @@ class SelfieResult(BaseModel):
         face_profile = multipart_response_dict.get("face_profile")
         pad_score = multipart_response_dict.get("pad_score")
         number_of_faces = multipart_response_dict.get("number_of_faces")
+        metadata = multipart_response_dict.get("metadata")
 
         return SelfieResult(
             face_profile=face_profile,
             pad_score=pad_score,
             number_of_faces=number_of_faces,
+            metadata=metadata,
         )
 
     def save_face_profile(self, filename: str) -> None:

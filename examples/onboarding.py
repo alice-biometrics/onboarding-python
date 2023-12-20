@@ -10,7 +10,7 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 
 def onboarding_example(api_key: str, verbose: Optional[bool] = False) -> None:
-    config = Config(api_key=api_key, verbose=verbose)
+    config = (Config(api_key=api_key, verbose=verbose),)
     onboarding = Onboarding.from_config(config)
 
     selfie_media_data = given_any_selfie_image_media_data()

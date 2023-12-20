@@ -15,6 +15,8 @@ def face_example(api_key: str, verbose: Optional[bool] = False) -> None:
 
     selfie_result = face.selfie(selfie_media_data).unwrap_or_raise()
 
+    selfie_result.save_face_profile("face_profile_v5.bin")
+
     document_result = face.document(document_front_media_data).unwrap_or_raise()
 
     match_result = face.match_profiles(
