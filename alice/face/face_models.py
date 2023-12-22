@@ -26,7 +26,7 @@ def liveness_response(response_encoded: bytes) -> Union[float, None]:
 def metadata_response(response_encoded: bytes) -> Union[Dict[str, Any], None]:
     if response_encoded == b"":
         return None
-    return json.loads(response_encoded.decode())
+    return json.loads(response_encoded.decode())  # type: ignore
 
 
 def bytes_response(response_encoded: bytes) -> Union[bytes, None]:
