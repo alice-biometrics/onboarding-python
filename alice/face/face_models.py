@@ -81,7 +81,7 @@ class SelfieResult(BaseModel):
         description="Binary with the face profile extracted from given media.",
         examples=[b"binary data"],
     )
-    liveness_score: float | None = Field(
+    liveness_score: Union[float, None] = Field(
         None,
         description="Liveness score to determine the input as a genuine attempt (>=50) or attack (<50).",
         ge=0.0,
