@@ -16,11 +16,17 @@ class BoundingBox(BaseModel):
     rotation_angle: Union[float, None] = None
 
 
-def pad_response(response_encoded: bytes) -> Union[float, None]:
+def liveness_response(response_encoded: bytes) -> Union[float, None]:
     if response_encoded == b"":
         return None
     pad_score = float(response_encoded.decode())
     return pad_score
+
+
+def metadata_response(response_encoded: bytes) -> Union[Dict[str, Any], None]:
+    if response_encoded == b"":
+        return None
+    return json.loads(response_encoded.decode())
 
 
 def bytes_response(response_encoded: bytes) -> Union[bytes, None]:
@@ -45,7 +51,8 @@ def number_of_faces_response(response_encoded: bytes) -> int:
 
 
 response_factory = {
-    "pad_score": pad_response,
+    "liveness_score": liveness_response,
+    "metadata": metadata_response,
     "face_avatar": bytes_response,
     "face_selfie": bytes_response,
     "face_profile": bytes_response,
@@ -74,12 +81,12 @@ class SelfieResult(BaseModel):
         description="Binary with the face profile extracted from given media.",
         examples=[b"binary data"],
     )
-    pad_score: Union[float, None] = Field(
+    liveness_score: float | None = Field(
         None,
-        description="Presentation Attack Detection score to determine the input as a genuine attempt (>0.5) or attack (<0.5).",
+        description="Liveness score to determine the input as a genuine attempt (>=50) or attack (<50).",
         ge=0.0,
-        le=1.0,
-        examples=[0.9],
+        le=100.0,
+        examples=[90],
     )
     number_of_faces: Union[int, None] = Field(
         None, description="Number of faces detected.", examples=[1]
@@ -88,17 +95,28 @@ class SelfieResult(BaseModel):
         None, description="Dictionary with some optional metadata"
     )
 
+    def __repr__(self) -> str:
+        face_profile = (
+            f"face_profile(length)={len(self.face_profile)}"
+            if self.face_profile
+            else "face_profile=None"
+        )
+        return f"[SelfieResult {face_profile} liveness_score={self.liveness_score} number_of_faces={self.number_of_faces} metadata={self.metadata}]"
+
+    def __str__(self) -> str:
+        return self.__repr__()
+
     @staticmethod
     def from_response(response: Response) -> "SelfieResult":
         multipart_response_dict = decode_multipart_response(response)
         face_profile = multipart_response_dict.get("face_profile")
-        pad_score = multipart_response_dict.get("pad_score")
+        liveness_score = multipart_response_dict.get("liveness_score")
         number_of_faces = multipart_response_dict.get("number_of_faces")
         metadata = multipart_response_dict.get("metadata")
 
         return SelfieResult(
             face_profile=face_profile,
-            pad_score=pad_score,
+            liveness_score=liveness_score,
             number_of_faces=number_of_faces,
             metadata=metadata,
         )
@@ -134,10 +152,10 @@ class DocumentResult(BaseModel):
 class MatchResult(BaseModel):
     score: Union[float, None] = Field(
         None,
-        description="Matching score to determine the input as a genuine attempt (>0.5) or attack (<0.5).",
+        description="Matching score to determine the input as a genuine attempt (>=50) or attack (<50).",
         ge=0.0,
-        le=1.0,
-        examples=[0.9],
+        le=100.0,
+        examples=[90],
     )
 
 
