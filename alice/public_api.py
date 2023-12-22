@@ -3,6 +3,8 @@
 """Public API of Alice Onboarding Python SDK"""
 from typing import List
 
+from alice.face.face import Face
+from alice.face.face_models import DocumentResult, FaceError, SelfieResult
 from alice.onboarding.enums.environment import Environment
 
 # Modules
@@ -65,6 +67,7 @@ classes = [
     "OtherTrustedDocumentReport",
     "Environment",
 ]
+face = ["Face", "SelfieResult", "DocumentResult", "FaceError", "BoundingBox"]
 
 
 # Errors
@@ -73,4 +76,4 @@ from alice.sandbox.sandbox_errors import SandboxError
 
 errors = ["OnboardingError", "SandboxError"]
 
-__all__ = modules + classes + errors
+__all__ = modules + classes + errors + face
