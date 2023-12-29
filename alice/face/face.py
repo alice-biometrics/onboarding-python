@@ -48,7 +48,7 @@ class Face:
     def selfie(
         self,
         media: bytes,
-        extract_face_pad: bool = True,
+        extract_liveness: bool = True,
         extract_face_profile: bool = True,
         headers: Union[Dict[str, str], None] = None,
     ) -> Result[SelfieResult, FaceError]:
@@ -60,7 +60,7 @@ class Face:
             headers={"apikey": self.api_key} | headers,
             files={"media": media},
             data={
-                "extract_face_pad": extract_face_pad,
+                "extract_liveness": extract_liveness,
                 "extract_face_profile": extract_face_profile,
             },
         )
