@@ -21,11 +21,13 @@ class RequestRunner:
         url_path: str,
         json: Union[Dict[str, Any], None] = None,
         data: Union[Dict[str, Any], None] = None,
+        files: Union[Dict[str, Any], None] = None,
     ) -> Response:
         return self.session.post(
             f"{self.base_url}/{url_path}",
             json=json,
             data=data,
+            files=files,
             headers=self.headers,
             timeout=self.timeout,
         )
