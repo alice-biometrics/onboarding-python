@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Union
+from typing import Any, Dict, Union
 
 from pydantic import BaseModel
 
@@ -18,4 +18,4 @@ class OnboardingStepName(Enum):
 
 class OnboardingStep(BaseModel):
     step: OnboardingStepName
-    config: Union[Dict, None] = None
+    config: Union[Dict[str, Any], None] = None
