@@ -1,7 +1,9 @@
 from enum import Enum
 
+from pydantic import BaseModel
 
-class OnboardingSteps(Enum):
+
+class OnboardingStepName(Enum):
     SELFIE = "selfie"
     SELFIE_WITH_CHALLENGE = "selfie_with_challenge"
     IDCARD = "idcard"
@@ -11,3 +13,13 @@ class OnboardingSteps(Enum):
     PASSPORT = "passport"
     OTHER_TRUSTED_DOCUMENT = "otd"
     ANY_DOCUMENT = "anydocument"
+
+
+class OnboardingStepConfig(BaseModel):
+    title: str
+    category: str
+
+
+class OnboardingStep(BaseModel):
+    step: OnboardingStepName
+    config: OnboardingStepConfig | None = None
