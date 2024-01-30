@@ -3,7 +3,7 @@ from meiga import Error, Result, early_return, isSuccess
 
 from alice import Config, DeviceInfo, Onboarding, UserInfo
 from alice.auth.auth_errors import AuthError
-from alice.onboarding.enums.onboarding_steps import OnboardingSteps
+from alice.onboarding.enums.onboarding_steps import OnboardingStep, OnboardingStepName
 
 
 @pytest.mark.unit
@@ -12,7 +12,7 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
     onboarding = Onboarding.from_config(config)
 
     result = onboarding.create_flow(
-        steps=[OnboardingSteps.SELFIE],
+        steps=[OnboardingStep(step=OnboardingStepName.SELFIE, config=None)],
         default=True,
         name="test",
     )
@@ -26,7 +26,7 @@ def test_should_timeout_when_time_exceeded(given_valid_api_key):
     onboarding = Onboarding.from_config(config)
 
     result = onboarding.create_flow(
-        steps=[OnboardingSteps.SELFIE],
+        steps=[OnboardingStep(step=OnboardingStepName.SELFIE, config=None)],
         default=True,
         name="test",
     )
@@ -42,7 +42,7 @@ def test_should_do_complete_flow_process(given_valid_api_key):
         onboarding = Onboarding.from_config(config)
 
         flow_id = onboarding.create_flow(
-            steps=[OnboardingSteps.SELFIE],
+            steps=[OnboardingStep(step=OnboardingStepName.SELFIE, config=None)],
             default=False,
             name="alice-flow-test-onboarding-python",
         ).unwrap_or_return()
@@ -61,7 +61,10 @@ def test_should_do_complete_flow_process(given_valid_api_key):
 
         _ = onboarding.update_flow(
             flow_id=flow_id,
-            steps=[OnboardingSteps.SELFIE, OnboardingSteps.IDCARD],
+            steps=[
+                OnboardingStep(step=OnboardingStepName.SELFIE, config=None),
+                OnboardingStep(step=OnboardingStepName.IDCARD, config=None),
+            ],
             default=False,
             name="alice-flow-test-onboarding-python-updated",
         ).unwrap_or_return()

@@ -13,7 +13,7 @@ from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
 from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
-from alice.onboarding.enums.onboarding_steps import OnboardingSteps
+from alice.onboarding.enums.onboarding_steps import OnboardingStep
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
 from alice.onboarding.models.bounding_box import BoundingBox
@@ -1818,7 +1818,7 @@ class Onboarding:
     @early_return
     def create_flow(
         self,
-        steps: List[OnboardingSteps],
+        steps: List[OnboardingStep],
         default: bool,
         name: str,
         id_: Union[str, None] = None,
@@ -1865,7 +1865,7 @@ class Onboarding:
     def update_flow(
         self,
         flow_id: str,
-        steps: List[OnboardingSteps],
+        steps: List[OnboardingStep],
         default: bool,
         name: str,
         verbose: bool = False,
