@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 
 from pydantic import BaseModel
 
@@ -22,4 +23,4 @@ class OnboardingStepConfig(BaseModel):
 
 class OnboardingStep(BaseModel):
     step: OnboardingStepName
-    config: OnboardingStepConfig | None = None
+    config: Union[OnboardingStepConfig, None] = None
