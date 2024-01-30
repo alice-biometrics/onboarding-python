@@ -2189,7 +2189,7 @@ class OnboardingClient:
             "id": flow_id,
             "default": default,
             "name": name,
-            "steps": [step.model_dump(mode="json") for step in steps],
+            "steps": [step.model_dump() for step in steps],
         }
 
         try:
