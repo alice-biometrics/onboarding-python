@@ -2129,7 +2129,7 @@ class OnboardingClient:
         data = {
             "default": default,
             "name": name,
-            "steps": [step.value for step in steps],
+            "steps": [step.model_dump(mode="json") for step in steps],
         }
 
         if id_:
@@ -2189,7 +2189,7 @@ class OnboardingClient:
             "id": flow_id,
             "default": default,
             "name": name,
-            "steps": [step.value for step in steps],
+            "steps": [step.model_dump(mode="json") for step in steps],
         }
 
         try:
