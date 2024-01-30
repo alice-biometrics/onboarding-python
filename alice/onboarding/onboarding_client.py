@@ -2129,7 +2129,7 @@ class OnboardingClient:
         data = {
             "default": default,
             "name": name,
-            "steps": [step.model_dump(exclude_none=True) for step in steps],
+            "steps": [step.model_dump() for step in steps],
         }
 
         if id_:
