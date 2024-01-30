@@ -1,7 +1,10 @@
 from enum import Enum
+from typing import Any, Dict, Union
+
+from pydantic import BaseModel
 
 
-class OnboardingSteps(Enum):
+class OnboardingStepName(str, Enum):
     SELFIE = "selfie"
     SELFIE_WITH_CHALLENGE = "selfie_with_challenge"
     IDCARD = "idcard"
@@ -11,3 +14,8 @@ class OnboardingSteps(Enum):
     PASSPORT = "passport"
     OTHER_TRUSTED_DOCUMENT = "otd"
     ANY_DOCUMENT = "anydocument"
+
+
+class OnboardingStep(BaseModel):
+    step: OnboardingStepName
+    config: Union[Dict[str, Any], None] = None
