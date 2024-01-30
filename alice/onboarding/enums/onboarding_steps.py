@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union
+from typing import Dict, Union
 
 from pydantic import BaseModel
 
@@ -16,11 +16,6 @@ class OnboardingStepName(Enum):
     ANY_DOCUMENT = "anydocument"
 
 
-class OnboardingStepConfig(BaseModel):
-    title: str
-    category: str
-
-
 class OnboardingStep(BaseModel):
     step: OnboardingStepName
-    config: Union[OnboardingStepConfig, None] = None
+    config: Union[Dict, None] = None
