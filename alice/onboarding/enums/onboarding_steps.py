@@ -4,7 +4,7 @@ from typing import Any, Dict, Union
 from pydantic import BaseModel
 
 
-class OnboardingStepName(Enum):
+class OnboardingStepName(str, Enum):
     SELFIE = "selfie"
     SELFIE_WITH_CHALLENGE = "selfie_with_challenge"
     IDCARD = "idcard"
