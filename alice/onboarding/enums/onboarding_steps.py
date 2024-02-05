@@ -17,5 +17,5 @@ class OnboardingStepName(str, Enum):
 
 
 class OnboardingStep(BaseModel):
-    step: OnboardingStepName
+    name: OnboardingStepName
     config: Union[Dict[str, Any], None] = None
