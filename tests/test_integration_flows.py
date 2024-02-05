@@ -12,7 +12,7 @@ def test_should_return_an_error_when_the_api_key_is_not_configured():
     onboarding = Onboarding.from_config(config)
 
     result = onboarding.create_flow(
-        steps=[OnboardingStep(step=OnboardingStepName.SELFIE)],
+        steps=[OnboardingStep(name=OnboardingStepName.SELFIE)],
         default=True,
         name="test",
     )
@@ -26,7 +26,7 @@ def test_should_timeout_when_time_exceeded(given_valid_api_key):
     onboarding = Onboarding.from_config(config)
 
     result = onboarding.create_flow(
-        steps=[OnboardingStep(step=OnboardingStepName.SELFIE)],
+        steps=[OnboardingStep(name=OnboardingStepName.SELFIE)],
         default=True,
         name="test",
     )
@@ -42,7 +42,7 @@ def test_should_do_complete_flow_process(given_valid_api_key):
         onboarding = Onboarding.from_config(config)
 
         flow_id = onboarding.create_flow(
-            steps=[OnboardingStep(step=OnboardingStepName.SELFIE)],
+            steps=[OnboardingStep(name=OnboardingStepName.SELFIE)],
             default=False,
             name="alice-flow-test-onboarding-python",
         ).unwrap_or_return()
@@ -62,8 +62,8 @@ def test_should_do_complete_flow_process(given_valid_api_key):
         _ = onboarding.update_flow(
             flow_id=flow_id,
             steps=[
-                OnboardingStep(step=OnboardingStepName.SELFIE),
-                OnboardingStep(step=OnboardingStepName.IDCARD),
+                OnboardingStep(name=OnboardingStepName.SELFIE),
+                OnboardingStep(name=OnboardingStepName.IDCARD),
             ],
             default=False,
             name="alice-flow-test-onboarding-python-updated",
