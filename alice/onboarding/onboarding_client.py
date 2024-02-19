@@ -14,7 +14,6 @@ from alice.onboarding.enums.decision import Decision
 from alice.onboarding.enums.document_side import DocumentSide
 from alice.onboarding.enums.document_source import DocumentSource
 from alice.onboarding.enums.document_type import DocumentType
-from alice.onboarding.enums.duplicates_resource_type import DuplicatesResourceType
 from alice.onboarding.enums.onboarding_steps import OnboardingStep
 from alice.onboarding.enums.user_state import UserState
 from alice.onboarding.enums.version import Version
@@ -1789,7 +1788,6 @@ class OnboardingClient:
         self,
         start_date: datetime,
         end_date: datetime,
-        resource_type: DuplicatesResourceType,
         verbose: bool = False,
     ) -> Result[Response, Error]:
         """
@@ -1802,8 +1800,6 @@ class OnboardingClient:
             Beginning datetime of the temporal window
         end_date
             Ending datetime of the temporal window
-        resource_type
-            Entity to analyze (selfie or document)
         verbose
             Used for print service response as well as the time elapsed
 
@@ -1822,7 +1818,6 @@ class OnboardingClient:
         data = {
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
-            "resource_type": resource_type.value,
         }
         try:
             response = self.session.post(
