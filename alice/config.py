@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Dict, Union
 
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -34,6 +34,9 @@ class Config(BaseSettings):
     use_cache: bool = Field(
         default=True,
         description="This optional feature allows users to configure specific caches during service invocation, optimizing the performance of the application.",
+    )
+    headers: Union[Dict[str, str], None] = Field(
+        default=None, description="Configure header to add to all the entry points"
     )
 
     @model_validator(mode="after")
