@@ -21,6 +21,7 @@ class Face:
             send_agent=config.send_agent,
             verbose=config.verbose,
             session=session,
+            headers=config.headers,
         )
 
     def __init__(
@@ -31,6 +32,7 @@ class Face:
         timeout: Union[float, None] = None,
         send_agent: bool = True,
         verbose: bool = False,
+        headers: Union[Dict[str, str], None] = None,
     ):
         self.api_key = api_key
         self.url = url
@@ -38,12 +40,27 @@ class Face:
         self.send_agent = send_agent
         self.verbose = verbose
         self.session = session
+        self.headers = headers
 
     def healthcheck(self) -> Response:
         response = self.session.get(
             url=self.url + "/healthcheck", headers={"apikey": self.api_key}
         )
         return response
+
+    def _get_headers(
+        self, headers: Union[Dict[str, str], None] = None
+    ) -> Dict[str, str]:
+        function_headers = {}
+        config_headers = {}
+
+        if headers is not None:
+            function_headers = headers
+        if self.headers is not None:
+            config_headers = self.headers
+
+        headers = {"apikey": self.api_key} | function_headers | config_headers
+        return headers
 
     def selfie(
         self,
@@ -52,12 +69,9 @@ class Face:
         extract_face_profile: bool = True,
         headers: Union[Dict[str, str], None] = None,
     ) -> Result[SelfieResult, FaceError]:
-        if headers is None:
-            headers = {}
-
         response = self.session.post(
             url=f"{self.url}/selfie",
-            headers={"apikey": self.api_key} | headers,
+            headers=self._get_headers(headers),
             files={"media": media},
             data={
                 "extract_liveness": extract_liveness,
@@ -74,12 +88,9 @@ class Face:
         image: bytes,
         headers: Union[Dict[str, str], None] = None,
     ) -> Result[DocumentResult, FaceError]:
-        if headers is None:
-            headers = {}
-
         response = self.session.post(
             url=f"{self.url}/document",
-            headers={"apikey": self.api_key} | headers,
+            headers=self._get_headers(headers),
             files={"image": image},
         )
 
@@ -92,10 +103,11 @@ class Face:
         self,
         face_profile_probe: bytes,
         face_profile_target: bytes,
+        headers: Union[Dict[str, str], None] = None,
     ) -> Result[MatchResult, FaceError]:
         response = self.session.post(
             url=f"{self.url}/match/profiles",
-            headers={"apikey": self.api_key},
+            headers=self._get_headers(headers),
             files={
                 "face_profile_probe": face_profile_probe,
                 "face_profile_target": face_profile_target,
@@ -107,11 +119,14 @@ class Face:
             return Failure(FaceError.from_response(response))
 
     def match_media(
-        self, selfie_media: bytes, document_media: bytes
+        self,
+        selfie_media: bytes,
+        document_media: bytes,
+        headers: Union[Dict[str, str], None] = None,
     ) -> Result[MatchResult, FaceError]:
         response = self.session.post(
             url=f"{self.url}/match/media",
-            headers={"apikey": self.api_key},
+            headers=self._get_headers(headers),
             files={"selfie_media": selfie_media, "document_media": document_media},
         )
         if response.status_code == 200:
