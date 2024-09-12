@@ -8,12 +8,14 @@ RESOURCES_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../resources"
 
 def face_example(api_key: str, verbose: Optional[bool] = False) -> None:
     config = Config(api_key=api_key, verbose=verbose)
+
     face = Face.from_config(config)
 
     selfie_media_data = given_any_selfie_image_media_data()
     document_front_media_data = given_any_document_front_media_data()
 
     selfie_result = face.selfie(selfie_media_data).unwrap_or_raise()
+    print(selfie_result)
 
     selfie_result.save_face_profile("face_profile_v5.bin")
 

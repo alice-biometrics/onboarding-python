@@ -50,12 +50,18 @@ def number_of_faces_response(response_encoded: bytes) -> int:
     return number_of_faces
 
 
+def alerts_response(response_encoded: bytes) -> list[str]:
+    alerts = json.loads(response_encoded.decode())
+    return alerts
+
+
 response_factory = {
     "liveness_score": liveness_response,
     "metadata": metadata_response,
     "face_avatar": bytes_response,
     "face_selfie": bytes_response,
     "face_profile": bytes_response,
+    "alerts": alerts_response,
     "face_bounding_box": face_bounding_box_response,
     "number_of_faces": number_of_faces_response,
 }
@@ -94,6 +100,7 @@ class SelfieResult(BaseModel):
     metadata: Union[Dict[str, Any], None] = Field(
         None, description="Dictionary with some optional metadata"
     )
+    alerts: list[str] = Field(default_factory=list, description="List of selfie alerts")
 
     def __repr__(self) -> str:
         face_profile = (
@@ -101,7 +108,13 @@ class SelfieResult(BaseModel):
             if self.face_profile
             else "face_profile=None"
         )
-        return f"[SelfieResult {face_profile} liveness_score={self.liveness_score} number_of_faces={self.number_of_faces} metadata={self.metadata}]"
+        return (
+            f"[SelfieResult {face_profile} "
+            f"liveness_score={self.liveness_score} "
+            f"number_of_faces={self.number_of_faces} "
+            f"alerts={self.alerts} "
+            f"metadata={self.metadata}]"
+        )
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -112,12 +125,13 @@ class SelfieResult(BaseModel):
         face_profile = multipart_response_dict.get("face_profile")
         liveness_score = multipart_response_dict.get("liveness_score")
         number_of_faces = multipart_response_dict.get("number_of_faces")
+        alerts = multipart_response_dict.get("alerts")
         metadata = multipart_response_dict.get("metadata")
-
         return SelfieResult(
             face_profile=face_profile,
             liveness_score=liveness_score,
             number_of_faces=number_of_faces,
+            alerts=alerts,
             metadata=metadata,
         )
 
