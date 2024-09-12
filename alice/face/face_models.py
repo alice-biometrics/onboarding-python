@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union, cast
 
 from meiga import Error
 from pydantic import BaseModel, Field
@@ -51,7 +51,7 @@ def number_of_faces_response(response_encoded: bytes) -> int:
 
 
 def alerts_response(response_encoded: bytes) -> list[str]:
-    alerts = json.loads(response_encoded.decode())
+    alerts = cast(List[str], json.loads(response_encoded.decode()))
     return alerts
 
 
@@ -100,7 +100,9 @@ class SelfieResult(BaseModel):
     metadata: Union[Dict[str, Any], None] = Field(
         None, description="Dictionary with some optional metadata"
     )
-    alerts: list[str] = Field(default_factory=list, description="List of selfie alerts")
+    alerts: Union[List[str], None] = Field(
+        default_factory=list, description="List of selfie alerts"
+    )
 
     def __repr__(self) -> str:
         face_profile = (
