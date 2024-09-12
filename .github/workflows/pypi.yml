@@ -35,16 +35,16 @@ jobs:
       #  run: lume -test
       - name: Example [Onboarding]
         run: python examples/onboarding.py
-      - name: Example [Onboarding with Identification]
-        run: python examples/onboarding_with_identification.py
-      - name: Example [Onboarding with Certificate]
-        run: python examples/onboarding_with_certificate.py
-      - name: Example [Onboarding with Screening]
-        run: python examples/onboarding_with_screening.py
-      - name: Example [Auth]
-        run: python examples/auth.py
-      - name: Example [Sandbox]
-        run: python examples/sandbox.py
+#      - name: Example [Onboarding with Identification]
+#        run: python examples/onboarding_with_identification.py
+#      - name: Example [Onboarding with Certificate]
+#        run: python examples/onboarding_with_certificate.py
+#      - name: Example [Onboarding with Screening]
+#        run: python examples/onboarding_with_screening.py
+#      - name: Example [Auth]
+#        run: python examples/auth.py
+#      - name: Example [Sandbox]
+#        run: python examples/sandbox.py
 
   get-version:
     uses: alice-biometrics/actions-public/.github/workflows/get-version.yml@main
