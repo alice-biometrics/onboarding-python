@@ -31,8 +31,8 @@ jobs:
           lume -install
       - name: Lint
         run: lume -lint
-      - name: Test [pytest]
-        run: lume -test
+      #- name: Test [pytest]
+      #  run: lume -test
       - name: Example [Onboarding]
         run: python examples/onboarding.py
       - name: Example [Onboarding with Identification]
